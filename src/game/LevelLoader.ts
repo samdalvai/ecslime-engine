@@ -10,6 +10,7 @@ import KeyboardControlComponent from '../components/KeyboardControlComponent';
 import ProjectileEmitterComponent from '../components/ProjectileEmitterComponent';
 import RigidBodyComponent from '../components/RigidBodyComponent';
 import ScriptComponent from '../components/ScriptComponent';
+import ShadingComponent from '../components/ShadingComponent';
 import ShadowComponent from '../components/ShadowComponent';
 import SpriteComponent from '../components/SpriteComponent';
 import SpriteDirectionComponent from '../components/SpriteDirectionComponent';
@@ -78,6 +79,7 @@ export default class LevelLoader {
         player.addComponent(DeadBodyOnDeathComponent);
         player.addComponent(SpriteDirectionComponent);
         player.addComponent(ShadowComponent, 30, 10, 0, -3);
+        player.addComponent(ShadingComponent);
         player.addComponent(AnimationComponent, 4, 6);
         player.addComponent(RigidBodyComponent, { x: 0, y: 0 }, { x: 1, y: 0 });
         player.addComponent(CameraFollowComponent);

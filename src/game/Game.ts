@@ -21,6 +21,7 @@ import RenderColliderSystem from '../systems/RenderColliderSystem';
 import RenderDebugInfoSystem from '../systems/RenderDebugInfoSystem';
 import RenderHealthBarSystem from '../systems/RenderHealthBarSystem';
 import RenderPlayerFollowRadius from '../systems/RenderPlayerFollowRadius';
+import RenderShadingSystem from '../systems/RenderShadingSystem';
 import RenderSystem from '../systems/RenderSystem';
 import RenderTextSystem from '../systems/RenderTextSystem';
 import ScriptingSystem from '../systems/ScriptingSystem';
@@ -114,6 +115,7 @@ export default class Game {
         this.registry.addSystem(RenderHealthBarSystem);
         this.registry.addSystem(RenderTextSystem);
         this.registry.addSystem(RenderDebugInfoSystem);
+        this.registry.addSystem(RenderShadingSystem);
 
         this.registry.addSystem(MovementSystem);
         this.registry.addSystem(CameraMovementSystem);
@@ -229,6 +231,7 @@ export default class Game {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.registry.getSystem(RenderSystem)?.update(this.ctx, this.assetStore, this.camera);
+        this.registry.getSystem(RenderShadingSystem)?.update(this.ctx, this.assetStore, this.camera);
         this.registry.getSystem(AnimationSystem)?.update();
         this.registry.getSystem(SpriteDirectionSystem)?.update();
         this.registry.getSystem(RenderHealthBarSystem)?.update(this.ctx, this.camera);
