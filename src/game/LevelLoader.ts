@@ -79,7 +79,7 @@ export default class LevelLoader {
         player.addComponent(DeadBodyOnDeathComponent);
         player.addComponent(SpriteDirectionComponent);
         // player.addComponent(ShadowComponent, 30, 10, 0, -3);
-        player.addComponent(ShadingComponent);
+        player.addComponent(ShadingComponent, 0, -2);
         player.addComponent(AnimationComponent, 4, 6);
         player.addComponent(RigidBodyComponent, { x: 0, y: 0 }, { x: 1, y: 0 });
         player.addComponent(CameraFollowComponent);
@@ -95,7 +95,8 @@ export default class LevelLoader {
         enemy.addComponent(SpriteComponent, 'slime-texture', 32, 32, 1, 0, 0);
         enemy.addComponent(SpriteDirectionComponent);
         enemy.addComponent(DeadBodyOnDeathComponent);
-        enemy.addComponent(ShadowComponent, 20, 10, 0, -8);
+        enemy.addComponent(ShadingComponent, 0, -18);
+        // enemy.addComponent(ShadowComponent, 20, 10, 0, -8);
         enemy.addComponent(AnimationComponent, 2, 4);
         enemy.addComponent(RigidBodyComponent, { x: 50, y: 0 }, { x: 1, y: 0 });
         enemy.addComponent(BoxColliderComponent, 25, 20, { x: 4, y: 7 });

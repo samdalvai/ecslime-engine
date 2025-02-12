@@ -17,8 +17,9 @@ export default class RenderShadingSystem extends System {
         for (const entity of this.getSystemEntities()) {
             const sprite = entity.getComponent(SpriteComponent);
             const transform = entity.getComponent(TransformComponent);
+            const shading = entity.getComponent(ShadingComponent);
 
-            if (!sprite || !transform) {
+            if (!sprite || !transform || !shading) {
                 throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
             }
 
@@ -81,7 +82,7 @@ export default class RenderShadingSystem extends System {
                     data[i] = 0; // Red channel to 0
                     data[i + 1] = 0; // Green channel to 0
                     data[i + 2] = 0; // Blue channel to 0
-                    // Leave the alpha channel unchanged to preserve transparency
+                    data[i + 3] = 100;
                 }
             }
 
@@ -104,7 +105,11 @@ export default class RenderShadingSystem extends System {
             shadowCtx.restore(); // Restore the context state
 
             // Draw the modified image onto the main canvas
-            ctx.drawImage(shadowCanvas, dstRect.x, dstRect.y + sprite.height * transform.scale.y - 5);
+            ctx.drawImage(
+                shadowCanvas,
+                dstRect.x + shading.offsetX,
+                dstRect.y + sprite.height * transform.scale.y + shading.offsetY,
+            );
         }
     };
 }
