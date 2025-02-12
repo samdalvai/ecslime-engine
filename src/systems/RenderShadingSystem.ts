@@ -44,11 +44,30 @@ export default class RenderShadingSystem extends System {
             }
 
             // Set canvas dimensions to match the sprite
-            canvas.width = entitySprite.width;
-            canvas.height = entitySprite.height;
+            canvas.width = sprite.width;
+            canvas.height = sprite.height;
+
+            const srcRect: Rectangle = sprite.srcRect;
+
+            const dstRect: Rectangle = {
+                x: transform.position.x - (sprite.isFixed ? 0 : camera.x),
+                y: transform.position.y - (sprite.isFixed ? 0 : camera.y),
+                width: sprite.width * transform.scale.x,
+                height: sprite.height * transform.scale.y,
+            };
 
             // Draw the sprite onto the temporary canvas
-            tempCtx.drawImage(entitySprite, 0, 0);
+            tempCtx.drawImage(
+                entitySprite,
+                srcRect.x,
+                srcRect.y,
+                srcRect.width,
+                srcRect.height,
+                0,
+                0,
+                dstRect.width,
+                dstRect.height,
+            );
 
             // Get the image data from the canvas
             const imageData = tempCtx.getImageData(0, 0, canvas.width, canvas.height);
@@ -69,8 +88,23 @@ export default class RenderShadingSystem extends System {
             // Put the modified image data back onto the canvas
             tempCtx.putImageData(imageData, 0, 0);
 
+            const flippedCanvas = document.createElement('canvas');
+            flippedCanvas.width = canvas.width;
+            flippedCanvas.height = canvas.height;
+            const flippedCtx = flippedCanvas.getContext('2d');
+
+            if (!flippedCtx) {
+                continue; // Skip if context is not available
+            }
+
+            // Flip the image horizontally
+            flippedCtx.save(); // Save the current context state
+            flippedCtx.scale(1, -1); // Flip horizontally
+            flippedCtx.drawImage(canvas, 0, -canvas.height); // Draw the flipped image
+            flippedCtx.restore(); // Restore the context state
+
             // Draw the modified image onto the main canvas
-            ctx.drawImage(canvas, 500, 500);
+            ctx.drawImage(flippedCanvas, dstRect.x + 20, dstRect.y);
         }
     };
 }
