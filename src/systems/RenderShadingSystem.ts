@@ -88,23 +88,23 @@ export default class RenderShadingSystem extends System {
             // Put the modified image data back onto the canvas
             tempCtx.putImageData(imageData, 0, 0);
 
-            const flippedCanvas = document.createElement('canvas');
-            flippedCanvas.width = canvas.width;
-            flippedCanvas.height = canvas.height;
-            const flippedCtx = flippedCanvas.getContext('2d');
+            const shadowCanvas = document.createElement('canvas');
+            shadowCanvas.width = canvas.width;
+            shadowCanvas.height = canvas.height;
+            const shadowCtx = shadowCanvas.getContext('2d');
 
-            if (!flippedCtx) {
+            if (!shadowCtx) {
                 continue; // Skip if context is not available
             }
 
             // Flip the image horizontally
-            flippedCtx.save(); // Save the current context state
-            flippedCtx.scale(1, -1); // Flip horizontally
-            flippedCtx.drawImage(canvas, 0, -canvas.height); // Draw the flipped image
-            flippedCtx.restore(); // Restore the context state
+            shadowCtx.save(); // Save the current context state
+            shadowCtx.scale(1, -1); // Flip horizontally
+            shadowCtx.drawImage(canvas, 0, -canvas.height); // Draw the flipped image
+            shadowCtx.restore(); // Restore the context state
 
             // Draw the modified image onto the main canvas
-            ctx.drawImage(flippedCanvas, dstRect.x + 20, dstRect.y);
+            ctx.drawImage(shadowCanvas, dstRect.x, dstRect.y + sprite.height * transform.scale.y - 5);
         }
     };
 }
