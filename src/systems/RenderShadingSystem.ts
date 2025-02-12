@@ -40,33 +40,37 @@ export default class RenderShadingSystem extends System {
             const tempCtx = canvas.getContext('2d');
 
             if (!tempCtx) {
-                continue;
+                continue; // Skip if context is not available
             }
 
+            // Set canvas dimensions to match the sprite
             canvas.width = entitySprite.width;
             canvas.height = entitySprite.height;
 
+            // Draw the sprite onto the temporary canvas
             tempCtx.drawImage(entitySprite, 0, 0);
 
-            // Get image data (pixel data) from the canvas
-            const imageData = tempCtx.getImageData(0, 0, 32, 32); // Get 1x1 pixel data at (x, y)
+            // Get the image data from the canvas
+            const imageData = tempCtx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data; // Pixel data array (RGBA)
 
-            // The pixel data contains an array of RGBA values (in the form of [R, G, B, A])
-            const pixel = imageData.data;
-            const rgbData = [];
-
-            for (let i = 0; i < pixel.length - 3; i += 4) {
-                const rgba = {
-                    r: pixel[i],
-                    g: pixel[i + 1],
-                    b: pixel[i + 2],
-                    a: pixel[i + 3] / 255, // Alpha value in the range [0, 1]
-                };
-
-                rgbData.push(rgba);
+            // Loop through each pixel and set non-transparent pixels to black
+            for (let i = 0; i < data.length; i += 4) {
+                const alpha = data[i + 3]; // Alpha channel (transparency)
+                if (alpha > 0) {
+                    // If the pixel is not fully transparent
+                    data[i] = 0; // Red channel to 0
+                    data[i + 1] = 0; // Green channel to 0
+                    data[i + 2] = 0; // Blue channel to 0
+                    // Leave the alpha channel unchanged to preserve transparency
+                }
             }
 
-            console.log('rgbData: ', rgbData);
+            // Put the modified image data back onto the canvas
+            tempCtx.putImageData(imageData, 0, 0);
+
+            // Draw the modified image onto the main canvas
+            ctx.drawImage(canvas, 500, 500);
         }
     };
 }
