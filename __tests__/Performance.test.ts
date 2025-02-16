@@ -36,7 +36,7 @@ describe('Testing performance related functions', () => {
 
         registry.update();
 
-        console.log('Time for adding entitites: ' + (performance.now() - start));
+        console.log('Time for adding entitites: ' + (performance.now() - start) + ' ms');
 
         start = performance.now();
         const system = registry.getSystem(MovementSystem);
