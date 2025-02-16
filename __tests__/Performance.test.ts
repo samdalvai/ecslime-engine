@@ -44,6 +44,6 @@ describe('Testing performance related functions', () => {
 
         system?.update(10);
 
-        console.log('Time for updateing entitites: ' + (performance.now() - start) + ' ms');
+        console.log('Time for updating entitites: ' + (performance.now() - start) + ' ms');
     });
 });
