@@ -209,7 +209,6 @@ export default class Registry {
         ...args: ConstructorParameters<typeof ComponentClass>
     ) => {
         const componentId = ComponentClass.getComponentId();
-        const entityId = entity;
 
         if (this.componentPools[componentId] === undefined) {
             const newComponentPool = new Pool<T>();
@@ -218,38 +217,35 @@ export default class Registry {
 
         const newComponent = new ComponentClass(...args);
         const componentPool = this.componentPools[componentId] as Pool<T>;
-        componentPool?.set(entityId, newComponent);
+        componentPool?.set(entity, newComponent);
 
-        this.entityComponentSignatures[entityId].set(componentId);
+        this.entityComponentSignatures[entity].set(componentId);
         // console.log('Component with id ' + componentId + ' was added to entity with id ' + entityId);
     };
 
     removeComponent = <T extends Component>(entity: number, ComponentClass: ComponentClass<T>) => {
         const componentId = ComponentClass.getComponentId();
-        const entityId = entity;
 
         // Remove the component from the component list for that entity
         const componentPool = this.componentPools[componentId] as Pool<T>;
-        componentPool?.remove(entityId);
+        componentPool?.remove(entity);
 
         // Set this component signature for that entity to false
-        this.entityComponentSignatures[entityId].remove(componentId);
+        this.entityComponentSignatures[entity].remove(componentId);
 
         // console.log('Component with id ' + componentId + ' was removed from entity id ' + entityId);
     };
 
     hasComponent = <T extends Component>(entity: number, ComponentClass: ComponentClass<T>): boolean => {
         const componentId = ComponentClass.getComponentId();
-        const entityId = entity;
-        return this.entityComponentSignatures[entityId].test(componentId);
+        return this.entityComponentSignatures[entity].test(componentId);
     };
 
     getComponent = <T extends Component>(entity: number, ComponentClass: ComponentClass<T>): T | undefined => {
         const componentId = ComponentClass.getComponentId();
-        const entityId = entity;
 
         const componentPool = this.componentPools[componentId] as Pool<T>;
-        return componentPool?.get(entityId);
+        return componentPool?.get(entity);
     };
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -280,9 +276,7 @@ export default class Registry {
     }
 
     addEntityToSystems = (entity: number) => {
-        const entityId = entity;
-
-        const entityComponentSignature = this.entityComponentSignatures[entityId];
+        const entityComponentSignature = this.entityComponentSignatures[entity];
 
         for (const system of this.systems.values()) {
             const systemComponentSignature = system.getComponentSignature();
