@@ -1,5 +1,4 @@
 import Component, { ComponentClass } from './Component';
-import Entity from './Entity';
 import Pool, { IPool } from './Pool';
 import Signature from './Signature';
 import System, { SystemClass } from './System';
@@ -16,15 +15,15 @@ export default class Registry {
     // [Map key = system type id]
     systems: Map<number, System>;
 
-    entitiesToBeAdded: Entity[];
-    entitiesToBeKilled: Entity[];
+    entitiesToBeAdded: number[];
+    entitiesToBeKilled: number[];
 
     // Entity tags (one tag name per entity)
-    entityPerTag: Map<string, Entity>;
+    entityPerTag: Map<string, number>;
     tagPerEntity: Map<number, string>;
 
     // Entity groups (a set of entities per group name)
-    entitiesPerGroup: Map<string, Set<Entity>>;
+    entitiesPerGroup: Map<string, Set<number>>;
     groupPerEntity: Map<number, string>;
 
     freeIds: number[];
@@ -52,22 +51,22 @@ export default class Registry {
 
         for (const entity of this.entitiesToBeKilled) {
             this.removeEntityFromSystems(entity);
-            this.entityComponentSignatures[entity.getId()].reset();
+            this.entityComponentSignatures[entity].reset();
 
             for (let i = 0; i < this.componentPools.length; i++) {
                 const pool = this.componentPools[i] as Pool<T>;
                 if (pool) {
-                    pool.removeEntityFromPool(entity.getId());
+                    pool.removeEntityFromPool(entity);
                 }
             }
 
-            this.freeIds.push(entity.getId());
+            this.freeIds.push(entity);
 
-            if (this.tagPerEntity.get(entity.getId()) !== undefined) {
+            if (this.tagPerEntity.get(entity) !== undefined) {
                 this.removeEntityTag(entity);
             }
 
-            if (this.groupPerEntity.get(entity.getId()) !== undefined) {
+            if (this.groupPerEntity.get(entity) !== undefined) {
                 this.removeEntityGroup(entity);
             }
         }
@@ -79,7 +78,7 @@ export default class Registry {
     // Entity management
     ////////////////////////////////////////////////////////////////////////////////
 
-    createEntity = (): Entity => {
+    createEntity = (): number => {
         let entityId;
 
         if (this.freeIds.length === 0) {
@@ -91,14 +90,13 @@ export default class Registry {
             entityId = this.freeIds.pop() as number;
         }
 
-        const entity = new Entity(entityId, this);
-        this.entitiesToBeAdded.push(entity);
+        this.entitiesToBeAdded.push(entityId);
         // console.log('Entity created with id ' + entityId);
 
-        return entity;
+        return entityId;
     };
 
-    killEntity = (entity: Entity) => {
+    killEntity = (entity: number) => {
         this.entitiesToBeKilled.push(entity);
         // console.log('Entity with id ' + entity.getId() + ' killed');
     };
@@ -107,19 +105,19 @@ export default class Registry {
     // Tag management
     ////////////////////////////////////////////////////////////////////////////////
 
-    tagEntity = (entity: Entity, tag: string) => {
+    tagEntity = (entity: number, tag: string) => {
         const existingEntity = this.entityPerTag.get(tag);
 
         if (existingEntity !== undefined) {
-            throw new Error('An entity with tag ' + tag + ' already exists with id ' + existingEntity.getId());
+            throw new Error('An entity with tag ' + tag + ' already exists with id ' + existingEntity);
         }
 
         this.entityPerTag.set(tag, entity);
-        this.tagPerEntity.set(entity.getId(), tag);
+        this.tagPerEntity.set(entity, tag);
     };
 
-    entityHasTag = (entity: Entity, tag: string) => {
-        const currentTag = this.tagPerEntity.get(entity.getId());
+    entityHasTag = (entity: number, tag: string) => {
+        const currentTag = this.tagPerEntity.get(entity);
 
         if (currentTag === undefined) {
             return false;
@@ -132,15 +130,15 @@ export default class Registry {
         return this.entityPerTag.get(tag);
     };
 
-    removeEntityTag = (entity: Entity) => {
-        const currentTag = this.tagPerEntity.get(entity.getId());
+    removeEntityTag = (entity: number) => {
+        const currentTag = this.tagPerEntity.get(entity);
 
         if (currentTag === undefined) {
-            console.warn('Could not find tag for entity with id ' + entity.getId());
+            console.warn('Could not find tag for entity with id ' + entity);
             return;
         }
 
-        this.tagPerEntity.delete(entity.getId());
+        this.tagPerEntity.delete(entity);
         this.entityPerTag.delete(currentTag);
     };
 
@@ -148,7 +146,7 @@ export default class Registry {
     // Group management
     ////////////////////////////////////////////////////////////////////////////////
 
-    groupEntity = (entity: Entity, group: string) => {
+    groupEntity = (entity: number, group: string) => {
         const currentEntities = this.entitiesPerGroup.get(group);
 
         if (currentEntities === undefined) {
@@ -157,11 +155,11 @@ export default class Registry {
             currentEntities.add(entity);
         }
 
-        this.groupPerEntity.set(entity.getId(), group);
+        this.groupPerEntity.set(entity, group);
     };
 
-    entityBelongsToGroup = (entity: Entity, group: string) => {
-        const currentGroup = this.groupPerEntity.get(entity.getId());
+    entityBelongsToGroup = (entity: number, group: string) => {
+        const currentGroup = this.groupPerEntity.get(entity);
 
         if (currentGroup === undefined) {
             return false;
@@ -180,15 +178,15 @@ export default class Registry {
         return [...currentEntities];
     };
 
-    removeEntityGroup = (entity: Entity) => {
-        const currentGroup = this.groupPerEntity.get(entity.getId());
+    removeEntityGroup = (entity: number) => {
+        const currentGroup = this.groupPerEntity.get(entity);
 
         if (currentGroup === undefined) {
-            console.warn('Could not remove entity groups for entity with id ' + entity.getId());
+            console.warn('Could not remove entity groups for entity with id ' + entity);
             return;
         }
 
-        this.groupPerEntity.delete(entity.getId());
+        this.groupPerEntity.delete(entity);
 
         const currentEntities = this.entitiesPerGroup.get(currentGroup);
 
@@ -206,12 +204,12 @@ export default class Registry {
     ////////////////////////////////////////////////////////////////////////////////
 
     addComponent = <T extends Component>(
-        entity: Entity,
+        entity: number,
         ComponentClass: ComponentClass<T>,
         ...args: ConstructorParameters<typeof ComponentClass>
     ) => {
         const componentId = ComponentClass.getComponentId();
-        const entityId = entity.getId();
+        const entityId = entity;
 
         if (this.componentPools[componentId] === undefined) {
             const newComponentPool = new Pool<T>();
@@ -226,9 +224,9 @@ export default class Registry {
         // console.log('Component with id ' + componentId + ' was added to entity with id ' + entityId);
     };
 
-    removeComponent = <T extends Component>(entity: Entity, ComponentClass: ComponentClass<T>) => {
+    removeComponent = <T extends Component>(entity: number, ComponentClass: ComponentClass<T>) => {
         const componentId = ComponentClass.getComponentId();
-        const entityId = entity.getId();
+        const entityId = entity;
 
         // Remove the component from the component list for that entity
         const componentPool = this.componentPools[componentId] as Pool<T>;
@@ -240,15 +238,15 @@ export default class Registry {
         // console.log('Component with id ' + componentId + ' was removed from entity id ' + entityId);
     };
 
-    hasComponent = <T extends Component>(entity: Entity, ComponentClass: ComponentClass<T>): boolean => {
+    hasComponent = <T extends Component>(entity: number, ComponentClass: ComponentClass<T>): boolean => {
         const componentId = ComponentClass.getComponentId();
-        const entityId = entity.getId();
+        const entityId = entity;
         return this.entityComponentSignatures[entityId].test(componentId);
     };
 
-    getComponent = <T extends Component>(entity: Entity, ComponentClass: ComponentClass<T>): T | undefined => {
+    getComponent = <T extends Component>(entity: number, ComponentClass: ComponentClass<T>): T | undefined => {
         const componentId = ComponentClass.getComponentId();
-        const entityId = entity.getId();
+        const entityId = entity;
 
         const componentPool = this.componentPools[componentId] as Pool<T>;
         return componentPool?.get(entityId);
@@ -281,8 +279,8 @@ export default class Registry {
         return system as T;
     }
 
-    addEntityToSystems = (entity: Entity) => {
-        const entityId = entity.getId();
+    addEntityToSystems = (entity: number) => {
+        const entityId = entity;
 
         const entityComponentSignature = this.entityComponentSignatures[entityId];
 
@@ -305,7 +303,7 @@ export default class Registry {
         }
     };
 
-    removeEntityFromSystems = (entity: Entity) => {
+    removeEntityFromSystems = (entity: number) => {
         for (const system of this.systems.values()) {
             system.removeEntityFromSystem(entity);
         }

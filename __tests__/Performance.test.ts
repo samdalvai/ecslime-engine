@@ -1,6 +1,7 @@
 import RigidBodyComponent from '../src/components/RigidBodyComponent';
 import TransformComponent from '../src/components/TransformComponent';
 import Registry from '../src/ecs/Registry';
+import Game from '../src/game/Game';
 import MovementSystem from '../src/systems/MovementSystem';
 
 describe('Testing performance related functions', () => {
@@ -24,22 +25,27 @@ describe('Testing performance related functions', () => {
         //     sum += times[x];
         // }
         // console.log('Time elapsed: ' + sum / times.length + ' ms');
-        const registry = new Registry();
-        registry.addSystem(MovementSystem);
+
+        Game.mapHeight = 10000;
+        Game.mapWidth = 10000;
+        Game.registry = new Registry();
+
+        // const registry = new Registry();
+        Game.registry.addSystem(MovementSystem);
         let start = performance.now();
 
         for (let i = 0; i < 10000; i++) {
-            const entity = registry.createEntity();
-            entity.addComponent(RigidBodyComponent, { x: 10, y: 10 });
-            entity.addComponent(TransformComponent, { x: 100, y: 100 });
+            const entity = Game.registry.createEntity();
+            Game.registry.addComponent(entity, RigidBodyComponent, { x: 10, y: 10 });
+            Game.registry.addComponent(entity, TransformComponent, { x: 100, y: 100 });
         }
 
-        registry.update();
+        Game.registry.update();
 
         console.log('Time for adding entitites: ' + (performance.now() - start) + ' ms');
 
         start = performance.now();
-        const system = registry.getSystem(MovementSystem);
+        const system = Game.registry.getSystem(MovementSystem);
         console.log(system?.getSystemEntities().length + ' entities');
 
         system?.update(10);
