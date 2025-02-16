@@ -2,6 +2,7 @@ import BoxColliderComponent from '../components/BoxColliderComponent';
 import RigidBodyComponent from '../components/RigidBodyComponent';
 import SpriteComponent from '../components/SpriteComponent';
 import TransformComponent from '../components/TransformComponent';
+import Registry from '../ecs/Registry';
 import System from '../ecs/System';
 import EventBus from '../event-bus/EventBus';
 import CollisionEvent from '../events/CollisionEvent';
@@ -119,10 +120,10 @@ export default class MovementSystem extends System {
     //     }
     // }
 
-    update(deltaTime: number) {
+    update(registry: Registry, deltaTime: number) {
         for (const entity of this.getSystemEntities()) {
-            const transform = Game.registry.getComponent(entity, TransformComponent);
-            const rigidBody = Game.registry.getComponent(entity, RigidBodyComponent);
+            const transform = registry.getComponent(entity, TransformComponent);
+            const rigidBody = registry.getComponent(entity, RigidBodyComponent);
 
             if (!rigidBody || !transform) {
                 console.error('Could not find some component(s) of entity: ', entity);
@@ -132,7 +133,7 @@ export default class MovementSystem extends System {
             transform.position.x += rigidBody.velocity.x * deltaTime;
             transform.position.y += rigidBody.velocity.y * deltaTime;
 
-            if (Game.registry.entityHasTag(entity, 'player')) {
+            if (registry.entityHasTag(entity, 'player')) {
                 const paddingLeft = 10;
                 const paddingTop = 10;
                 const paddingRight = 50;
@@ -158,8 +159,8 @@ export default class MovementSystem extends System {
                 transform.position.y > Game.mapHeight + cullingMargin;
 
             // Kill all entities that move outside the map boundaries
-            if (isEntityOutsideMap && !Game.registry.entityHasTag(entity, 'player')) {
-                Game.registry.killEntity(entity);
+            if (isEntityOutsideMap && !registry.entityHasTag(entity, 'player')) {
+                registry.killEntity(entity);
             }
         }
     }

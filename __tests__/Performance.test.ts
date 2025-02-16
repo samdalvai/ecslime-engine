@@ -28,27 +28,27 @@ describe('Testing performance related functions', () => {
 
         Game.mapHeight = 10000;
         Game.mapWidth = 10000;
-        Game.registry = new Registry();
+        const registry = new Registry();
 
         // const registry = new Registry();
-        Game.registry.addSystem(MovementSystem);
+        registry.addSystem(MovementSystem);
         let start = performance.now();
 
         for (let i = 0; i < 10000; i++) {
-            const entity = Game.registry.createEntity();
-            Game.registry.addComponent(entity, RigidBodyComponent, { x: 10, y: 10 });
-            Game.registry.addComponent(entity, TransformComponent, { x: 100, y: 100 });
+            const entity = registry.createEntity();
+            registry.addComponent(entity, RigidBodyComponent, { x: 10, y: 10 });
+            registry.addComponent(entity, TransformComponent, { x: 100, y: 100 });
         }
 
-        Game.registry.update();
+        registry.update();
 
         console.log('Time for adding entitites: ' + (performance.now() - start) + ' ms');
 
         start = performance.now();
-        const system = Game.registry.getSystem(MovementSystem);
+        const system = registry.getSystem(MovementSystem);
         console.log(system?.getSystemEntities().length + ' entities');
 
-        system?.update(10);
+        system?.update(registry, 10);
 
         console.log('Time for updating entitites: ' + (performance.now() - start) + ' ms');
     });
