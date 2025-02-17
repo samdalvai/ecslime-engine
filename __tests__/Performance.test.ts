@@ -43,6 +43,8 @@ describe('Testing performance related functions', () => {
             timeDelete.push(performance.now() - startDelete);
 
             timesTotal.push(performance.now() - start);
+
+            expect(system?.getSystemEntities().length).toBe(0);
         }
 
         let sum = 0;
