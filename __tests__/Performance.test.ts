@@ -11,6 +11,7 @@ describe('Testing performance related functions', () => {
 
         const timeAdd: number[] = [];
         const timeUpdate: number[] = [];
+        const timeDelete: number[] = [];
         const timesTotal: number[] = [];
 
         for (let x = 0; x < 10; x++) {
@@ -27,12 +28,20 @@ describe('Testing performance related functions', () => {
             registry.update();
 
             timeAdd.push(performance.now() - start);
-            const start2 = performance.now();
+            const startUpdate = performance.now();
 
             const system = registry.getSystem(MovementSystem);
 
             system?.update(registry, 10);
-            timeUpdate.push(performance.now() - start2);
+            timeUpdate.push(performance.now() - startUpdate);
+
+            const startDelete = performance.now();
+
+            system?.getSystemEntities().forEach(entity => registry.killEntity(entity));
+            registry.update();
+
+            timeDelete.push(performance.now() - startDelete);
+
             timesTotal.push(performance.now() - start);
         }
 
@@ -41,11 +50,19 @@ describe('Testing performance related functions', () => {
             sum += timeAdd[x];
         }
         console.log('Time for adding entitites: ' + sum / timeAdd.length + ' ms');
+
         sum = 0;
         for (let x = 0; x < timeAdd.length; x++) {
             sum += timeUpdate[x];
         }
         console.log('Time for updating entitites: ' + sum / timeUpdate.length + ' ms');
+
+        sum = 0;
+        for (let x = 0; x < timeDelete.length; x++) {
+            sum += timeDelete[x];
+        }
+        console.log('Time for deleting entitites: ' + sum / timeDelete.length + ' ms');
+
         sum = 0;
         for (let x = 0; x < timesTotal.length; x++) {
             sum += timesTotal[x];
