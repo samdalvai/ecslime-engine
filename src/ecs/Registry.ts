@@ -238,15 +238,11 @@ export default class Registry {
     };
 
     hasComponent = <T extends Component>(entity: Entity, ComponentClass: ComponentClass<T>): boolean => {
-        const componentId = ComponentClass.getComponentId();
-        return this.entityComponentSignatures[entity].test(componentId);
+        return this.entityComponentSignatures[entity].test(ComponentClass.getComponentId());
     };
 
     getComponent = <T extends Component>(entity: Entity, ComponentClass: ComponentClass<T>): T | undefined => {
-        const componentId = ComponentClass.getComponentId();
-
-        const componentPool = this.componentPools[componentId] as Pool<T>;
-        return componentPool?.get(entity);
+        return (this.componentPools[ComponentClass.getComponentId()] as Pool<T>)?.get(entity);
     };
 
     ////////////////////////////////////////////////////////////////////////////////
