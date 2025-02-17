@@ -1,4 +1,5 @@
 import LifetimeComponent from '../components/LifetimeComponent';
+import Registry from '../ecs/Registry';
 import System from '../ecs/System';
 
 export default class LifetimeSystem extends System {
@@ -17,7 +18,7 @@ export default class LifetimeSystem extends System {
 
             // Kill projectiles after they reach their duration limit
             if (performance.now() - lifeTime.startTime > lifeTime.lifetime) {
-                entity.kill();
+                this.registry.killEntity(entity);
             }
         }
     }

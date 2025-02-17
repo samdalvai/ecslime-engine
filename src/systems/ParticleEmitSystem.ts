@@ -3,6 +3,7 @@ import ParticleComponent from '../components/ParticleComponent';
 import ParticleEmitComponent from '../components/ParticleEmitComponent';
 import RigidBodyComponent from '../components/RigidBodyComponent';
 import TransformComponent from '../components/TransformComponent';
+import Registry from '../ecs/Registry';
 import System from '../ecs/System';
 import { Vector } from '../types';
 
@@ -32,11 +33,11 @@ export default class ParticleEmitSystem extends System {
                 continue;
             }
 
-            const particle = entity.registry.createEntity();
-            particle.addComponent(ParticleComponent, particleEmit.dimension, particleEmit.color);
-            particle.addComponent(TransformComponent, particlePosition);
-            particle.addComponent(LifetimeComponent, particleEmit.duration);
-            particle.addComponent(RigidBodyComponent, { ...particleEmit.particleVelocity });
+            const particle = this.registry.createEntity();
+            this.registry.addComponent(particle, ParticleComponent, particleEmit.dimension, particleEmit.color);
+            this.registry.addComponent(particle, TransformComponent, particlePosition);
+            this.registry.addComponent(particle, LifetimeComponent, particleEmit.duration);
+            this.registry.addComponent(particle, RigidBodyComponent, { ...particleEmit.particleVelocity });
 
             particleEmit.lastEmission = performance.now();
         }

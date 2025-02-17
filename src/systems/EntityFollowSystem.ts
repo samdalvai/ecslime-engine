@@ -3,6 +3,7 @@ import RigidBodyComponent from '../components/RigidBodyComponent';
 import ScriptComponent from '../components/ScriptComponent';
 import SpriteComponent from '../components/SpriteComponent';
 import TransformComponent from '../components/TransformComponent';
+import Registry from '../ecs/Registry';
 import System from '../ecs/System';
 import EventBus from '../event-bus/EventBus';
 import EntityKilledEvent from '../events/EntityKilledEvent';
@@ -76,14 +77,14 @@ export default class EntityFollowSystem extends System {
 
             if (!followedEntity) {
                 // TODO: revert to previous velocity if entity has script (to be implemented)
-                if (!entity.hasComponent(ScriptComponent)) {
+                if (!this.registry.hasComponent(entity, ScriptComponent)) {
                     rigidBody.velocity = { x: 0, y: 0 };
                 }
                 continue;
             }
 
-            const followedEntityTransform = followedthis.registry.getComponent(entity, TransformComponent);
-            const followedEntitySprite = followedthis.registry.getComponent(entity, SpriteComponent);
+            const followedEntityTransform = this.registry.getComponent(followedEntity, TransformComponent);
+            const followedEntitySprite = this.registry.getComponent(followedEntity, SpriteComponent);
 
             if (!followedEntityTransform || !followedEntitySprite) {
                 throw new Error('Could not find player transform and/or sprite component');

@@ -1,6 +1,7 @@
 import KeyboardControlComponent from '../components/KeyboardControlComponent';
 import RigidBodyComponent from '../components/RigidBodyComponent';
 import SpriteComponent from '../components/SpriteComponent';
+import Registry from '../ecs/Registry';
 import System from '../ecs/System';
 import EventBus from '../event-bus/EventBus';
 import KeyPressedEvent from '../events/KeyPressedEvent';

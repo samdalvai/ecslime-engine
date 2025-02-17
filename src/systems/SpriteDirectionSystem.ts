@@ -2,6 +2,7 @@ import HealthComponent from '../components/HealthComponent';
 import RigidBodyComponent from '../components/RigidBodyComponent';
 import SpriteComponent from '../components/SpriteComponent';
 import SpriteDirectionComponent from '../components/SpriteDirectionComponent';
+import Registry from '../ecs/Registry';
 import System from '../ecs/System';
 
 export default class SpriteDirectionSystem extends System {
@@ -23,7 +24,7 @@ export default class SpriteDirectionSystem extends System {
 
             let hurtSprite = false;
 
-            if (entity.hasComponent(HealthComponent)) {
+            if (this.registry.hasComponent(entity, HealthComponent)) {
                 const health = this.registry.getComponent(entity, HealthComponent);
 
                 if (!health) {

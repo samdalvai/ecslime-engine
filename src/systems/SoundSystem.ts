@@ -1,5 +1,6 @@
 import AssetStore from '../asset-store/AssetStore';
 import SoundComponent from '../components/SoundComponent';
+import Registry from '../ecs/Registry';
 import System from '../ecs/System';
 import EventBus from '../event-bus/EventBus';
 import EntityHitEvent from '../events/EntityHitEvent';
@@ -8,8 +9,8 @@ import EntityKilledEvent from '../events/EntityKilledEvent';
 export default class SoundSystem extends System {
     assetStore: AssetStore;
 
-    constructor(assetStore: AssetStore) {
-        super();
+    constructor(registry: Registry, assetStore: AssetStore) {
+        super(registry);
         this.requireComponent(SoundComponent);
         this.assetStore = assetStore;
     }

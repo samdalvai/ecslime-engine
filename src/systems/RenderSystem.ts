@@ -2,6 +2,7 @@ import AssetStore from '../asset-store/AssetStore';
 import ShadowComponent from '../components/ShadowComponent';
 import SpriteComponent from '../components/SpriteComponent';
 import TransformComponent from '../components/TransformComponent';
+import Registry from '../ecs/Registry';
 import System from '../ecs/System';
 import { Flip, Rectangle } from '../types';
 
@@ -39,7 +40,9 @@ export default class RenderSystem extends System {
                 continue;
             }
 
-            const shadow = entity.hasComponent(ShadowComponent) ? this.registry.getComponent(entity, ShadowComponent) : undefined;
+            const shadow = this.registry.hasComponent(entity, ShadowComponent)
+                ? this.registry.getComponent(entity, ShadowComponent)
+                : undefined;
 
             renderableEntities.push({ sprite, transform, shadow });
         }

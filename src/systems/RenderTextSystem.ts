@@ -1,4 +1,5 @@
 import TextLabelComponent from '../components/TextLabelComponent';
+import Registry from '../ecs/Registry';
 import System from '../ecs/System';
 import { Rectangle } from '../types';
 

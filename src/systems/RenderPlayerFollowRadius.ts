@@ -1,11 +1,12 @@
 import EntityFollowComponent from '../components/EntityFollowComponent';
 import TransformComponent from '../components/TransformComponent';
+import Registry from '../ecs/Registry';
 import System from '../ecs/System';
 import { Rectangle } from '../types';
 
 export default class RenderPlayerFollowRadius extends System {
-    constructor() {
-        super();
+    constructor(registry: Registry) {
+        super(registry);
         this.requireComponent(TransformComponent);
         this.requireComponent(EntityFollowComponent);
     }

@@ -1,5 +1,6 @@
 import BoxColliderComponent from '../components/BoxColliderComponent';
 import TransformComponent from '../components/TransformComponent';
+import Registry from '../ecs/Registry';
 import System from '../ecs/System';
 import { Rectangle } from '../types';
 

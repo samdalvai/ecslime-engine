@@ -47,8 +47,8 @@ export default class PlayerDetectionSystem extends System {
             return;
         }
 
-        const playerTransform = player.getComponent(TransformComponent);
-        const playerSprite = player.getComponent(SpriteComponent);
+        const playerTransform = this.registry.getComponent(player, TransformComponent);
+        const playerSprite = this.registry.getComponent(player, SpriteComponent);
 
         if (!playerTransform || !playerSprite) {
             throw new Error('Could not find player transform and/or sprite component');

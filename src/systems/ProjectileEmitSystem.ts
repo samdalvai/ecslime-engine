@@ -7,17 +7,17 @@ import RigidBodyComponent from '../components/RigidBodyComponent';
 import ShadowComponent from '../components/ShadowComponent';
 import SpriteComponent from '../components/SpriteComponent';
 import TransformComponent from '../components/TransformComponent';
-import Entity from '../ecs/Entity';
 import Registry from '../ecs/Registry';
 import System from '../ecs/System';
 import EventBus from '../event-bus/EventBus';
 import KeyPressedEvent from '../events/KeyPressedEvent';
+import { Entity } from '../types';
 
 export default class ProjectileEmitSystem extends System {
     registry: Registry;
 
     constructor(registry: Registry) {
-        super();
+        super(registry);
         this.requireComponent(ProjectileEmitterComponent);
         this.requireComponent(TransformComponent);
         this.registry = registry;
@@ -34,11 +34,11 @@ export default class ProjectileEmitSystem extends System {
             if (!player) {
                 throw new Error('Could not find entity with tag "Player"');
             }
-            const projectileEmitter = player.getComponent(ProjectileEmitterComponent);
-            const transform = player.getComponent(TransformComponent);
+            const projectileEmitter = this.registry.getComponent(player, ProjectileEmitterComponent);
+            const transform = this.registry.getComponent(player, TransformComponent);
 
             if (!projectileEmitter || !transform) {
-                throw new Error('Could not find some component(s) of entity with id ' + player.getId());
+                throw new Error('Could not find some component(s) of entity with id ' + player);
             }
 
             this.emitProjectile(projectileEmitter, transform, player, this.registry);
@@ -55,7 +55,7 @@ export default class ProjectileEmitSystem extends System {
             }
 
             // If entity is player, skip automatic emission
-            if (entity.hasTag('player')) {
+            if (this.registry.entityHasTag(entity, 'player')) {
                 continue;
             }
 
@@ -74,7 +74,7 @@ export default class ProjectileEmitSystem extends System {
             // Modify the direction of the projectile according to the rigid body direction
             const projectileVelocity = { ...projectileEmitter.projectileVelocity };
 
-            if (entity.hasComponent(RigidBodyComponent)) {
+            if (this.registry.hasComponent(entity, RigidBodyComponent)) {
                 const rigidBody = this.registry.getComponent(entity, RigidBodyComponent);
 
                 if (!rigidBody) {
@@ -94,7 +94,7 @@ export default class ProjectileEmitSystem extends System {
 
             const projectilePosition = { x: transform.position.x - 16, y: transform.position.y - 16 };
 
-            if (entity.hasComponent(SpriteComponent)) {
+            if (this.registry.hasComponent(entity, SpriteComponent)) {
                 const sprite = this.registry.getComponent(entity, SpriteComponent);
 
                 if (!sprite) {
@@ -107,19 +107,30 @@ export default class ProjectileEmitSystem extends System {
 
             // Add a new projectile entity to the registry
             const projectile = registry.createEntity();
-            projectile.group('projectiles');
-            projectile.addComponent(TransformComponent, projectilePosition, { x: 1.0, y: 1.0 }, 0.0);
-            projectile.addComponent(RigidBodyComponent, projectileVelocity);
-            projectile.addComponent(SpriteComponent, 'magic-sphere-texture', 32, 32, 4);
-            projectile.addComponent(BoxColliderComponent, 8, 8, { x: 12, y: 12 });
-            projectile.addComponent(
+            this.registry.groupEntity(projectile, 'projectiles');
+            this.registry.addComponent(projectile, TransformComponent, projectilePosition, { x: 1.0, y: 1.0 }, 0.0);
+            this.registry.addComponent(projectile, RigidBodyComponent, projectileVelocity);
+            this.registry.addComponent(projectile, SpriteComponent, 'magic-sphere-texture', 32, 32, 4);
+            this.registry.addComponent(projectile, BoxColliderComponent, 8, 8, { x: 12, y: 12 });
+            this.registry.addComponent(
+                projectile,
                 ProjectileComponent,
                 projectileEmitter.isFriendly,
                 projectileEmitter.hitPercentDamage,
             );
-            projectile.addComponent(LifetimeComponent, projectileEmitter.projectileDuration);
-            projectile.addComponent(ParticleEmitComponent, 2, 300, 'rgba(255,255,255,0.5)', 100, 5, 16, 16);
-            projectile.addComponent(ShadowComponent, 8, 4);
+            this.registry.addComponent(projectile, LifetimeComponent, projectileEmitter.projectileDuration);
+            this.registry.addComponent(
+                projectile,
+                ParticleEmitComponent,
+                2,
+                300,
+                'rgba(255,255,255,0.5)',
+                100,
+                5,
+                16,
+                16,
+            );
+            this.registry.addComponent(projectile, ShadowComponent, 8, 4);
 
             // Update the projectile emitter component last emission to the current milliseconds
             projectileEmitter.lastEmissionTime = performance.now();

@@ -1,24 +1,22 @@
 import BoxColliderComponent from '../components/BoxColliderComponent';
 import CameraShakeComponent from '../components/CameraShakeComponent';
 import HealthComponent from '../components/HealthComponent';
-import LifetimeComponent from '../components/LifetimeComponent';
 import ProjectileComponent from '../components/ProjectileComponent';
-import RigidBodyComponent from '../components/RigidBodyComponent';
-import SpriteComponent from '../components/SpriteComponent';
-import SpriteDirectionComponent from '../components/SpriteDirectionComponent';
 import TransformComponent from '../components/TransformComponent';
+import Registry from '../ecs/Registry';
 import System from '../ecs/System';
 import EventBus from '../event-bus/EventBus';
 import CameraShakeEvent from '../events/CameraShakeEvent';
 import CollisionEvent from '../events/CollisionEvent';
 import EntityHitEvent from '../events/EntityHitEvent';
 import EntityKilledEvent from '../events/EntityKilledEvent';
+import { Entity } from '../types';
 
 export default class DamageSystem extends System {
     eventBus: EventBus;
 
-    constructor(eventBus: EventBus) {
-        super();
+    constructor(registry: Registry, eventBus: EventBus) {
+        super(registry);
         this.eventBus = eventBus;
         this.requireComponent(BoxColliderComponent);
     }
@@ -49,17 +47,17 @@ export default class DamageSystem extends System {
     }
 
     onProjectileHitsPlayer(projectile: Entity, player: Entity) {
-        const projectileComponent = projectile.getComponent(ProjectileComponent);
+        const projectileComponent = this.registry.getComponent(projectile, ProjectileComponent);
 
         if (!projectileComponent) {
-            throw new Error('Could not find some component(s) of entity with id ' + projectile.getId());
+            throw new Error('Could not find some component(s) of entity with id ' + projectile);
         }
 
-        if (!projectileComponent.isFriendly && player.hasComponent(HealthComponent)) {
-            const health = player.getComponent(HealthComponent);
+        if (!projectileComponent.isFriendly && this.registry.hasComponent(player, HealthComponent)) {
+            const health = this.registry.getComponent(player, HealthComponent);
 
             if (!health) {
-                throw new Error('Could not find some component(s) of entity with id ' + player.getId());
+                throw new Error('Could not find some component(s) of entity with id ' + player);
             }
 
             health.healthPercentage -= projectileComponent.hitPercentDamage;
@@ -67,26 +65,27 @@ export default class DamageSystem extends System {
 
             if (health.healthPercentage <= 0) {
                 this.eventBus.emitEvent(EntityKilledEvent, player);
-                player.kill();
+
+                this.registry.killEntity(player);
             }
 
-            projectile.kill();
+            this.registry.killEntity(projectile);
 
-            if (player.hasComponent(CameraShakeComponent)) {
-                const cameraShake = player.getComponent(CameraShakeComponent);
+            if (this.registry.hasComponent(player, CameraShakeComponent)) {
+                const cameraShake = this.registry.getComponent(player, CameraShakeComponent);
 
                 if (!cameraShake) {
-                    throw new Error('Could not find some component(s) of entity with id ' + player.getId());
+                    throw new Error('Could not find some component(s) of entity with id ' + player);
                 }
 
                 this.eventBus.emitEvent(CameraShakeEvent, cameraShake.shakeDuration);
             }
 
-            if (projectile.hasComponent(TransformComponent)) {
-                const transform = projectile.getComponent(TransformComponent);
+            if (this.registry.hasComponent(projectile, TransformComponent)) {
+                const transform = this.registry.getComponent(projectile, TransformComponent);
 
                 if (!transform) {
-                    throw new Error('Could not find some component(s) of entity with id ' + projectile.getId());
+                    throw new Error('Could not find some component(s) of entity with id ' + projectile);
                 }
 
                 this.eventBus.emitEvent(EntityHitEvent, player, transform.position);
@@ -95,17 +94,17 @@ export default class DamageSystem extends System {
     }
 
     onProjectileHitsEnemy(projectile: Entity, enemy: Entity) {
-        const projectileComponent = projectile.getComponent(ProjectileComponent);
+        const projectileComponent = this.registry.getComponent(projectile, ProjectileComponent);
 
         if (!projectileComponent) {
-            throw new Error('Could not find some component(s) of entity with id ' + projectile.getId());
+            throw new Error('Could not find some component(s) of entity with id ' + projectile);
         }
 
-        if (projectileComponent.isFriendly && enemy.hasComponent(HealthComponent)) {
-            const health = enemy.getComponent(HealthComponent);
+        if (projectileComponent.isFriendly && this.registry.hasComponent(enemy, HealthComponent)) {
+            const health = this.registry.getComponent(enemy, HealthComponent);
 
             if (!health) {
-                throw new Error('Could not find some component(s) of entity with id ' + enemy.getId());
+                throw new Error('Could not find some component(s) of entity with id ' + enemy);
             }
 
             health.healthPercentage -= projectileComponent.hitPercentDamage;
@@ -113,16 +112,16 @@ export default class DamageSystem extends System {
 
             if (health.healthPercentage <= 0) {
                 this.eventBus.emitEvent(EntityKilledEvent, enemy);
-                enemy.kill();
+                this.registry.killEntity(enemy);
             }
 
-            projectile.kill();
+            this.registry.killEntity(projectile);
 
-            if (projectile.hasComponent(TransformComponent)) {
-                const transform = projectile.getComponent(TransformComponent);
+            if (this.registry.hasComponent(projectile, TransformComponent)) {
+                const transform = this.registry.getComponent(projectile, TransformComponent);
 
                 if (!transform) {
-                    throw new Error('Could not find some component(s) of entity with id ' + projectile.getId());
+                    throw new Error('Could not find some component(s) of entity with id ' + projectile);
                 }
 
                 this.eventBus.emitEvent(EntityHitEvent, enemy, transform.position);

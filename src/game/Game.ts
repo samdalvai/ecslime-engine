@@ -128,7 +128,7 @@ export default class Game {
         this.registry.addSystem(KeyboardControlSystem);
         this.registry.addSystem(AnimationSystem);
         this.registry.addSystem(CollisionSystem);
-        this.registry.addSystem(ProjectileEmitSystem, this.registry);
+        this.registry.addSystem(ProjectileEmitSystem);
         this.registry.addSystem(DamageSystem, this.eventBus);
         this.registry.addSystem(LifetimeSystem);
         this.registry.addSystem(CameraShakeSystem);
