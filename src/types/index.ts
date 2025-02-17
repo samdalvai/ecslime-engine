@@ -1,3 +1,5 @@
+export type Entity = number;
+
 export type Vector = {
     x: number;
     y: number;

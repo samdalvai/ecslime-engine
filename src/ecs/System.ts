@@ -1,3 +1,4 @@
+import { Entity } from '../types';
 import Component, { ComponentClass } from './Component';
 import Signature from './Signature';
 
@@ -17,7 +18,7 @@ export class ISystem {
 export default class System extends ISystem {
     private static _id?: number;
     private componentSignature: Signature;
-    private entities: number[];
+    private entities: Entity[];
 
     constructor() {
         super();
@@ -32,11 +33,11 @@ export default class System extends ISystem {
         return this._id;
     }
 
-    addEntityToSystem = (entity: number) => {
+    addEntityToSystem = (entity: Entity) => {
         this.entities.push(entity);
     };
 
-    removeEntityFromSystem = (entity: number) => {
+    removeEntityFromSystem = (entity: Entity) => {
         const entityIndex = this.entities.findIndex(e => e === entity);
         if (entityIndex === -1) {
             return;
