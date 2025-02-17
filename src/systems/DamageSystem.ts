@@ -7,7 +7,6 @@ import RigidBodyComponent from '../components/RigidBodyComponent';
 import SpriteComponent from '../components/SpriteComponent';
 import SpriteDirectionComponent from '../components/SpriteDirectionComponent';
 import TransformComponent from '../components/TransformComponent';
-import Entity from '../ecs/Entity';
 import System from '../ecs/System';
 import EventBus from '../event-bus/EventBus';
 import CameraShakeEvent from '../events/CameraShakeEvent';

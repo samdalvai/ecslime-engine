@@ -5,8 +5,8 @@ import SpriteDirectionComponent from '../components/SpriteDirectionComponent';
 import System from '../ecs/System';
 
 export default class SpriteDirectionSystem extends System {
-    constructor() {
-        super();
+    constructor(registry: Registry) {
+        super(registry);
         this.requireComponent(SpriteDirectionComponent);
         this.requireComponent(SpriteComponent);
         this.requireComponent(RigidBodyComponent);
@@ -14,20 +14,20 @@ export default class SpriteDirectionSystem extends System {
 
     update() {
         for (const entity of this.getSystemEntities()) {
-            const sprite = entity.getComponent(SpriteComponent);
-            const rigidBody = entity.getComponent(RigidBodyComponent);
+            const sprite = this.registry.getComponent(entity, SpriteComponent);
+            const rigidBody = this.registry.getComponent(entity, RigidBodyComponent);
 
             if (!sprite || !rigidBody) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
+                throw new Error('Could not find some component(s) of entity with id ' + entity);
             }
 
             let hurtSprite = false;
 
             if (entity.hasComponent(HealthComponent)) {
-                const health = entity.getComponent(HealthComponent);
+                const health = this.registry.getComponent(entity, HealthComponent);
 
                 if (!health) {
-                    throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
+                    throw new Error('Could not find some component(s) of entity with id ' + entity);
                 }
 
                 if (health.lastDamageTime !== 0 && performance.now() - health.lastDamageTime <= 500) {

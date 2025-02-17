@@ -4,19 +4,19 @@ import System from '../ecs/System';
 import { Rectangle } from '../types';
 
 export default class RenderColliderSystem extends System {
-    constructor() {
-        super();
+    constructor(registry: Registry) {
+        super(registry);
         this.requireComponent(TransformComponent);
         this.requireComponent(BoxColliderComponent);
     }
 
     update(ctx: CanvasRenderingContext2D, camera: Rectangle) {
         for (const entity of this.getSystemEntities()) {
-            const transform = entity.getComponent(TransformComponent);
-            const collider = entity.getComponent(BoxColliderComponent);
+            const transform = this.registry.getComponent(entity, TransformComponent);
+            const collider = this.registry.getComponent(entity, BoxColliderComponent);
 
             if (!collider || !transform) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
+                throw new Error('Could not find some component(s) of entity with id ' + entity);
             }
 
             // Bypass rendering if entities are outside the camera view

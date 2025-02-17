@@ -6,8 +6,8 @@ import System from '../ecs/System';
 import { Flip, Rectangle } from '../types';
 
 export default class RenderSystem extends System {
-    constructor() {
-        super();
+    constructor(registry: Registry) {
+        super(registry);
         this.requireComponent(SpriteComponent);
         this.requireComponent(TransformComponent);
     }
@@ -20,11 +20,11 @@ export default class RenderSystem extends System {
         }[] = [];
 
         for (const entity of this.getSystemEntities()) {
-            const sprite = entity.getComponent(SpriteComponent);
-            const transform = entity.getComponent(TransformComponent);
+            const sprite = this.registry.getComponent(entity, SpriteComponent);
+            const transform = this.registry.getComponent(entity, TransformComponent);
 
             if (!sprite || !transform) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
+                throw new Error('Could not find some component(s) of entity with id ' + entity);
             }
 
             // Check if the entity sprite is outside the camera view
@@ -39,7 +39,7 @@ export default class RenderSystem extends System {
                 continue;
             }
 
-            const shadow = entity.hasComponent(ShadowComponent) ? entity.getComponent(ShadowComponent) : undefined;
+            const shadow = entity.hasComponent(ShadowComponent) ? this.registry.getComponent(entity, ShadowComponent) : undefined;
 
             renderableEntities.push({ sprite, transform, shadow });
         }

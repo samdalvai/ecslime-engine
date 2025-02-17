@@ -1,22 +1,23 @@
 import CameraFollowComponent from '../components/CameraFollowComponent';
 import TransformComponent from '../components/TransformComponent';
+import Registry from '../ecs/Registry';
 import System from '../ecs/System';
 import Game from '../game/Game';
 import { Rectangle } from '../types';
 
 export default class CameraMovementSystem extends System {
-    constructor() {
-        super();
+    constructor(registry: Registry) {
+        super(registry);
         this.requireComponent(CameraFollowComponent);
         this.requireComponent(TransformComponent);
     }
 
     update(camera: Rectangle) {
         for (const entity of this.getSystemEntities()) {
-            const transform = entity.getComponent(TransformComponent);
+            const transform = this.registry.getComponent(entity, TransformComponent);
 
             if (!transform) {
-                throw new Error('Could not find transform component of entity with id ' + entity.getId());
+                throw new Error('Could not find transform component of entity with id ' + entity);
             }
 
             if (transform.position.x + camera.width / 2 < Game.mapWidth) {

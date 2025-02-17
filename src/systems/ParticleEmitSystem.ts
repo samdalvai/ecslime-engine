@@ -7,19 +7,19 @@ import System from '../ecs/System';
 import { Vector } from '../types';
 
 export default class ParticleEmitSystem extends System {
-    constructor() {
-        super();
+    constructor(registry: Registry) {
+        super(registry);
         this.requireComponent(ParticleEmitComponent);
         this.requireComponent(TransformComponent);
     }
 
     update() {
         for (const entity of this.getSystemEntities()) {
-            const particleEmit = entity.getComponent(ParticleEmitComponent);
-            const transform = entity.getComponent(TransformComponent);
+            const particleEmit = this.registry.getComponent(entity, ParticleEmitComponent);
+            const transform = this.registry.getComponent(entity, TransformComponent);
 
             if (!particleEmit || !transform) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
+                throw new Error('Could not find some component(s) of entity with id ' + entity);
             }
 
             const particlePosition = this.getRandomPointInCircle(

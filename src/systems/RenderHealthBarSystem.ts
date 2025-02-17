@@ -5,8 +5,8 @@ import System from '../ecs/System';
 import { Rectangle } from '../types';
 
 export default class RenderHealthBarSystem extends System {
-    constructor() {
-        super();
+    constructor(registry: Registry) {
+        super(registry);
         this.requireComponent(HealthComponent);
         this.requireComponent(TransformComponent);
         this.requireComponent(SpriteComponent);
@@ -14,12 +14,12 @@ export default class RenderHealthBarSystem extends System {
 
     update(ctx: CanvasRenderingContext2D, camera: Rectangle) {
         for (const entity of this.getSystemEntities()) {
-            const transform = entity.getComponent(TransformComponent);
-            const sprite = entity.getComponent(SpriteComponent);
-            const health = entity.getComponent(HealthComponent);
+            const transform = this.registry.getComponent(entity, TransformComponent);
+            const sprite = this.registry.getComponent(entity, SpriteComponent);
+            const health = this.registry.getComponent(entity, HealthComponent);
 
             if (!sprite || !transform || !health) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
+                throw new Error('Could not find some component(s) of entity with id ' + entity);
             }
 
             const isOutsideCameraView =

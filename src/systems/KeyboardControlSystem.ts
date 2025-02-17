@@ -10,8 +10,8 @@ import { Direction } from '../types';
 export default class KeyboardControlSystem extends System {
     keysPressed: Direction[] = [];
 
-    constructor() {
-        super();
+    constructor(registry: Registry) {
+        super(registry);
         this.requireComponent(KeyboardControlComponent);
         this.requireComponent(SpriteComponent);
         this.requireComponent(RigidBodyComponent);
@@ -66,11 +66,11 @@ export default class KeyboardControlSystem extends System {
 
     update = () => {
         for (const entity of this.getSystemEntities()) {
-            const keyboardControl = entity.getComponent(KeyboardControlComponent);
-            const rigidBody = entity.getComponent(RigidBodyComponent);
+            const keyboardControl = this.registry.getComponent(entity, KeyboardControlComponent);
+            const rigidBody = this.registry.getComponent(entity, RigidBodyComponent);
 
             if (!keyboardControl || !rigidBody) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
+                throw new Error('Could not find some component(s) of entity with id ' + entity);
             }
 
             if (this.keysPressed.length == 0) {

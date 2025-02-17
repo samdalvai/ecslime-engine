@@ -4,8 +4,8 @@ import Game from '../game/Game';
 import InputManager from '../input-manager/InputManager';
 
 export default class RenderDebugInfoSystem extends System {
-    constructor() {
-        super();
+    constructor(registry: Registry) {
+        super(registry);
     }
 
     update(

@@ -47,11 +47,11 @@ export default class ProjectileEmitSystem extends System {
 
     update(registry: Registry) {
         for (const entity of this.getSystemEntities()) {
-            const projectileEmitter = entity.getComponent(ProjectileEmitterComponent);
-            const transform = entity.getComponent(TransformComponent);
+            const projectileEmitter = this.registry.getComponent(entity, ProjectileEmitterComponent);
+            const transform = this.registry.getComponent(entity, TransformComponent);
 
             if (!projectileEmitter || !transform) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
+                throw new Error('Could not find some component(s) of entity with id ' + entity);
             }
 
             // If entity is player, skip automatic emission
@@ -75,10 +75,10 @@ export default class ProjectileEmitSystem extends System {
             const projectileVelocity = { ...projectileEmitter.projectileVelocity };
 
             if (entity.hasComponent(RigidBodyComponent)) {
-                const rigidBody = entity.getComponent(RigidBodyComponent);
+                const rigidBody = this.registry.getComponent(entity, RigidBodyComponent);
 
                 if (!rigidBody) {
-                    throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
+                    throw new Error('Could not find some component(s) of entity with id ' + entity);
                 }
 
                 let directionX = 0;
@@ -95,10 +95,10 @@ export default class ProjectileEmitSystem extends System {
             const projectilePosition = { x: transform.position.x - 16, y: transform.position.y - 16 };
 
             if (entity.hasComponent(SpriteComponent)) {
-                const sprite = entity.getComponent(SpriteComponent);
+                const sprite = this.registry.getComponent(entity, SpriteComponent);
 
                 if (!sprite) {
-                    throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
+                    throw new Error('Could not find some component(s) of entity with id ' + entity);
                 }
 
                 projectilePosition.x += (sprite.width / 2) * transform.scale.x;

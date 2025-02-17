@@ -1,3 +1,4 @@
+import Registry from '../ecs/Registry';
 import System from '../ecs/System';
 import EventBus from '../event-bus/EventBus';
 import CameraShakeEvent from '../events/CameraShakeEvent';
@@ -9,8 +10,8 @@ export default class CameraShakeSystem extends System {
     shakeDuration = 0;
     shakeStartTime = 0;
 
-    constructor() {
-        super();
+    constructor(registry: Registry) {
+        super(registry);
     }
 
     subscribeToEvents = (eventBus: EventBus) => {

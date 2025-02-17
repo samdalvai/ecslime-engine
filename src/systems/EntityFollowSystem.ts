@@ -37,8 +37,8 @@ the entity will move on the y axis to align
 */
 
 export default class EntityFollowSystem extends System {
-    constructor() {
-        super();
+    constructor(registry: Registry) {
+        super(registry);
         this.requireComponent(TransformComponent);
         this.requireComponent(EntityFollowComponent);
         this.requireComponent(RigidBodyComponent);
@@ -50,13 +50,13 @@ export default class EntityFollowSystem extends System {
 
     onEntityDeath = (event: EntityKilledEvent) => {
         for (const entity of this.getSystemEntities()) {
-            const entityFollow = entity.getComponent(EntityFollowComponent);
+            const entityFollow = this.registry.getComponent(entity, EntityFollowComponent);
 
             if (!entityFollow) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
+                throw new Error('Could not find some component(s) of entity with id ' + entity);
             }
 
-            if (entityFollow.followedEntity?.getId() === event.entity.getId()) {
+            if (entityFollow.followedEntity?.getId() === event.entity) {
                 entityFollow.followedEntity = null;
             }
         }
@@ -64,12 +64,12 @@ export default class EntityFollowSystem extends System {
 
     update() {
         for (const entity of this.getSystemEntities()) {
-            const transform = entity.getComponent(TransformComponent);
-            const rigidBody = entity.getComponent(RigidBodyComponent);
-            const entityFollow = entity.getComponent(EntityFollowComponent);
+            const transform = this.registry.getComponent(entity, TransformComponent);
+            const rigidBody = this.registry.getComponent(entity, RigidBodyComponent);
+            const entityFollow = this.registry.getComponent(entity, EntityFollowComponent);
 
             if (!rigidBody || !transform || !entityFollow) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
+                throw new Error('Could not find some component(s) of entity with id ' + entity);
             }
 
             const followedEntity = entityFollow.followedEntity;
@@ -82,8 +82,8 @@ export default class EntityFollowSystem extends System {
                 continue;
             }
 
-            const followedEntityTransform = followedEntity.getComponent(TransformComponent);
-            const followedEntitySprite = followedEntity.getComponent(SpriteComponent);
+            const followedEntityTransform = followedthis.registry.getComponent(entity, TransformComponent);
+            const followedEntitySprite = followedthis.registry.getComponent(entity, SpriteComponent);
 
             if (!followedEntityTransform || !followedEntitySprite) {
                 throw new Error('Could not find player transform and/or sprite component');

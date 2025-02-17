@@ -4,19 +4,19 @@ import System from '../ecs/System';
 import { Rectangle } from '../types';
 
 export default class RenderParticleSystem extends System {
-    constructor() {
-        super();
+    constructor(registry: Registry) {
+        super(registry);
         this.requireComponent(ParticleComponent);
         this.requireComponent(TransformComponent);
     }
 
     update(ctx: CanvasRenderingContext2D, camera: Rectangle) {
         for (const entity of this.getSystemEntities()) {
-            const transform = entity.getComponent(TransformComponent);
-            const particle = entity.getComponent(ParticleComponent);
+            const transform = this.registry.getComponent(entity, TransformComponent);
+            const particle = this.registry.getComponent(entity, ParticleComponent);
 
             if (!particle || !transform) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
+                throw new Error('Could not find some component(s) of entity with id ' + entity);
             }
 
             // Bypass rendering if entities are outside the camera view

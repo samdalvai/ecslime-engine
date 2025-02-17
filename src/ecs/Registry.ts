@@ -99,7 +99,7 @@ export default class Registry {
 
     killEntity = (entity: Entity) => {
         this.entitiesToBeKilled.push(entity);
-        // console.log('Entity with id ' + entity.getId() + ' killed');
+        // console.log('Entity with id ' + entity + ' killed');
     };
 
     ////////////////////////////////////////////////////////////////////////////////

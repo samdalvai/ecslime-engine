@@ -3,19 +3,19 @@ import ScriptComponent from '../components/ScriptComponent';
 import System from '../ecs/System';
 
 export default class ScriptingSystem extends System {
-    constructor() {
-        super();
+    constructor(registry: Registry) {
+        super(registry);
         this.requireComponent(ScriptComponent);
         this.requireComponent(RigidBodyComponent);
     }
 
     update() {
         for (const entity of this.getSystemEntities()) {
-            const script = entity.getComponent(ScriptComponent);
-            const rigidBody = entity.getComponent(RigidBodyComponent);
+            const script = this.registry.getComponent(entity, ScriptComponent);
+            const rigidBody = this.registry.getComponent(entity, RigidBodyComponent);
 
             if (!script || !rigidBody) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
+                throw new Error('Could not find some component(s) of entity with id ' + entity);
             }
 
             const currentAction = script.scripts[script.currentActionIndex];

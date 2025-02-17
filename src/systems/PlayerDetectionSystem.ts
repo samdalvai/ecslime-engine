@@ -8,8 +8,8 @@ import EventBus from '../event-bus/EventBus';
 import EntityHitEvent from '../events/EntityHitEvent';
 
 export default class PlayerDetectionSystem extends System {
-    constructor() {
-        super();
+    constructor(registry: Registry) {
+        super(registry);
         this.requireComponent(TransformComponent);
         this.requireComponent(EntityFollowComponent);
         this.requireComponent(RigidBodyComponent);
@@ -29,10 +29,10 @@ export default class PlayerDetectionSystem extends System {
                 throw new Error('Player entity not found');
             }
 
-            const entityFollow = entity.getComponent(EntityFollowComponent);
+            const entityFollow = this.registry.getComponent(entity, EntityFollowComponent);
 
             if (!entityFollow) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
+                throw new Error('Could not find some component(s) of entity with id ' + entity);
             }
 
             entityFollow.followedEntity = player;
@@ -55,12 +55,12 @@ export default class PlayerDetectionSystem extends System {
         }
 
         for (const entity of this.getSystemEntities()) {
-            const transform = entity.getComponent(TransformComponent);
-            const rigidBody = entity.getComponent(RigidBodyComponent);
-            const entityFollow = entity.getComponent(EntityFollowComponent);
+            const transform = this.registry.getComponent(entity, TransformComponent);
+            const rigidBody = this.registry.getComponent(entity, RigidBodyComponent);
+            const entityFollow = this.registry.getComponent(entity, EntityFollowComponent);
 
             if (!rigidBody || !transform || !entityFollow) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
+                throw new Error('Could not find some component(s) of entity with id ' + entity);
             }
 
             const playerFollowX = transform.position.x + entityFollow.offset.x;

@@ -12,11 +12,11 @@ export default class RenderPlayerFollowRadius extends System {
 
     update(ctx: CanvasRenderingContext2D, camera: Rectangle) {
         for (const entity of this.getSystemEntities()) {
-            const transform = entity.getComponent(TransformComponent);
-            const playerFollow = entity.getComponent(EntityFollowComponent);
+            const transform = this.registry.getComponent(entity, TransformComponent);
+            const playerFollow = this.registry.getComponent(entity, EntityFollowComponent);
 
             if (!playerFollow || !transform) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
+                throw new Error('Could not find some component(s) of entity with id ' + entity);
             }
 
             // Bypass rendering if entities are outside the camera view

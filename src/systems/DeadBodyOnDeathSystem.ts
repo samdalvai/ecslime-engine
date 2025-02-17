@@ -9,8 +9,8 @@ import EventBus from '../event-bus/EventBus';
 import EntityKilledEvent from '../events/EntityKilledEvent';
 
 export default class DeadBodyOnDeathSystem extends System {
-    constructor() {
-        super();
+    constructor(registry: Registry) {
+        super(registry);
     }
 
     subscribeToEvents(eventBus: EventBus) {
@@ -21,9 +21,9 @@ export default class DeadBodyOnDeathSystem extends System {
         const entity = event.entity;
 
         if (entity.hasComponent(DeadBodyOnDeathComponent)) {
-            const sprite = entity.getComponent(SpriteComponent);
-            const transform = entity.getComponent(TransformComponent);
-            const rigidBody = entity.getComponent(RigidBodyComponent);
+            const sprite = this.registry.getComponent(entity, SpriteComponent);
+            const transform = this.registry.getComponent(entity, TransformComponent);
+            const rigidBody = this.registry.getComponent(entity, RigidBodyComponent);
 
             if (sprite && transform && rigidBody) {
                 const registry = entity.registry;
@@ -59,10 +59,10 @@ export default class DeadBodyOnDeathSystem extends System {
                 deadBody.addComponent(LifetimeComponent, 5000);
 
                 if (entity.hasComponent(ShadowComponent)) {
-                    const shadow = entity.getComponent(ShadowComponent);
+                    const shadow = this.registry.getComponent(entity, ShadowComponent);
 
                     if (!shadow) {
-                        throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
+                        throw new Error('Could not find some component(s) of entity with id ' + entity);
                     }
 
                     deadBody.addComponent(ShadowComponent, shadow.width, shadow.height, shadow.offsetX, shadow.offsetY);

@@ -1,12 +1,13 @@
 import BoxColliderComponent from '../components/BoxColliderComponent';
 import TransformComponent from '../components/TransformComponent';
+import Registry from '../ecs/Registry';
 import System from '../ecs/System';
 import EventBus from '../event-bus/EventBus';
 import CollisionEvent from '../events/CollisionEvent';
 
 export default class CollisionSystem extends System {
-    constructor() {
-        super();
+    constructor(registry: Registry) {
+        super(registry);
         this.requireComponent(TransformComponent);
         this.requireComponent(BoxColliderComponent);
     }
@@ -17,11 +18,11 @@ export default class CollisionSystem extends System {
         // Loop all the entities that the system is interested in
         for (let i = 0; i < entities.length - 1; i++) {
             const a = entities[i];
-            const aTransform = a.getComponent(TransformComponent);
-            const aCollider = a.getComponent(BoxColliderComponent);
+            const aTransform = this.registry.getComponent(a, TransformComponent);
+            const aCollider = this.registry.getComponent(a, BoxColliderComponent);
 
             if (!aTransform || !aCollider) {
-                throw new Error('Could not find some component(s) of entity with id ' + a.getId());
+                throw new Error('Could not find some component(s) of entity with id ' + a);
             }
 
             // Loop all the entities that still need to be checked (to the right of i)
@@ -33,11 +34,11 @@ export default class CollisionSystem extends System {
                     continue;
                 }
 
-                const bTransform = b.getComponent(TransformComponent);
-                const bCollider = b.getComponent(BoxColliderComponent);
+                const bTransform = this.registry.getComponent(b, TransformComponent);
+                const bCollider = this.registry.getComponent(b, BoxColliderComponent);
 
                 if (!bTransform || !bCollider) {
-                    throw new Error('Could not find some component(s) of entity with id ' + b.getId());
+                    throw new Error('Could not find some component(s) of entity with id ' + b);
                 }
 
                 // Perform the AABB collision check between entities a and b

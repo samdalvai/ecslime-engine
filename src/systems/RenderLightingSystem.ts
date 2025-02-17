@@ -5,8 +5,8 @@ import System from '../ecs/System';
 import { Rectangle } from '../types';
 
 export default class RenderLightingSystem extends System {
-    constructor() {
-        super();
+    constructor(registry: Registry) {
+        super(registry);
         this.requireComponent(LightEmitComponent);
         this.requireComponent(TransformComponent);
         this.requireComponent(SpriteComponent);
@@ -31,12 +31,12 @@ export default class RenderLightingSystem extends System {
         tempCtx.shadowBlur = 15;
 
         for (const entity of this.getSystemEntities()) {
-            const lightEmit = entity.getComponent(LightEmitComponent);
-            const transform = entity.getComponent(TransformComponent);
-            const sprite = entity.getComponent(SpriteComponent);
+            const lightEmit = this.registry.getComponent(entity, LightEmitComponent);
+            const transform = this.registry.getComponent(entity, TransformComponent);
+            const sprite = this.registry.getComponent(entity, SpriteComponent);
 
             if (!lightEmit || !transform || !sprite) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
+                throw new Error('Could not find some component(s) of entity with id ' + entity);
             }
 
             tempCtx.beginPath();
