@@ -44,7 +44,7 @@ describe('Testing performance related functions', () => {
 
             timesTotal.push(performance.now() - start);
 
-            expect(system?.getSystemEntities().length).toBe(0);
+            expect(system?.getSystemEntities().size).toBe(0);
         }
 
         let sum = 0;
