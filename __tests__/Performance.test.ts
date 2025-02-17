@@ -6,50 +6,50 @@ import MovementSystem from '../src/systems/MovementSystem';
 
 describe('Testing performance related functions', () => {
     test('A test on performance', () => {
-        // const times: number[] = [];
-
-        // for (let x = 0; x < 10; x++) {
-        //     const start = performance.now();
-
-        //     // Code to be tested
-        //     for (let i = 0; i < 1000; i++) {
-        //         //
-        //     }
-
-        //     const end = performance.now();
-        //     times.push(end - start);
-        // }
-
-        // let sum = 0;
-        // for (let x = 0; x < times.length; x++) {
-        //     sum += times[x];
-        // }
-        // console.log('Time elapsed: ' + sum / times.length + ' ms');
-
         Game.mapHeight = 10000;
         Game.mapWidth = 10000;
-        const registry = new Registry();
 
-        // const registry = new Registry();
-        registry.addSystem(MovementSystem);
-        let start = performance.now();
+        const timeAdd: number[] = [];
+        const timeUpdate: number[] = [];
+        const timesTotal: number[] = [];
 
-        for (let i = 0; i < 10000; i++) {
-            const entity = registry.createEntity();
-            registry.addComponent(entity, RigidBodyComponent, { x: 10, y: 10 });
-            registry.addComponent(entity, TransformComponent, { x: 100, y: 100 });
+        for (let x = 0; x < 10; x++) {
+            const start = performance.now();
+            const registry = new Registry();
+            registry.addSystem(MovementSystem);
+
+            for (let i = 0; i < 10000; i++) {
+                const entity = registry.createEntity();
+                registry.addComponent(entity, RigidBodyComponent, { x: 10, y: 10 });
+                registry.addComponent(entity, TransformComponent, { x: 100, y: 100 });
+            }
+
+            registry.update();
+
+            timeAdd.push(performance.now() - start);
+            const start2 = performance.now();
+
+            const system = registry.getSystem(MovementSystem);
+
+            system?.update(registry, 10);
+            timeUpdate.push(performance.now() - start2);
+            timesTotal.push(performance.now() - start);
         }
 
-        registry.update();
-
-        console.log('Time for adding entitites: ' + (performance.now() - start) + ' ms');
-
-        start = performance.now();
-        const system = registry.getSystem(MovementSystem);
-        console.log(system?.getSystemEntities().length + ' entities');
-
-        system?.update(registry, 10);
-
-        console.log('Time for updating entitites: ' + (performance.now() - start) + ' ms');
+        let sum = 0;
+        for (let x = 0; x < timeAdd.length; x++) {
+            sum += timeAdd[x];
+        }
+        console.log('Time for adding entitites: ' + sum / timeAdd.length + ' ms');
+        sum = 0;
+        for (let x = 0; x < timeAdd.length; x++) {
+            sum += timeUpdate[x];
+        }
+        console.log('Time for updating entitites: ' + sum / timeUpdate.length + ' ms');
+        sum = 0;
+        for (let x = 0; x < timesTotal.length; x++) {
+            sum += timesTotal[x];
+        }
+        console.log('Total time: ' + sum / timesTotal.length + ' ms');
     });
 });
