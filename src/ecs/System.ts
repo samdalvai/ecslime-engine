@@ -1,5 +1,6 @@
 import { Entity } from '../types';
 import Component, { ComponentClass } from './Component';
+import Registry from './Registry';
 import Signature from './Signature';
 
 export type SystemClass<T extends System> = {
@@ -19,11 +20,13 @@ export default class System extends ISystem {
     private static _id?: number;
     private componentSignature: Signature;
     private entities: Entity[];
+    protected registry: Registry;
 
-    constructor() {
+    constructor(registry: Registry) {
         super();
         this.componentSignature = new Signature();
         this.entities = [];
+        this.registry = registry;
     }
 
     static getSystemId() {

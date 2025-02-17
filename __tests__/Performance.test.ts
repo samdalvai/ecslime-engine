@@ -32,7 +32,7 @@ describe('Testing performance related functions', () => {
 
             const system = registry.getSystem(MovementSystem);
 
-            system?.update(registry, 10);
+            system?.update(10);
             timeUpdate.push(performance.now() - startUpdate);
 
             const startDelete = performance.now();

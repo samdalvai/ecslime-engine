@@ -250,7 +250,7 @@ export default class Registry {
     ////////////////////////////////////////////////////////////////////////////////
 
     addSystem = <T extends System>(SystemClass: SystemClass<T>, ...args: ConstructorParameters<typeof SystemClass>) => {
-        const newSystem = new SystemClass(...args);
+        const newSystem = new SystemClass(...args, this);
         this.systems.set(SystemClass.getSystemId(), newSystem);
     };
 

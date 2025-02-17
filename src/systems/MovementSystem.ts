@@ -9,8 +9,8 @@ import CollisionEvent from '../events/CollisionEvent';
 import Game from '../game/Game';
 
 export default class MovementSystem extends System {
-    constructor() {
-        super();
+    constructor(registry: Registry) {
+        super(registry);
         this.requireComponent(TransformComponent);
         this.requireComponent(RigidBodyComponent);
     }
@@ -120,10 +120,10 @@ export default class MovementSystem extends System {
     //     }
     // }
 
-    update(registry: Registry, deltaTime: number) {
+    update(deltaTime: number) {
         for (const entity of this.getSystemEntities()) {
-            const transform = registry.getComponent(entity, TransformComponent);
-            const rigidBody = registry.getComponent(entity, RigidBodyComponent);
+            const transform = this.registry.getComponent(entity, TransformComponent);
+            const rigidBody = this.registry.getComponent(entity, RigidBodyComponent);
 
             if (!rigidBody || !transform) {
                 console.error('Could not find some component(s) of entity: ', entity);
@@ -133,7 +133,7 @@ export default class MovementSystem extends System {
             transform.position.x += rigidBody.velocity.x * deltaTime;
             transform.position.y += rigidBody.velocity.y * deltaTime;
 
-            if (registry.entityHasTag(entity, 'player')) {
+            if (this.registry.entityHasTag(entity, 'player')) {
                 const paddingLeft = 10;
                 const paddingTop = 10;
                 const paddingRight = 50;
@@ -159,8 +159,8 @@ export default class MovementSystem extends System {
                 transform.position.y > Game.mapHeight + cullingMargin;
 
             // Kill all entities that move outside the map boundaries
-            if (isEntityOutsideMap && !registry.entityHasTag(entity, 'player')) {
-                registry.killEntity(entity);
+            if (isEntityOutsideMap && !this.registry.entityHasTag(entity, 'player')) {
+                this.registry.killEntity(entity);
             }
         }
     }
