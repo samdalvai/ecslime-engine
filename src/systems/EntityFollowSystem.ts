@@ -57,7 +57,7 @@ export default class EntityFollowSystem extends System {
                 throw new Error('Could not find some component(s) of entity with id ' + entity);
             }
 
-            if (entityFollow.followedEntity?.getId() === event.entity) {
+            if (entityFollow.followedEntity === event.entity) {
                 entityFollow.followedEntity = null;
             }
         }

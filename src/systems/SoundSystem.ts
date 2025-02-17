@@ -9,7 +9,7 @@ import EntityKilledEvent from '../events/EntityKilledEvent';
 export default class SoundSystem extends System {
     assetStore: AssetStore;
 
-    constructor(registry: Registry, assetStore: AssetStore) {
+    constructor(assetStore: AssetStore, registry: Registry) {
         super(registry);
         this.requireComponent(SoundComponent);
         this.assetStore = assetStore;

@@ -56,7 +56,8 @@ export default class LevelLoader {
                 const srcRectX = (tileNumber % 10) * tileSize;
                 const srcRectY = Math.floor(tileNumber / 10) * tileSize;
                 const tile = registry.createEntity();
-                tile.addComponent(
+                registry.addComponent(
+                    tile,
                     TransformComponent,
                     {
                         x: columnNumber * (mapScale * tileSize),
@@ -65,7 +66,16 @@ export default class LevelLoader {
                     { x: mapScale, y: mapScale },
                     0,
                 );
-                tile.addComponent(SpriteComponent, 'tiles-dark-texture', tileSize, tileSize, 0, srcRectX, srcRectY);
+                registry.addComponent(
+                    tile,
+                    SpriteComponent,
+                    'tiles-dark-texture',
+                    tileSize,
+                    tileSize,
+                    0,
+                    srcRectX,
+                    srcRectY,
+                );
                 columnNumber++;
             }
             rowNumber++;
@@ -94,39 +104,45 @@ export default class LevelLoader {
         registry.tagEntity(player, 'player');
 
         const enemy = registry.createEntity();
-        enemy.addComponent(TransformComponent, { x: 300, y: 600 }, { x: 1, y: 1 }, 0);
-        enemy.addComponent(SpriteComponent, 'slime-texture', 32, 32, 1, 0, 0);
-        enemy.addComponent(SpriteDirectionComponent);
-        enemy.addComponent(DeadBodyOnDeathComponent);
-        enemy.addComponent(ShadowComponent, 30, 10, 0, -8);
-        enemy.addComponent(AnimationComponent, 2, 4);
-        enemy.addComponent(RigidBodyComponent, { x: 50, y: 0 }, { x: 1, y: 0 });
-        enemy.addComponent(BoxColliderComponent, 25, 20, { x: 4, y: 7 });
-        enemy.addComponent(HealthComponent, 50);
-        enemy.addComponent(ProjectileEmitterComponent, { x: 100, y: 100 }, 500, 2000, 20, false);
-        enemy.addComponent(EntityFollowComponent, 250, 100, 50, { x: 16, y: 16 }, 5000);
-        enemy.addComponent(ScriptComponent, [
+        registry.addComponent(enemy, TransformComponent, { x: 300, y: 600 }, { x: 1, y: 1 }, 0);
+        registry.addComponent(enemy, SpriteComponent, 'slime-texture', 32, 32, 1, 0, 0);
+        registry.addComponent(enemy, SpriteDirectionComponent);
+        registry.addComponent(enemy, DeadBodyOnDeathComponent);
+        registry.addComponent(enemy, ShadowComponent, 30, 10, 0, -8);
+        registry.addComponent(enemy, AnimationComponent, 2, 4);
+        registry.addComponent(enemy, RigidBodyComponent, { x: 50, y: 0 }, { x: 1, y: 0 });
+        registry.addComponent(enemy, BoxColliderComponent, 25, 20, { x: 4, y: 7 });
+        registry.addComponent(enemy, HealthComponent, 50);
+        registry.addComponent(enemy, ProjectileEmitterComponent, { x: 100, y: 100 }, 500, 2000, 20, false);
+        registry.addComponent(enemy, EntityFollowComponent, 250, 100, 50, { x: 16, y: 16 }, 5000);
+        registry.addComponent(enemy, ScriptComponent, [
             { movement: { x: 50, y: 0 }, duration: 2000 },
             { movement: { x: 0, y: 50 }, duration: 2000 },
             { movement: { x: -50, y: 0 }, duration: 2000 },
             { movement: { x: 0, y: -50 }, duration: 2000 },
         ]);
-        enemy.group('enemies');
+        registry.groupEntity(enemy, 'enemies');
 
         const torch = registry.createEntity();
-        torch.addComponent(SpriteComponent, 'torch-texture', 32, 32, 1);
-        torch.addComponent(TransformComponent, { x: 200, y: 200 }, { x: 1, y: 1 });
-        torch.addComponent(AnimationComponent, 4, 10);
-        torch.addComponent(LightEmitComponent, 100);
-        torch.addComponent(ShadowComponent, 10, 5, -0.5, -5);
-        torch.addComponent(ParticleEmitComponent, 2, 1000, 'rgba(255,0,0,1)', 200, 5, 16, 0, { x: 0, y: -50 });
+        registry.addComponent(torch, SpriteComponent, 'torch-texture', 32, 32, 1);
+        registry.addComponent(torch, TransformComponent, { x: 200, y: 200 }, { x: 1, y: 1 });
+        registry.addComponent(torch, AnimationComponent, 4, 10);
+        registry.addComponent(torch, LightEmitComponent, 100);
+        registry.addComponent(torch, ShadowComponent, 10, 5, -0.5, -5);
+        registry.addComponent(torch, ParticleEmitComponent, 2, 1000, 'rgba(255,0,0,1)', 200, 5, 16, 0, {
+            x: 0,
+            y: -50,
+        });
 
         const torch2 = registry.createEntity();
-        torch2.addComponent(SpriteComponent, 'torch-texture', 32, 32, 1);
-        torch2.addComponent(TransformComponent, { x: 500, y: 200 }, { x: 1, y: 1 });
-        torch2.addComponent(AnimationComponent, 4, 10);
-        torch2.addComponent(LightEmitComponent, 100);
-        torch2.addComponent(ShadowComponent, 10, 5, -0.5, -5);
-        torch2.addComponent(ParticleEmitComponent, 2, 1000, 'rgba(255,0,0,1)', 200, 5, 16, 0, { x: 0, y: -50 });
+        registry.addComponent(torch2, SpriteComponent, 'torch-texture', 32, 32, 1);
+        registry.addComponent(torch2, TransformComponent, { x: 500, y: 200 }, { x: 1, y: 1 });
+        registry.addComponent(torch2, AnimationComponent, 4, 10);
+        registry.addComponent(torch2, LightEmitComponent, 100);
+        registry.addComponent(torch2, ShadowComponent, 10, 5, -0.5, -5);
+        registry.addComponent(torch2, ParticleEmitComponent, 2, 1000, 'rgba(255,0,0,1)', 200, 5, 16, 0, {
+            x: 0,
+            y: -50,
+        });
     }
 }

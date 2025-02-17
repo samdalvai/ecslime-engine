@@ -15,7 +15,7 @@ import { Entity } from '../types';
 export default class DamageSystem extends System {
     eventBus: EventBus;
 
-    constructor(registry: Registry, eventBus: EventBus) {
+    constructor(eventBus: EventBus, registry: Registry) {
         super(registry);
         this.eventBus = eventBus;
         this.requireComponent(BoxColliderComponent);
@@ -29,19 +29,19 @@ export default class DamageSystem extends System {
         const a = event.a;
         const b = event.b;
 
-        if (a.belongsToGroup('projectiles') && b.hasTag('player')) {
+        if (this.registry.entityBelongsToGroup(a, 'projectiles') && this.registry.entityHasTag(b, 'player')) {
             this.onProjectileHitsPlayer(a, b);
         }
 
-        if (b.belongsToGroup('projectiles') && a.hasTag('player')) {
+        if (this.registry.entityBelongsToGroup(b, 'projectiles') && this.registry.entityHasTag(a, 'player')) {
             this.onProjectileHitsPlayer(b, a);
         }
 
-        if (a.belongsToGroup('projectiles') && b.belongsToGroup('enemies')) {
+        if (this.registry.entityBelongsToGroup(a, 'projectiles') && this.registry.entityBelongsToGroup(b, 'enemies')) {
             this.onProjectileHitsEnemy(a, b);
         }
 
-        if (b.belongsToGroup('projectiles') && a.belongsToGroup('enemies')) {
+        if (this.registry.entityBelongsToGroup(b, 'projectiles') && this.registry.entityBelongsToGroup(a, 'enemies')) {
             this.onProjectileHitsEnemy(b, a);
         }
     }

@@ -24,17 +24,17 @@ export default class MovementSystem extends System {
         const a = event.a;
         const b = event.b;
 
-        if (a.belongsToGroup('enemies') && (b.belongsToGroup('obstacles') || b.hasTag('player'))) {
+        if (this.registry.entityBelongsToGroup(a, 'enemies') && (this.registry.entityBelongsToGroup(b,'obstacles') || this.registry.entityHasTag(b, 'player'))) {
             this.onEnemyHitsObstacleOrPlayer(a);
         }
-        if ((a.belongsToGroup('obstacles') || a.hasTag('player')) && b.belongsToGroup('enemies')) {
+        if ((this.registry.entityBelongsToGroup(a, 'obstacles') || this.registry.entityHasTag(a, 'player')) && this.registry.entityBelongsToGroup(b,'enemies')) {
             this.onEnemyHitsObstacleOrPlayer(b);
         }
 
-        if (a.hasTag('player') && (b.belongsToGroup('enemies') || b.belongsToGroup('obstacles'))) {
+        if (this.registry.entityHasTag(a, 'player') && (this.registry.entityBelongsToGroup(b,'enemies') || this.registry.entityBelongsToGroup(b,'obstacles'))) {
             this.onPlayerHitsEnemyOrObstacle(a, b);
         }
-        if ((a.belongsToGroup('enemies') || a.belongsToGroup('obstacles')) && b.hasTag('player')) {
+        if ((this.registry.entityBelongsToGroup(a, 'enemies') || this.registry.entityBelongsToGroup(a, 'obstacles')) && this.registry.entityHasTag(b, 'player')) {
             this.onPlayerHitsEnemyOrObstacle(b, a);
         }
     }

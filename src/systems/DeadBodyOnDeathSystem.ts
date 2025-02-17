@@ -21,22 +21,21 @@ export default class DeadBodyOnDeathSystem extends System {
     onEntityDeath = (event: EntityKilledEvent) => {
         const entity = event.entity;
 
-        if (registry.hasComponent(entity, DeadBodyOnDeathComponent)) {
+        if (this.registry.hasComponent(entity, DeadBodyOnDeathComponent)) {
             const sprite = this.registry.getComponent(entity, SpriteComponent);
             const transform = this.registry.getComponent(entity, TransformComponent);
             const rigidBody = this.registry.getComponent(entity, RigidBodyComponent);
 
             if (sprite && transform && rigidBody) {
-                const registry = entity.registry;
-
-                const deadBody = registry.createEntity();
-                deadBody.addComponent(
+                const deadBody = this.registry.createEntity();
+                this.registry.addComponent(
+                    deadBody,
                     TransformComponent,
                     { ...transform.position },
                     { ...transform.scale },
                     transform.rotation,
                 );
-                deadBody.addComponent(RigidBodyComponent, { x: 0, y: 0 }, { ...rigidBody.direction });
+                this.registry.addComponent(deadBody, RigidBodyComponent, { x: 0, y: 0 }, { ...rigidBody.direction });
 
                 let spriteOffset = 0;
 
@@ -48,7 +47,8 @@ export default class DeadBodyOnDeathSystem extends System {
                     spriteOffset = 3;
                 }
 
-                deadBody.addComponent(
+                this.registry.addComponent(
+                    deadBody,
                     SpriteComponent,
                     sprite.assetId,
                     sprite.width,
@@ -57,16 +57,23 @@ export default class DeadBodyOnDeathSystem extends System {
                     0,
                     sprite.height * 12 + sprite.height * spriteOffset,
                 );
-                deadBody.addComponent(LifetimeComponent, 5000);
+                this.registry.addComponent(deadBody, LifetimeComponent, 5000);
 
-                if (registry.hasComponent(entity, ShadowComponent)) {
+                if (this.registry.hasComponent(entity, ShadowComponent)) {
                     const shadow = this.registry.getComponent(entity, ShadowComponent);
 
                     if (!shadow) {
                         throw new Error('Could not find some component(s) of entity with id ' + entity);
                     }
 
-                    deadBody.addComponent(ShadowComponent, shadow.width, shadow.height, shadow.offsetX, shadow.offsetY);
+                    this.registry.addComponent(
+                        deadBody,
+                        ShadowComponent,
+                        shadow.width,
+                        shadow.height,
+                        shadow.offsetX,
+                        shadow.offsetY,
+                    );
                 }
             }
         }

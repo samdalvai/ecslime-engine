@@ -22,8 +22,11 @@ export default class PlayerDetectionSystem extends System {
     onEntityHitByPlayer = (event: EntityHitEvent) => {
         const entity = event.entity;
 
-        if (!registry.entityHasTag(entity,'player') && registry.hasComponent(entity, EntityFollowComponent)) {
-            const player = entity.registry.getEntityByTag('player');
+        if (
+            !this.registry.entityHasTag(entity, 'player') &&
+            this.registry.hasComponent(entity, EntityFollowComponent)
+        ) {
+            const player = this.registry.getEntityByTag('player');
 
             if (!player) {
                 throw new Error('Player entity not found');
