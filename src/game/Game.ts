@@ -47,11 +47,11 @@ export default class Game {
     private millisecondsLastFPSUpdate = 0;
     private currentFPS = 0;
     private currentTickTime = 0;
+    private registry: Registry;
     private assetStore: AssetStore;
     private eventBus: EventBus;
     private inputManager: InputManager;
-    
-    static registry: Registry;
+
     static mapWidth: number;
     static mapHeight: number;
     static windowWidth: number;
@@ -64,7 +64,7 @@ export default class Game {
         this.canvas = null;
         this.ctx = null;
         this.camera = { x: 0, y: 0, width: window.innerWidth, height: window.innerHeight };
-        Game.registry = new Registry();
+        this.registry = new Registry();
         this.assetStore = new AssetStore();
         this.eventBus = new EventBus();
         this.inputManager = new InputManager();
