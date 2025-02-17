@@ -38,7 +38,7 @@ describe('Testing System related functions', () => {
         registry.addSystem(MySystem);
 
         const entity = registry.createEntity();
-        entity.addComponent(MyComponent);
+        registry.addComponent(entity, MyComponent);
 
         registry.update();
 
@@ -84,7 +84,7 @@ describe('Testing System related functions', () => {
         registry.addSystem(MySystem);
 
         const entity = registry.createEntity();
-        entity.addComponent(MyComponent);
+        registry.addComponent(entity, MyComponent);
 
         registry.update();
 

@@ -4,8 +4,7 @@ import { Vector } from '../types';
 export default class TransformComponent extends Component {
     position: Vector;
     scale: Vector;
-    // Rotation is expressed in degrees
-    rotation: number;
+    rotation: number; // Rotation is expressed in degrees
 
     constructor(position: Vector = { x: 0, y: 0 }, scale: Vector = { x: 1, y: 1 }, rotation: number = 0.0) {
         super();

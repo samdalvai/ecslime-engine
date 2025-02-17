@@ -16,8 +16,8 @@ describe('Testing Movement system related functions', () => {
         const registry = new Registry();
 
         const entity = registry.createEntity();
-        entity.addComponent(TransformComponent, { x: 100, y: 100 }, { x: 1, y: 1 }, 0);
-        entity.addComponent(RigidBodyComponent, { x: 50, y: 0 });
+        registry.addComponent(entity, TransformComponent, { x: 100, y: 100 }, { x: 1, y: 1 }, 0);
+        registry.addComponent(entity, RigidBodyComponent, { x: 50, y: 0 });
 
         registry.addSystem(MovementSystem);
 
@@ -27,7 +27,7 @@ describe('Testing Movement system related functions', () => {
 
         registry.getSystem(MovementSystem)?.update(deltaTime);
 
-        const transform = entity.getComponent(TransformComponent);
+        const transform = registry.getComponent(entity, TransformComponent);
 
         expect(transform).not.toBe(undefined);
         expect(transform?.position.x).toBe(150);
@@ -38,8 +38,8 @@ describe('Testing Movement system related functions', () => {
         const registry = new Registry();
 
         const entity = registry.createEntity();
-        entity.addComponent(TransformComponent, { x: 100, y: 100 }, { x: 1, y: 1 }, 0);
-        entity.addComponent(RigidBodyComponent, { x: 0, y: 50 });
+        registry.addComponent(entity, TransformComponent, { x: 100, y: 100 }, { x: 1, y: 1 }, 0);
+        registry.addComponent(entity, RigidBodyComponent, { x: 0, y: 50 });
 
         registry.addSystem(MovementSystem);
 
@@ -49,7 +49,7 @@ describe('Testing Movement system related functions', () => {
 
         registry.getSystem(MovementSystem)?.update(deltaTime);
 
-        const transform = entity.getComponent(TransformComponent);
+        const transform = registry.getComponent(entity, TransformComponent);
 
         expect(transform).not.toBe(undefined);
         expect(transform?.position.x).toBe(100);
@@ -60,8 +60,8 @@ describe('Testing Movement system related functions', () => {
         const registry = new Registry();
 
         const entity = registry.createEntity();
-        entity.addComponent(TransformComponent, { x: 100, y: 100 }, { x: 1, y: 1 }, 0);
-        entity.addComponent(RigidBodyComponent, { x: 50, y: 50 });
+        registry.addComponent(entity, TransformComponent, { x: 100, y: 100 }, { x: 1, y: 1 }, 0);
+        registry.addComponent(entity, RigidBodyComponent, { x: 50, y: 50 });
 
         registry.addSystem(MovementSystem);
 
@@ -71,7 +71,7 @@ describe('Testing Movement system related functions', () => {
 
         registry.getSystem(MovementSystem)?.update(deltaTime);
 
-        const transform = entity.getComponent(TransformComponent);
+        const transform = registry.getComponent(entity, TransformComponent);
 
         expect(transform).not.toBe(undefined);
         expect(transform?.position.x).toBe(150);
@@ -82,8 +82,8 @@ describe('Testing Movement system related functions', () => {
         const registry = new Registry();
 
         const entity = registry.createEntity();
-        entity.addComponent(TransformComponent, { x: 950, y: 100 }, { x: 1, y: 1 }, 0);
-        entity.addComponent(RigidBodyComponent, { x: 200, y: 0 });
+        registry.addComponent(entity, TransformComponent, { x: 950, y: 100 }, { x: 1, y: 1 }, 0);
+        registry.addComponent(entity, RigidBodyComponent, { x: 200, y: 0 });
 
         registry.addSystem(MovementSystem);
 
@@ -93,7 +93,7 @@ describe('Testing Movement system related functions', () => {
 
         registry.getSystem(MovementSystem)?.update(deltaTime);
 
-        const transform = entity.getComponent(TransformComponent);
+        const transform = registry.getComponent(entity, TransformComponent);
 
         expect(transform).not.toBe(undefined);
         expect(transform?.position.x).toBe(1150);
@@ -101,8 +101,8 @@ describe('Testing Movement system related functions', () => {
 
         registry.update();
 
-        expect(entity.getComponent(TransformComponent)).toBe(undefined);
-        expect(entity.getComponent(RigidBodyComponent)).toBe(undefined);
+        expect(registry.getComponent(entity, TransformComponent)).toBe(undefined);
+        expect(registry.getComponent(entity, RigidBodyComponent)).toBe(undefined);
         expect(registry.getSystem(MovementSystem)?.getSystemEntities().length).toBe(0);
     });
 });

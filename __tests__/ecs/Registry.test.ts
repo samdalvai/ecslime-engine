@@ -1,7 +1,6 @@
 import { expect } from '@jest/globals';
 
 import Component, { IComponent } from '../../src/ecs/Component';
-import Entity from '../../src/ecs/Entity';
 import Pool from '../../src/ecs/Pool';
 import Registry from '../../src/ecs/Registry';
 import System, { ISystem } from '../../src/ecs/System';
@@ -62,7 +61,7 @@ describe('Testing Registry related functions', () => {
             }
         }
 
-        entity.addComponent(MyComponent, 1);
+        registry.addComponent(entity, MyComponent, 1);
 
         expect(registry.entityComponentSignatures[0].test(0)).toBe(true);
     });
@@ -74,8 +73,8 @@ describe('Testing Registry related functions', () => {
         class MyComponent1 extends Component {}
         class MyComponent2 extends Component {}
 
-        entity.addComponent(MyComponent1);
-        entity.addComponent(MyComponent2);
+        registry.addComponent(entity, MyComponent1);
+        registry.addComponent(entity, MyComponent2);
 
         console.log(registry.entityComponentSignatures);
 
@@ -110,7 +109,7 @@ describe('Testing Registry related functions', () => {
 
         class MyComponent extends Component {}
 
-        entity.addComponent(MyComponent);
+        registry.addComponent(entity, MyComponent);
 
         const pool = registry.componentPools[0] as Pool<MyComponent>;
 
@@ -148,8 +147,8 @@ describe('Testing Registry related functions', () => {
         class MyComponent1 extends Component {}
         class MyComponent2 extends Component {}
 
-        entity.addComponent(MyComponent1);
-        entity.addComponent(MyComponent2);
+        registry.addComponent(entity, MyComponent1);
+        registry.addComponent(entity, MyComponent2);
 
         const pool1 = registry.componentPools[0] as Pool<MyComponent1>;
         const pool2 = registry.componentPools[1] as Pool<MyComponent1>;
@@ -169,7 +168,7 @@ describe('Testing Registry related functions', () => {
 
         class MyComponent extends Component {}
 
-        entity.addComponent(MyComponent);
+        registry.addComponent(entity, MyComponent);
         entity.removeComponent(MyComponent);
 
         const pool = registry.componentPools[0] as Pool<MyComponent>;
@@ -209,8 +208,8 @@ describe('Testing Registry related functions', () => {
         class MyComponent1 extends Component {}
         class MyComponent2 extends Component {}
 
-        entity.addComponent(MyComponent1);
-        entity.addComponent(MyComponent2);
+        registry.addComponent(entity, MyComponent1);
+        registry.addComponent(entity, MyComponent2);
 
         entity.removeComponent(MyComponent1);
 
@@ -232,7 +231,7 @@ describe('Testing Registry related functions', () => {
 
         class MyComponent extends Component {}
 
-        entity.addComponent(MyComponent);
+        registry.addComponent(entity, MyComponent);
 
         expect(entity.hasComponent(MyComponent)).toBe(true);
     });
@@ -244,8 +243,8 @@ describe('Testing Registry related functions', () => {
         class MyComponent1 extends Component {}
         class MyComponent2 extends Component {}
 
-        entity.addComponent(MyComponent1);
-        entity.addComponent(MyComponent2);
+        registry.addComponent(entity, MyComponent1);
+        registry.addComponent(entity, MyComponent2);
 
         expect(entity.hasComponent(MyComponent1)).toBe(true);
         expect(entity.hasComponent(MyComponent2)).toBe(true);
@@ -258,7 +257,7 @@ describe('Testing Registry related functions', () => {
         class MyComponent1 extends Component {}
         class MyComponent2 extends Component {}
 
-        entity.addComponent(MyComponent1);
+        registry.addComponent(entity, MyComponent1);
 
         expect(entity.hasComponent(MyComponent2)).toBe(false);
     });
@@ -276,9 +275,9 @@ describe('Testing Registry related functions', () => {
             }
         }
 
-        entity.addComponent(MyComponent, 1);
+        registry.addComponent(entity, MyComponent, 1);
 
-        expect(entity.getComponent(MyComponent)).toEqual(new MyComponent(1));
+        expect(registry.getComponent(entity, MyComponent)).toEqual(new MyComponent(1));
     });
 
     test('Should get entity component from registry, when having multiple components', () => {
@@ -288,11 +287,11 @@ describe('Testing Registry related functions', () => {
         class MyComponent1 extends Component {}
         class MyComponent2 extends Component {}
 
-        entity.addComponent(MyComponent1);
-        entity.addComponent(MyComponent2);
+        registry.addComponent(entity, MyComponent1);
+        registry.addComponent(entity, MyComponent2);
 
-        expect(entity.getComponent(MyComponent1)).toEqual(new MyComponent1());
-        expect(entity.getComponent(MyComponent2)).toEqual(new MyComponent2());
+        expect(registry.getComponent(entity, MyComponent1)).toEqual(new MyComponent1());
+        expect(registry.getComponent(entity, MyComponent2)).toEqual(new MyComponent2());
     });
 
     test('Should get an undefined component if entity does not have it', () => {
@@ -302,9 +301,9 @@ describe('Testing Registry related functions', () => {
         class MyComponent1 extends Component {}
         class MyComponent2 extends Component {}
 
-        entity.addComponent(MyComponent1);
+        registry.addComponent(entity, MyComponent1);
 
-        expect(entity.getComponent(MyComponent2)).toEqual(undefined);
+        expect(registry.getComponent(entity, MyComponent2)).toEqual(undefined);
     });
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -437,7 +436,7 @@ describe('Testing Registry related functions', () => {
         }
 
         const entity = registry.createEntity();
-        entity.addComponent(MyComponent);
+        registry.addComponent(entity, MyComponent);
 
         registry.addSystem(MySystem);
         registry.addEntityToSystems(entity);
@@ -467,7 +466,7 @@ describe('Testing Registry related functions', () => {
         }
 
         const entity = registry.createEntity();
-        entity.addComponent(MyComponent);
+        registry.addComponent(entity, MyComponent);
 
         registry.addSystem(MySystem1);
         registry.addSystem(MySystem2);
@@ -522,8 +521,8 @@ describe('Testing Registry related functions', () => {
         }
 
         const entity = registry.createEntity();
-        entity.addComponent(MyComponent1);
-        entity.addComponent(MyComponent2);
+        registry.addComponent(entity, MyComponent1);
+        registry.addComponent(entity, MyComponent2);
 
         registry.addSystem(MySystem);
         registry.addEntityToSystems(entity);
@@ -548,7 +547,7 @@ describe('Testing Registry related functions', () => {
         }
 
         const entity = registry.createEntity();
-        entity.addComponent(MyComponent1);
+        registry.addComponent(entity, MyComponent1);
 
         registry.addSystem(MySystem);
         registry.addEntityToSystems(entity);
@@ -571,7 +570,7 @@ describe('Testing Registry related functions', () => {
         }
 
         const entity = registry.createEntity();
-        entity.addComponent(MyComponent);
+        registry.addComponent(entity, MyComponent);
 
         registry.addSystem(MySystem);
         registry.addEntityToSystems(entity);
@@ -658,7 +657,7 @@ describe('Testing Registry related functions', () => {
         }
 
         const entity = registry.createEntity();
-        entity.addComponent(MyComponent);
+        registry.addComponent(entity, MyComponent);
 
         registry.addSystem(MySystem1);
         registry.addSystem(MySystem2);
@@ -685,7 +684,7 @@ describe('Testing Registry related functions', () => {
         }
 
         const entity = registry.createEntity();
-        entity.addComponent(MyComponent);
+        registry.addComponent(entity, MyComponent);
 
         registry.addSystem(MySystem);
 
@@ -716,7 +715,7 @@ describe('Testing Registry related functions', () => {
         }
 
         const entity = registry.createEntity();
-        entity.addComponent(MyComponent);
+        registry.addComponent(entity, MyComponent);
 
         registry.addSystem(MySystem1);
         registry.addSystem(MySystem2);
@@ -772,8 +771,8 @@ describe('Testing Registry related functions', () => {
         }
 
         const entity = registry.createEntity();
-        entity.addComponent(MyComponent1);
-        entity.addComponent(MyComponent2);
+        registry.addComponent(entity, MyComponent1);
+        registry.addComponent(entity, MyComponent2);
 
         registry.addSystem(MySystem);
 
@@ -799,7 +798,7 @@ describe('Testing Registry related functions', () => {
         }
 
         const entity = registry.createEntity();
-        entity.addComponent(MyComponent1);
+        registry.addComponent(entity, MyComponent1);
 
         registry.addSystem(MySystem);
 
@@ -823,7 +822,7 @@ describe('Testing Registry related functions', () => {
         }
 
         const entity = registry.createEntity();
-        entity.addComponent(MyComponent);
+        registry.addComponent(entity, MyComponent);
 
         registry.addSystem(MySystem);
 
@@ -939,7 +938,7 @@ describe('Testing Registry related functions', () => {
         }
 
         const entity = registry.createEntity();
-        entity.addComponent(MyComponent);
+        registry.addComponent(entity, MyComponent);
 
         registry.addSystem(MySystem1);
         registry.addSystem(MySystem2);

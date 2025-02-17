@@ -2,6 +2,7 @@ import { expect } from '@jest/globals';
 
 import KeyboardControlComponent from '../../src/components/KeyboardControlComponent';
 import RigidBodyComponent from '../../src/components/RigidBodyComponent';
+import Registry from '../../src/ecs/Registry';
 import KeyboardControlSystem from '../../src/systems/KeyboardControlSystem';
 import { Direction } from '../../src/types';
 
@@ -10,7 +11,8 @@ describe('Testing KeyboardControl system related functions', () => {
         const rigidBody = new RigidBodyComponent({ x: 0, y: 0 });
         const keyboardControl = new KeyboardControlComponent(-100, 100, 100, -100);
 
-        const keyboardControlSystem = new KeyboardControlSystem();
+        const registry = new Registry();
+        const keyboardControlSystem = new KeyboardControlSystem(registry);
         keyboardControlSystem.updateEntityMovement(rigidBody, keyboardControl, Direction.UP);
 
         expect(rigidBody.velocity).toEqual({ x: 0, y: -100 });
@@ -21,7 +23,8 @@ describe('Testing KeyboardControl system related functions', () => {
         const rigidBody = new RigidBodyComponent({ x: 0, y: 0 });
         const keyboardControl = new KeyboardControlComponent(-100, 100, 100, -100);
 
-        const keyboardControlSystem = new KeyboardControlSystem();
+        const registry = new Registry();
+        const keyboardControlSystem = new KeyboardControlSystem(registry);
         keyboardControlSystem.updateEntityMovement(rigidBody, keyboardControl, Direction.RIGHT);
 
         expect(rigidBody.velocity).toEqual({ x: 100, y: 0 });
@@ -32,7 +35,8 @@ describe('Testing KeyboardControl system related functions', () => {
         const rigidBody = new RigidBodyComponent({ x: 0, y: 0 });
         const keyboardControl = new KeyboardControlComponent(-100, 100, 100, -100);
 
-        const keyboardControlSystem = new KeyboardControlSystem();
+        const registry = new Registry();
+        const keyboardControlSystem = new KeyboardControlSystem(registry);
         keyboardControlSystem.updateEntityMovement(rigidBody, keyboardControl, Direction.DOWN);
 
         expect(rigidBody.velocity).toEqual({ x: 0, y: 100 });
@@ -43,7 +47,8 @@ describe('Testing KeyboardControl system related functions', () => {
         const rigidBody = new RigidBodyComponent({ x: 0, y: 0 });
         const keyboardControl = new KeyboardControlComponent(-100, 100, 100, -100);
 
-        const keyboardControlSystem = new KeyboardControlSystem();
+        const registry = new Registry();
+        const keyboardControlSystem = new KeyboardControlSystem(registry);
         keyboardControlSystem.updateEntityMovement(rigidBody, keyboardControl, Direction.LEFT);
 
         expect(rigidBody.velocity).toEqual({ x: -100, y: 0 });
@@ -54,7 +59,8 @@ describe('Testing KeyboardControl system related functions', () => {
         const rigidBody = new RigidBodyComponent({ x: 0, y: -75 });
         const keyboardControl = new KeyboardControlComponent(-100, 100, 100, -100);
 
-        const keyboardControlSystem = new KeyboardControlSystem();
+        const registry = new Registry();
+        const keyboardControlSystem = new KeyboardControlSystem(registry);
         keyboardControlSystem.updateEntityMovement(rigidBody, keyboardControl, Direction.UP);
         keyboardControlSystem.updateEntityMovement(rigidBody, keyboardControl, Direction.UP);
 
@@ -66,7 +72,8 @@ describe('Testing KeyboardControl system related functions', () => {
         const rigidBody = new RigidBodyComponent({ x: 75, y: 0 });
         const keyboardControl = new KeyboardControlComponent(-100, 100, 100, -100);
 
-        const keyboardControlSystem = new KeyboardControlSystem();
+        const registry = new Registry();
+        const keyboardControlSystem = new KeyboardControlSystem(registry);
         keyboardControlSystem.updateEntityMovement(rigidBody, keyboardControl, Direction.RIGHT);
         keyboardControlSystem.updateEntityMovement(rigidBody, keyboardControl, Direction.RIGHT);
 
@@ -78,7 +85,8 @@ describe('Testing KeyboardControl system related functions', () => {
         const rigidBody = new RigidBodyComponent({ x: 0, y: 75 });
         const keyboardControl = new KeyboardControlComponent(-100, 100, 100, -100);
 
-        const keyboardControlSystem = new KeyboardControlSystem();
+        const registry = new Registry();
+        const keyboardControlSystem = new KeyboardControlSystem(registry);
         keyboardControlSystem.updateEntityMovement(rigidBody, keyboardControl, Direction.DOWN);
         keyboardControlSystem.updateEntityMovement(rigidBody, keyboardControl, Direction.DOWN);
 
@@ -90,7 +98,8 @@ describe('Testing KeyboardControl system related functions', () => {
         const rigidBody = new RigidBodyComponent({ x: -75, y: 0 });
         const keyboardControl = new KeyboardControlComponent(-100, 100, 100, -100);
 
-        const keyboardControlSystem = new KeyboardControlSystem();
+        const registry = new Registry();
+        const keyboardControlSystem = new KeyboardControlSystem(registry);
         keyboardControlSystem.updateEntityMovement(rigidBody, keyboardControl, Direction.LEFT);
         keyboardControlSystem.updateEntityMovement(rigidBody, keyboardControl, Direction.LEFT);
 

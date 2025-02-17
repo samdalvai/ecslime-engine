@@ -77,21 +77,21 @@ export default class LevelLoader {
     private static loadEntities(registry: Registry) {
         console.log('Loading entities');
         const player = registry.createEntity();
-        player.addComponent(TransformComponent, { x: 240, y: 100 }, { x: 1, y: 1 }, 0);
-        player.addComponent(SpriteComponent, 'player-texture', 32, 32, 1, 0, 0);
-        player.addComponent(DeadBodyOnDeathComponent);
-        player.addComponent(SpriteDirectionComponent);
-        player.addComponent(ShadowComponent, 30, 10, 0, -2);
-        player.addComponent(AnimationComponent, 4, 6);
-        player.addComponent(RigidBodyComponent, { x: 0, y: 0 }, { x: 1, y: 0 });
-        player.addComponent(CameraFollowComponent);
-        player.addComponent(KeyboardControlComponent, -200, 200, 200, -200);
-        player.addComponent(ProjectileEmitterComponent, { x: 200, y: 200 }, 250, 3000, 10, true);
-        player.addComponent(BoxColliderComponent, 25, 34, { x: 2.5, y: 0 });
-        player.addComponent(HealthComponent, 100);
-        player.addComponent(CameraShakeComponent, 100);
-        player.addComponent(LightEmitComponent, 250);
-        player.tag('player');
+        registry.addComponent(player, TransformComponent, { x: 240, y: 100 }, { x: 1, y: 1 }, 0);
+        registry.addComponent(player, SpriteComponent, 'player-texture', 32, 32, 1, 0, 0);
+        registry.addComponent(player, DeadBodyOnDeathComponent);
+        registry.addComponent(player, SpriteDirectionComponent);
+        registry.addComponent(player, ShadowComponent, 30, 10, 0, -2);
+        registry.addComponent(player, AnimationComponent, 4, 6);
+        registry.addComponent(player, RigidBodyComponent, { x: 0, y: 0 }, { x: 1, y: 0 });
+        registry.addComponent(player, CameraFollowComponent);
+        registry.addComponent(player, KeyboardControlComponent, -200, 200, 200, -200);
+        registry.addComponent(player, ProjectileEmitterComponent, { x: 200, y: 200 }, 250, 3000, 10, true);
+        registry.addComponent(player, BoxColliderComponent, 25, 34, { x: 2.5, y: 0 });
+        registry.addComponent(player, HealthComponent, 100);
+        registry.addComponent(player, CameraShakeComponent, 100);
+        registry.addComponent(player, LightEmitComponent, 250);
+        registry.tagEntity(player, 'player');
 
         const enemy = registry.createEntity();
         enemy.addComponent(TransformComponent, { x: 300, y: 600 }, { x: 1, y: 1 }, 0);

@@ -13,12 +13,12 @@ describe('Testing Collision system related functions', () => {
         const eventBus = new EventBus();
 
         const entityA = registry.createEntity();
-        entityA.addComponent(TransformComponent, { x: 100, y: 100 }, { x: 1, y: 1 }, 0);
-        entityA.addComponent(BoxColliderComponent, 50, 50, { x: 0, y: 0 });
+        registry.addComponent(entityA, TransformComponent, { x: 100, y: 100 }, { x: 1, y: 1 }, 0);
+        registry.addComponent(entityA, BoxColliderComponent, 50, 50, { x: 0, y: 0 });
 
         const entityB = registry.createEntity();
-        entityB.addComponent(TransformComponent, { x: 125, y: 125 }, { x: 1, y: 1 }, 0);
-        entityB.addComponent(BoxColliderComponent, 50, 50, { x: 0, y: 0 });
+        registry.addComponent(entityB, TransformComponent, { x: 125, y: 125 }, { x: 1, y: 1 }, 0);
+        registry.addComponent(entityB, BoxColliderComponent, 50, 50, { x: 0, y: 0 });
 
         registry.addSystem(CollisionSystem);
 
@@ -45,12 +45,12 @@ describe('Testing Collision system related functions', () => {
         const eventBus = new EventBus();
 
         const entityA = registry.createEntity();
-        entityA.addComponent(TransformComponent, { x: 100, y: 100 }, { x: 1, y: 1 }, 0);
-        entityA.addComponent(BoxColliderComponent, 50, 50, { x: 0, y: 0 });
+        registry.addComponent(entityA, TransformComponent, { x: 100, y: 100 }, { x: 1, y: 1 }, 0);
+        registry.addComponent(entityA, BoxColliderComponent, 50, 50, { x: 0, y: 0 });
 
         const entityB = registry.createEntity();
-        entityB.addComponent(TransformComponent, { x: 200, y: 200 }, { x: 1, y: 1 }, 0);
-        entityB.addComponent(BoxColliderComponent, 50, 50, { x: 0, y: 0 });
+        registry.addComponent(entityB, TransformComponent, { x: 200, y: 200 }, { x: 1, y: 1 }, 0);
+        registry.addComponent(entityB, BoxColliderComponent, 50, 50, { x: 0, y: 0 });
 
         registry.addSystem(CollisionSystem);
 
