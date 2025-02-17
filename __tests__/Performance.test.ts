@@ -14,7 +14,7 @@ describe('Testing performance related functions', () => {
         const timeDelete: number[] = [];
         const timesTotal: number[] = [];
 
-        for (let x = 0; x < 10; x++) {
+        for (let x = 0; x < 100; x++) {
             const start = performance.now();
             const registry = new Registry();
             registry.addSystem(MovementSystem);
@@ -44,7 +44,7 @@ describe('Testing performance related functions', () => {
 
             timesTotal.push(performance.now() - start);
 
-            expect(system?.getSystemEntities().size).toBe(0);
+            expect(system?.getSystemEntities().length).toBe(0);
         }
 
         let sum = 0;
