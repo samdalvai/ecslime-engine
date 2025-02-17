@@ -21,7 +21,7 @@ export default class DeadBodyOnDeathSystem extends System {
     onEntityDeath = (event: EntityKilledEvent) => {
         const entity = event.entity;
 
-        if (entity.hasComponent(DeadBodyOnDeathComponent)) {
+        if (registry.hasComponent(entity, DeadBodyOnDeathComponent)) {
             const sprite = this.registry.getComponent(entity, SpriteComponent);
             const transform = this.registry.getComponent(entity, TransformComponent);
             const rigidBody = this.registry.getComponent(entity, RigidBodyComponent);
@@ -59,7 +59,7 @@ export default class DeadBodyOnDeathSystem extends System {
                 );
                 deadBody.addComponent(LifetimeComponent, 5000);
 
-                if (entity.hasComponent(ShadowComponent)) {
+                if (registry.hasComponent(entity, ShadowComponent)) {
                     const shadow = this.registry.getComponent(entity, ShadowComponent);
 
                     if (!shadow) {

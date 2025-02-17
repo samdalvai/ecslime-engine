@@ -26,15 +26,16 @@ describe('Testing System related functions', () => {
     });
 
     test('A system requiring a component should add entity to his system entitites', () => {
+        const registry = new Registry();
+
         class MyComponent extends Component {}
         class MySystem extends System {
             constructor() {
-                super();
+                super(registry);
                 this.requireComponent(MyComponent);
             }
         }
 
-        const registry = new Registry();
         registry.addSystem(MySystem);
 
         const entity = registry.createEntity();
@@ -48,21 +49,22 @@ describe('Testing System related functions', () => {
     });
 
     test('A system requiring a component should add multiple entities to his system entitites', () => {
+        const registry = new Registry();
+
         class MyComponent extends Component {}
         class MySystem extends System {
             constructor() {
-                super();
+                super(registry);
                 this.requireComponent(MyComponent);
             }
         }
 
-        const registry = new Registry();
         registry.addSystem(MySystem);
 
         const entity1 = registry.createEntity();
-        entity1.addComponent(MyComponent);
+        registry.addComponent(entity1, MyComponent);
         const entity2 = registry.createEntity();
-        entity2.addComponent(MyComponent);
+        registry.addComponent(entity2, MyComponent);
 
         registry.update();
 
@@ -73,14 +75,15 @@ describe('Testing System related functions', () => {
     });
 
     test('A system with no required component should not add any entity to his system entitites', () => {
+        const registry = new Registry();
+
         class MyComponent extends Component {}
         class MySystem extends System {
             constructor() {
-                super();
+                super(registry);
             }
         }
 
-        const registry = new Registry();
         registry.addSystem(MySystem);
 
         const entity = registry.createEntity();
