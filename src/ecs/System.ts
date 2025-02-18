@@ -41,7 +41,12 @@ export default class System extends ISystem {
     };
 
     removeEntityFromSystem = (entity: Entity) => {
-        this.entities.splice(this.entities.indexOf(entity), 1);
+        const entityIndex = this.entities.indexOf(entity);
+        if (entityIndex === -1) {
+            return;
+        }
+        this.entities[entityIndex] = this.entities[this.entities.length - 1];
+        this.entities.pop();
     };
 
     getSystemEntities = () => {
