@@ -13,6 +13,7 @@ export default class RenderSystem extends System {
     }
 
     update(ctx: CanvasRenderingContext2D, assetStore: AssetStore, camera: Rectangle) {
+        const start = performance.now();
         const renderableEntities: {
             sprite: SpriteComponent;
             transform: TransformComponent;
@@ -57,23 +58,41 @@ export default class RenderSystem extends System {
             const transform = entity.transform;
 
             if (entity.shadow) {
-                ctx.save();
+                if (!entity.shadow.cachedShadow) {
+                    const offscreenCanvas = document.createElement('canvas');
+                    offscreenCanvas.width = entity.shadow.width;
+                    offscreenCanvas.height = entity.shadow.height;
+                    const offscreenCtx = offscreenCanvas.getContext('2d');
 
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.35)'; // Semi-transparent black
+                    if (!offscreenCtx) {
+                        throw new Error('Could not initialize offscreen canvas');
+                    }
 
-                // Position the shadow below the entity
+                    offscreenCtx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+                    offscreenCtx.beginPath();
+                    offscreenCtx.ellipse(
+                        offscreenCanvas.width / 2,
+                        offscreenCanvas.height / 2,
+                        entity.shadow.width / 2,
+                        entity.shadow.height / 2,
+                        0,
+                        0,
+                        2 * Math.PI,
+                    );
+                    offscreenCtx.fill();
+
+                    entity.shadow.cachedShadow = offscreenCanvas;
+                }
                 const shadowX =
                     transform.position.x + entity.shadow.offsetX + (sprite.width * transform.scale.x) / 2 - camera.x;
                 const shadowY =
                     transform.position.y + entity.shadow.offsetY + sprite.height * transform.scale.y - camera.y;
 
-                // Draw an ellipse as the shadow
-                ctx.beginPath();
-                ctx.ellipse(shadowX, shadowY, entity.shadow.width / 2, entity.shadow.height / 2, 0, 0, 2 * Math.PI);
-                ctx.fill();
-
-                // Restore the canvas state
-                ctx.restore();
+                ctx.drawImage(
+                    entity.shadow.cachedShadow,
+                    shadowX - entity.shadow.width / 2,
+                    shadowY - entity.shadow.height / 2,
+                );
             }
 
             const srcRect: Rectangle = sprite.srcRect;
@@ -126,5 +145,6 @@ export default class RenderSystem extends System {
 
             ctx.restore();
         }
+        console.log(performance.now() - start);
     }
 }

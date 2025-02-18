@@ -5,6 +5,7 @@ export default class ShadowComponent extends Component {
     height: number;
     offsetX: number;
     offsetY: number;
+    cachedShadow: HTMLCanvasElement | null;
 
     constructor(width = 0, height = 0, offsetX = 0, offsetY = 0) {
         super();
@@ -12,5 +13,6 @@ export default class ShadowComponent extends Component {
         this.height = height;
         this.offsetX = offsetX;
         this.offsetY = offsetY;
+        this.cachedShadow = null;
     }
 }
