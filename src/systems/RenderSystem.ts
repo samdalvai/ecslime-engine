@@ -13,7 +13,6 @@ export default class RenderSystem extends System {
     }
 
     update(ctx: CanvasRenderingContext2D, assetStore: AssetStore, camera: Rectangle) {
-        const start = performance.now();
         const renderableEntities: {
             sprite: SpriteComponent;
             transform: TransformComponent;
@@ -145,6 +144,5 @@ export default class RenderSystem extends System {
 
             ctx.restore();
         }
-        console.log(performance.now() - start);
     }
 }
