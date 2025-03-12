@@ -42,20 +42,20 @@ export default class RenderGUISystem extends System {
             magicBubbleWidth * magicBubbleScale,
         );
 
-        const fireBallScale = 1.5;
-        const fireBallWidth = 32;
-        const fireBallHeight = 32;
+        const fireballScale = 1.5;
+        const fireballWidth = 32;
+        const fireballHeight = 32;
 
         ctx.drawImage(
             assetStore.getTexture('fireball-texture'),
             0,
             32,
-            fireBallWidth,
-            fireBallHeight,
+            fireballWidth,
+            fireballHeight,
             padding + magicBubbleWidth * magicBubbleScale + 6,
             Game.windowHeight - 64 - padding + 6,
-            fireBallWidth * fireBallScale,
-            fireBallWidth * fireBallScale,
+            fireballWidth * fireballScale,
+            fireballWidth * fireballScale,
         );
 
         const mouseMenuScale = 2.0;

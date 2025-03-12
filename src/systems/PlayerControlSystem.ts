@@ -1,8 +1,12 @@
 import AnimationComponent from '../components/AnimationComponent';
+import BoxColliderComponent from '../components/BoxColliderComponent';
 import EntityDestinationComponent from '../components/EntityDestinationComponent';
+import EntityEffectComponent from '../components/EntityEffectComponent';
 import HighlightComponent from '../components/HighlightComponent';
 import LifetimeComponent from '../components/LifetimeComponent';
+import ParticleEmitComponent from '../components/ParticleEmitComponent';
 import PlayerControlComponent from '../components/PlayerControlComponent';
+import ProjectileComponent from '../components/ProjectileComponent';
 import RangedAttackEmitterComponent from '../components/RangedAttackEmitterComponent';
 import RigidBodyComponent from '../components/RigidBodyComponent';
 import SlowTimeComponent from '../components/SlowTimeComponent';
@@ -17,6 +21,7 @@ import MouseMoveEvent from '../events/MouseMoveEvent';
 import MousePressedEvent from '../events/MousePressedEvent';
 import RangedAttackEmitEvent from '../events/RangedAttackEmitEvent';
 import { Flip, Vector } from '../types';
+import { computeDirectionVector, computeUnitVector } from '../utils/vector';
 import EntityDestinationSystem from './EntityDestinationSystem';
 import RenderEntityDestinationSystem from './debug/RenderEntityDestinationSystem';
 
@@ -135,6 +140,9 @@ export default class PlayerControlSystem extends System {
             case 'Digit1':
                 this.emitMagicBubble(this.mousePosition);
                 break;
+            case 'Digit2':
+                this.emitFireball(this.mousePosition);
+                break;
         }
     };
 
@@ -181,5 +189,62 @@ export default class PlayerControlSystem extends System {
         bubbleTop.addComponent(SlowTimeComponent, 60 * scale, 0.2, true);
         bubbleTop.addComponent(LifetimeComponent, 5000);
         bubbleTop.group('slow-time');
+    };
+
+    private emitFireball = (coordinates: Vector) => {
+        const player = this.registry.getEntityByTag('player');
+
+        if (!player) {
+            throw new Error('Could not find entity with tag "Player"');
+        }
+
+        const transform = player.getComponent(TransformComponent);
+        const sprite = player.getComponent(SpriteComponent);
+
+        if (!transform || !sprite) {
+            throw new Error('Could not find some component(s) of entity with id ' + player.getId());
+        }
+
+        const projectileDirection = computeDirectionVector(
+            transform.position.x + (sprite.width / 2) * transform.scale.x,
+            transform.position.y + (sprite.height / 2) * transform.scale.y,
+            coordinates.x,
+            coordinates.y,
+            200,
+        );
+
+        if (player.hasComponent(RigidBodyComponent)) {
+            const rigidBody = player.getComponent(RigidBodyComponent);
+
+            if (!rigidBody) {
+                throw new Error('Could not find some component(s) of entity with id ' + player.getId());
+            }
+
+            rigidBody.direction = computeUnitVector(projectileDirection.x, projectileDirection.y);
+        }
+
+        const projectilePosition = { x: transform.position.x - 16, y: transform.position.y - 16 };
+
+        if (player.hasComponent(SpriteComponent)) {
+            const sprite = player.getComponent(SpriteComponent);
+
+            if (!sprite) {
+                throw new Error('Could not find some component(s) of entity with id ' + player.getId());
+            }
+
+            projectilePosition.x += (sprite.width / 2) * transform.scale.x;
+            projectilePosition.y += (sprite.height / 2) * transform.scale.y;
+        }
+
+        const projectile = this.registry.createEntity();
+        projectile.group('projectiles');
+        projectile.addComponent(TransformComponent, projectilePosition, { x: 1.0, y: 1.0 }, 0.0);
+        projectile.addComponent(RigidBodyComponent, projectileDirection);
+        projectile.addComponent(SpriteComponent, 'fireball-texture', 32, 32, 4);
+        projectile.addComponent(BoxColliderComponent, 8, 8, { x: 12, y: 12 });
+        projectile.addComponent(ProjectileComponent, true, 20);
+        projectile.addComponent(LifetimeComponent, 5000);
+        projectile.addComponent(ParticleEmitComponent, 2, 300, 'rgba(255,100,100,0.5)', 100, 5, 16, 16);
+        projectile.addComponent(EntityEffectComponent);
     };
 }
