@@ -236,15 +236,24 @@ export default class PlayerControlSystem extends System {
             projectilePosition.y += (sprite.height / 2) * transform.scale.y;
         }
 
+        // atan2 returns values between -π and +π radians, which correspond to angles between -180 and +180 degrees.
+        const angleInRadians = Math.atan2(projectileDirection.x, projectileDirection.y);
+        let angleInDegrees = -1 * angleInRadians * (180 / Math.PI);
+
+        // Ensure the angle is between 0 and 360 degrees
+        if (angleInDegrees < 0) {
+            angleInDegrees += 360;
+        }
+
         const projectile = this.registry.createEntity();
         projectile.group('projectiles');
-        projectile.addComponent(TransformComponent, projectilePosition, { x: 1.0, y: 1.0 }, 0.0);
+        projectile.addComponent(TransformComponent, projectilePosition, { x: 1.0, y: 1.0 }, angleInDegrees);
         projectile.addComponent(RigidBodyComponent, projectileDirection);
-        projectile.addComponent(SpriteComponent, 'fireball-texture', 32, 32, 4);
+        projectile.addComponent(SpriteComponent, 'fireball-texture', 32, 32, 4, 0, 32 * 2);
         projectile.addComponent(BoxColliderComponent, 8, 8, { x: 12, y: 12 });
         projectile.addComponent(ProjectileComponent, true, 20);
         projectile.addComponent(LifetimeComponent, 5000);
-        projectile.addComponent(ParticleEmitComponent, 2, 300, 'rgba(255,100,100,0.5)', 100, 5, 16, 16);
+        projectile.addComponent(ParticleEmitComponent, 3, 300, 'rgba(255,100,100,0.5)', 25, 20, 16, 16);
         projectile.addComponent(EntityEffectComponent);
     };
 }
