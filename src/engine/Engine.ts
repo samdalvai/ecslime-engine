@@ -4,6 +4,10 @@ import EventBus from './event-bus/EventBus';
 import InputManager from './input-manager/InputManager';
 import LevelManager from './level-manager/LevelManager';
 import { GameStatus, Rectangle, Vector } from './types/utils';
+import { sleep } from './utils/time';
+
+const FPS = 60;
+const MILLISECS_PER_FRAME = 1000 / FPS;
 
 export default abstract class Engine {
     // Objects for rendering
@@ -28,6 +32,7 @@ export default abstract class Engine {
     protected maxFPS: number;
     protected frameDuration: number;
     protected millisecondsLastFPSUpdate: number;
+    private millisecsPreviousFrame = 0;
 
     // Global engine objects
     static mousePositionScreen: Vector;
@@ -126,6 +131,38 @@ export default abstract class Engine {
 
     protected abstract render(): void;
 
+    // run = async () => {
+    //     console.log('Initializing Engine');
+    //     this.initialize();
+
+    //     console.log('Setting up systems');
+    //     await this.setup();
+
+    //     console.log('Running Engine');
+    //     let lastTime = performance.now();
+
+    //     const loop = () => {
+    //         if (this.isRunning) {
+    //             const currentTime = performance.now();
+    //             const deltaTime = (currentTime - lastTime) / 1000.0;
+
+    //             if (this.isDebug) {
+    //                 this.updateDebugInfo(deltaTime);
+    //             }
+
+    //             this.processInput();
+    //             this.update(deltaTime);
+    //             this.render();
+
+    //             lastTime = currentTime;
+
+    //             requestAnimationFrame(loop);
+    //         }
+    //     };
+
+    //     requestAnimationFrame(loop);
+    // };
+
     run = async () => {
         console.log('Initializing Engine');
         this.initialize();
@@ -134,27 +171,27 @@ export default abstract class Engine {
         await this.setup();
 
         console.log('Running Engine');
-        let lastTime = performance.now();
+        const loop = async () => {
+            while (this.isRunning) {
+                this.processInput();
 
-        const loop = () => {
-            if (this.isRunning) {
-                const currentTime = performance.now();
-                const deltaTime = (currentTime - lastTime) / 1000.0;
+                const timeToWait = MILLISECS_PER_FRAME - (performance.now() - this.millisecsPreviousFrame);
+                if (timeToWait > 0 && timeToWait <= MILLISECS_PER_FRAME) {
+                    await sleep(timeToWait);
+                }
+
+                // The difference in milliseconds since the last frame, converted to seconds
+                const deltaTime = (performance.now() - this.millisecsPreviousFrame) / 1000.0;
+                this.millisecsPreviousFrame = performance.now();
 
                 if (this.isDebug) {
                     this.updateDebugInfo(deltaTime);
                 }
 
-                this.processInput();
                 this.update(deltaTime);
                 this.render();
-
-                lastTime = currentTime;
-
-                requestAnimationFrame(loop);
             }
         };
-
-        requestAnimationFrame(loop);
+        loop();
     };
 }
