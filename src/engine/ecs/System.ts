@@ -18,12 +18,12 @@ export class ISystem {
 export default class System extends ISystem {
     private static _id?: number;
     private componentSignature: Signature;
-    private entities: Entity[];
+    private entities: Set<Entity>;
 
     constructor() {
         super();
         this.componentSignature = new Signature();
-        this.entities = [];
+        this.entities = new Set();
     }
 
     static getSystemId() {
@@ -34,16 +34,11 @@ export default class System extends ISystem {
     }
 
     addEntityToSystem = (entity: Entity) => {
-        this.entities.push(entity);
+        this.entities.add(entity);
     };
 
     removeEntityFromSystem = (entity: Entity) => {
-        const entityIndex = this.entities.indexOf(entity);
-        if (entityIndex === -1) {
-            return;
-        }
-        this.entities[entityIndex] = this.entities[this.entities.length - 1];
-        this.entities.pop();
+        this.entities.delete(entity);
     };
 
     getSystemEntities = () => {
@@ -60,6 +55,6 @@ export default class System extends ISystem {
     };
 
     removeAllEntities = () => {
-        this.entities = [];
+        this.entities.clear();
     };
 }

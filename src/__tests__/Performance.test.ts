@@ -1,18 +1,20 @@
 // import LifetimeComponent from '../game/components/LifetimeComponent';
+import Registry from '../engine/ecs/Registry';
 import RigidBodyComponent from '../game/components/RigidBodyComponent';
 import TransformComponent from '../game/components/TransformComponent';
-import Registry from '../engine/ecs/Registry';
 import LifetimeSystem from '../game/systems/LifeTimeSystem';
 import MovementSystem from '../game/systems/MovementSystem';
 
 describe('Testing performance related functions', () => {
     test('A test on performance', () => {
+        const numOfRepetition = 100;
+
         const timeAdd: number[] = [];
         const timeUpdate: number[] = [];
         const timeDelete: number[] = [];
         const timesTotal: number[] = [];
 
-        for (let x = 0; x < 10; x++) {
+        for (let x = 0; x < numOfRepetition; x++) {
             const start = performance.now();
             const registry = new Registry();
             registry.addSystem(MovementSystem);
@@ -46,7 +48,7 @@ describe('Testing performance related functions', () => {
 
             timesTotal.push(performance.now() - start);
 
-            expect(movementSystem?.getSystemEntities().length).toBe(0);
+            expect(movementSystem?.getSystemEntities().size).toBe(0);
         }
 
         let sum = 0;

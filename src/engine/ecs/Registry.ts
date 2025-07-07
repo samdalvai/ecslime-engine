@@ -6,7 +6,7 @@ import System, { SystemClass } from './System';
 
 export default class Registry {
     numEntities: number;
-    entities: Map<number, Entity>;
+    entities: Set<Entity>;
 
     // [Array index = component type id] - [Pool index = entity id]
     componentPools: IPool[];
@@ -32,7 +32,7 @@ export default class Registry {
 
     constructor() {
         this.numEntities = 0;
-        this.entities = new Map();
+        this.entities = new Set();
         this.componentPools = [];
         this.entityComponentSignatures = [];
         this.systems = new Map();
@@ -50,7 +50,7 @@ export default class Registry {
             this.addEntityToSystems(entity);
         }
 
-        this.entitiesToBeAdded = [];
+        this.entitiesToBeAdded.length = 0;
 
         for (const entity of this.entitiesToBeKilled) {
             this.removeEntityFromSystems(entity);
@@ -73,10 +73,10 @@ export default class Registry {
                 this.removeEntityGroup(entity);
             }
 
-            this.entities.delete(entity.getId());
+            this.entities.delete(entity);
         }
 
-        this.entitiesToBeKilled = [];
+        this.entitiesToBeKilled.length = 0;
     };
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -97,7 +97,7 @@ export default class Registry {
 
         const entity = new Entity(entityId, this);
         this.entitiesToBeAdded.push(entity);
-        this.entities.set(entity.getId(), entity);
+        this.entities.add(entity);
 
         return entity;
     };
@@ -114,10 +114,6 @@ export default class Registry {
 
     getAllEntities = () => {
         return this.entities.values();
-    };
-
-    getEntityById = (entityId: number) => {
-        return this.entities.get(entityId);
     };
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -338,7 +334,7 @@ export default class Registry {
             );
         }
 
-        if (system.getSystemEntities().indexOf(entity) !== -1) {
+        if (!system.getSystemEntities().has(entity)) {
             throw new Error(
                 'Entity with id ' + entityId + ' is already present in system with id ' + SystemClass.getSystemId(),
             );
