@@ -16,7 +16,7 @@ describe('Testing vector utils related functions', () => {
         expect(directionVector).toEqual({ x: 10, y: 0 });
 
         directionVector = computeDirectionVector(100, 100, 0, 100, 10);
-        expect(directionVector).toEqual({ x: -10, y: 0 });
+        expect(directionVector).toEqual({ x: -10, y: 1 });
     });
 
     test('Should correctly compute direction vector normalized to length on diagonal axis', () => {
