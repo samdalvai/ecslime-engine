@@ -1,6 +1,5 @@
 import Engine from '../../engine/Engine';
 import AssetStore from '../../engine/asset-store/AssetStore';
-import Component from '../../engine/ecs/Component';
 import Entity from '../../engine/ecs/Entity';
 import Registry from '../../engine/ecs/Registry';
 import System from '../../engine/ecs/System';
@@ -13,7 +12,6 @@ import {
     saveLevelToJson,
 } from '../../engine/serialization/persistence';
 import { LevelMap } from '../../engine/types/map';
-import { Rectangle, Vector } from '../../engine/types/utils';
 import { isValidLevelMap } from '../../engine/utils/level';
 import * as GameComponents from '../../game/components';
 import EntityKilledEvent from '../../game/events/EntityKilledEvent';
@@ -22,7 +20,8 @@ import Editor from '../Editor';
 import EntityDeleteEvent from '../events/EntityDeleteEvent';
 import EntityDuplicateEvent from '../events/EntityDuplicateEvent';
 import EntitySelectEvent from '../events/EntitySelectEvent';
-import { showAlert } from '../gui';
+import { showAlert } from '../gui/alert';
+import { createInput, createListItem, getComponentContainer, getComponentsForms } from '../gui/forms';
 import {
     deleteLevelInLocalStorage,
     getAllLevelKeysFromLocalStorage,
@@ -242,7 +241,7 @@ export default class RenderSidebarSystem extends System {
                 registry.removeEntityFromSystems(entity);
                 registry.addEntityToSystems(entity);
 
-                const componentContainer = this.getComponentContainer(component, entity, assetStore, registry);
+                const componentContainer = getComponentContainer(component, entity, assetStore, registry);
                 li.appendChild(componentContainer);
 
                 this.scrollToListElement(leftSidebar, `#${component.constructor.name}-${entity.getId()}`);
@@ -268,7 +267,7 @@ export default class RenderSidebarSystem extends System {
         componentSelector.appendChild(select);
         li.appendChild(componentSelector);
 
-        const forms = this.getComponentsForms(entityComponents, entity, assetStore, registry);
+        const forms = getComponentsForms(entityComponents, entity, assetStore, registry);
         li.appendChild(forms);
 
         return li;
@@ -282,7 +281,7 @@ export default class RenderSidebarSystem extends System {
         }
 
         for (const systemKey in GameSystems) {
-            const checkBoxInput = this.createInput(
+            const checkBoxInput = createInput(
                 'checkbox',
                 systemKey,
                 Editor.editorSettings.activeSystems[systemKey as keyof typeof GameSystems],
@@ -292,7 +291,7 @@ export default class RenderSidebarSystem extends System {
                 Editor.editorSettings.activeSystems[systemKey as keyof typeof GameSystems] = target.checked;
                 saveEditorSettingsToLocalStorage();
             });
-            const propertyLi = this.createListItem(systemKey, checkBoxInput);
+            const propertyLi = createListItem(systemKey, checkBoxInput);
             activeSystemsList.appendChild(propertyLi);
         }
     };
@@ -545,298 +544,6 @@ export default class RenderSidebarSystem extends System {
         Editor.editorSettings.selectedLevel = levelId;
         levelSelectElement.value = levelId;
         saveEditorSettingsToLocalStorage();
-    };
-
-    private getComponentsForms = (
-        entityComponents: Component[],
-        entity: Entity,
-        assetStore: AssetStore,
-        registry: Registry,
-    ): HTMLElement => {
-        const container = document.createElement('div');
-        container.className = 'pt-2';
-
-        for (const component of entityComponents) {
-            const componentContainer = this.getComponentContainer(component, entity, assetStore, registry);
-            container.append(componentContainer);
-        }
-
-        return container;
-    };
-
-    private getComponentContainer = (
-        component: Component,
-        entity: Entity,
-        assetStore: AssetStore,
-        registry: Registry,
-    ) => {
-        const componentContainer = document.createElement('div');
-        componentContainer.className = 'pb-2';
-        componentContainer.id = component.constructor.name + '-' + entity.getId();
-
-        const componentHeader = document.createElement('div');
-        componentHeader.className = 'd-flex space-between align-center';
-
-        const title = document.createElement('span');
-        const componentName = component.constructor.name;
-        title.innerText = '* ' + componentName;
-        title.style.textDecoration = 'underline';
-
-        const removeButton = document.createElement('button');
-        removeButton.innerText = 'REMOVE';
-        removeButton.onclick = () => {
-            const componentContainerToDelete = document.getElementById(
-                component.constructor.name + '-' + entity.getId(),
-            );
-
-            if (!componentContainerToDelete) {
-                throw new Error(
-                    'Could not find component container to delete with id ' +
-                        (component.constructor.name + '-' + entity.getId()),
-                );
-            }
-            componentContainerToDelete.remove();
-            const ComponentClass = GameComponents[component.constructor.name as keyof typeof GameComponents];
-            entity.removeComponent(ComponentClass);
-
-            entity.registry.removeEntityFromSystems(entity);
-            entity.registry.addEntityToSystems(entity);
-        };
-
-        componentHeader.append(title);
-        componentHeader.append(removeButton);
-        componentContainer.append(componentHeader);
-
-        const properties = Object.keys(component);
-
-        for (const key of properties) {
-            const form = this.getPropertyInput(
-                key,
-                (component as any)[key],
-                component,
-                entity.getId(),
-                assetStore,
-                registry,
-            );
-
-            if (form) {
-                componentContainer.append(form);
-            }
-        }
-
-        if (properties.length === 0) {
-            const li = document.createElement('li');
-            li.className = 'd-flex align-center';
-            li.innerText = 'No property for this component...';
-            componentContainer.append(li);
-        }
-
-        return componentContainer;
-    };
-
-    private getPropertyInput = (
-        propertyName: string,
-        propertyValue: string | number | boolean | Vector | Rectangle,
-        component: Component,
-        entityId: number,
-        assetStore: AssetStore,
-        registry: Registry,
-    ) => {
-        if (propertyValue === null) {
-            return null;
-        }
-
-        if (component.constructor.name === 'SpriteComponent' && propertyName === 'assetId') {
-            const container = document.createElement('div');
-            container.className = 'd-flex flex-col';
-
-            const select = document.createElement('select');
-            select.id = propertyName + '-' + entityId;
-
-            const textureIds = assetStore.getAllTexturesIds();
-            const options: { value: string; text: string }[] = [];
-
-            for (const textureId of textureIds) {
-                options.push({ value: textureId, text: textureId ? textureId : 'Unknown' });
-            }
-
-            options.forEach(optionData => {
-                const option = document.createElement('option');
-                option.value = optionData.value;
-                option.textContent = optionData.text;
-                select.appendChild(option);
-            });
-
-            select.value = (component as any)[propertyName];
-
-            select.addEventListener('change', (event: Event): void => {
-                const target = event.target as HTMLSelectElement;
-                (component as any)[propertyName] = target.value;
-
-                const currentSpriteImage = document.getElementById('spritesheet-' + entityId) as HTMLImageElement;
-
-                if (!currentSpriteImage) {
-                    throw new Error('Could not find spritesheet image for entity with id ' + entityId);
-                }
-
-                saveCurrentLevelToLocalStorage(Editor.editorSettings.selectedLevel, registry, assetStore);
-                const newAssetImg = assetStore.getTexture((component as GameComponents.SpriteComponent).assetId);
-                currentSpriteImage.src = newAssetImg.src;
-                currentSpriteImage.style.maxHeight = (newAssetImg.height > 100 ? newAssetImg.height : 100) + 'px';
-            });
-
-            const propertyLi = this.createListItem(propertyName, select);
-
-            const spriteImage = document.createElement('img');
-            const assetImg = assetStore.getTexture((component as GameComponents.SpriteComponent).assetId);
-            spriteImage.src = assetImg.src;
-            spriteImage.style.objectFit = 'contain';
-            spriteImage.style.maxHeight = assetImg.height + 'px';
-            spriteImage.style.maxWidth = '100%';
-            spriteImage.style.height = 'auto';
-            spriteImage.style.width = 'auto';
-            spriteImage.id = 'spritesheet-' + entityId;
-
-            container.append(propertyLi);
-            container.append(spriteImage);
-
-            return container;
-        }
-
-        if (Array.isArray(propertyValue)) {
-            const arrayContainer = document.createElement('div');
-            for (const property of propertyValue as Array<any>) {
-                arrayContainer.append(
-                    this.createListItemWithInput(propertyName, property, component, entityId, registry, assetStore),
-                );
-            }
-
-            return arrayContainer;
-        }
-
-        return this.createListItemWithInput(propertyName, propertyValue, component, entityId, registry, assetStore);
-    };
-
-    private createListItem = (label: string, input: HTMLElement): HTMLLIElement => {
-        const li = document.createElement('li');
-        li.className = 'd-flex space-between align-center';
-
-        const span = document.createElement('span');
-        span.innerText = label;
-        span.className = 'label-text';
-
-        li.append(span);
-        li.append(input);
-        return li;
-    };
-
-    private createInput = (
-        type: 'text' | 'number' | 'checkbox',
-        id: string,
-        value: string | number | boolean,
-    ): HTMLInputElement => {
-        const input = document.createElement('input');
-        input.type = type;
-        input.id = id;
-        if (type === 'checkbox') {
-            input.checked = Boolean(value);
-        } else {
-            input.value = String(value);
-        }
-        return input;
-    };
-
-    private createListItemWithInput = (
-        propertyName: string,
-        propertyValue: string | number | boolean | object,
-        component: Component,
-        entityId: number,
-        registry: Registry,
-        assetStore: AssetStore,
-    ) => {
-        return this.createListItemWithInputRec(
-            propertyName,
-            propertyName,
-            propertyName,
-            propertyValue,
-            component,
-            entityId,
-            registry,
-            assetStore,
-        );
-    };
-
-    private createListItemWithInputRec = (
-        id: string,
-        label: string,
-        propertyName: string,
-        propertyValue: string | number | boolean | object,
-        component: Component,
-        entityId: number,
-        registry: Registry,
-        assetStore: AssetStore,
-    ) => {
-        switch (typeof propertyValue) {
-            case 'string': {
-                const textInput = this.createInput('text', id + '-' + propertyName + '-' + entityId, propertyValue);
-                textInput.addEventListener('input', event => {
-                    const target = event.target as HTMLInputElement;
-                    (component as any)[propertyName] = target.value;
-                    saveCurrentLevelToLocalStorage(Editor.editorSettings.selectedLevel, registry, assetStore);
-                });
-
-                const propertyLi = this.createListItem(label, textInput);
-                return propertyLi;
-            }
-            case 'number': {
-                const numberInput = this.createInput('number', id + '-' + propertyName + '-' + entityId, propertyValue);
-                numberInput.addEventListener('input', event => {
-                    const target = event.target as HTMLInputElement;
-                    (component as any)[propertyName] = parseFloat(target.value);
-                    saveCurrentLevelToLocalStorage(Editor.editorSettings.selectedLevel, registry, assetStore);
-                });
-                const propertyLi = this.createListItem(label, numberInput);
-                return propertyLi;
-            }
-            case 'boolean': {
-                const checkBoxInput = this.createInput(
-                    'checkbox',
-                    id + '-' + propertyName + '-' + entityId,
-                    propertyValue,
-                );
-                checkBoxInput.addEventListener('input', event => {
-                    const target = event.target as HTMLInputElement;
-                    (component as any)[propertyName] = target.checked;
-                    saveCurrentLevelToLocalStorage(Editor.editorSettings.selectedLevel, registry, assetStore);
-                });
-                const propertyLi = this.createListItem(label, checkBoxInput);
-                return propertyLi;
-            }
-            case 'object': {
-                const objectContainer = document.createElement('div');
-
-                for (const property in propertyValue) {
-                    objectContainer.append(
-                        this.createListItemWithInputRec(
-                            id,
-                            label + '-' + property,
-                            property,
-                            propertyValue[property as keyof typeof propertyValue],
-                            propertyValue,
-                            entityId,
-                            registry,
-                            assetStore,
-                        ),
-                    );
-                }
-
-                return objectContainer;
-            }
-            default:
-                throw new Error(
-                    `Uknown type of property ${propertyName} with value ${propertyValue} for component ${component.constructor.name}`,
-                );
-        }
     };
 
     private scrollToListElement = (sidebar: HTMLElement, elementId: string) => {

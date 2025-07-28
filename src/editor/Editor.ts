@@ -6,7 +6,7 @@ import { Rectangle, Vector } from '../engine/types/utils';
 import * as GameEvents from '../game/events';
 import * as GameSystems from '../game/systems';
 import ScrollEvent from './events/ScrollEvent';
-import { closeAlert } from './gui';
+import { closeAlert } from './gui/alert';
 import {
     getAllLevelKeysFromLocalStorage,
     loadEditorSettingsFromLocalStorage,
