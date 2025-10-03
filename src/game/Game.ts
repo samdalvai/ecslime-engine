@@ -54,7 +54,7 @@ export default class Game extends Engine {
 
         await this.levelManager.addLevelToAssets('grass', '/assets/levels/grass.json');
         await this.levelManager.loadLevelFromAssets('grass');
-        
+
         // await this.levelManager.addLevelToAssets('test', '/assets/levels/test.json');
         // await this.levelManager.loadLevelFromAssets('test');
         this.gameStatus = GameStatus.PLAYING;
@@ -73,6 +73,11 @@ export default class Game extends Engine {
                 case 'keydown':
                     if (inputEvent.code === 'F2') {
                         this.isDebug = !this.isDebug;
+                        if (this.overlayManager.isVisible()) {
+                            this.overlayManager.hideOverlay();
+                        } else {
+                            this.overlayManager.showOverlay();
+                        }
                     }
 
                     this.eventBus.emitEvent(GameEvents.KeyPressedEvent, inputEvent.code);

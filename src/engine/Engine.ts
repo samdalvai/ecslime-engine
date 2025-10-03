@@ -1,6 +1,7 @@
 import AssetStore from './asset-store/AssetStore';
 import Registry from './ecs/Registry';
 import EventBus from './event-bus/EventBus';
+import OverlayManager from './gui/overlay-manager';
 import InputManager from './input-manager/InputManager';
 import LevelManager from './level-manager/LevelManager';
 import LoopStrategy from './loop-strategy/LoopStrategy';
@@ -11,6 +12,7 @@ export default abstract class Engine {
     protected canvas: HTMLCanvasElement | null;
     protected ctx: CanvasRenderingContext2D | null;
     protected camera: Rectangle;
+    protected overlayManager: OverlayManager;
 
     // Ecs related objects
     protected registry: Registry;
@@ -43,6 +45,7 @@ export default abstract class Engine {
         this.canvas = null;
         this.ctx = null;
         this.camera = { x: 0, y: 0, width: window.innerWidth, height: window.innerHeight };
+        this.overlayManager = new OverlayManager();
 
         this.registry = new Registry();
         this.assetStore = new AssetStore();
