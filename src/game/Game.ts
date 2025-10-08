@@ -9,6 +9,8 @@ export default class Game extends Engine {
     }
 
     setup = async () => {
+        this.overlayManager.showOverlay();
+
         // Rendering systems
         this.registry.addSystem(Systems.RenderSystem);
         this.registry.addSystem(Systems.RenderTextSystem);
@@ -58,6 +60,7 @@ export default class Game extends Engine {
         // await this.levelManager.addLevelToAssets('test', '/assets/levels/test.json');
         // await this.levelManager.loadLevelFromAssets('test');
         this.gameStatus = GameStatus.PLAYING;
+        this.overlayManager.hideOverlay();
     };
 
     processInput = () => {
