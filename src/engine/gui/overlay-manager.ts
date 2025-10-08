@@ -29,4 +29,16 @@ export default class OverlayManager {
     isVisible = () => {
         return this.visible;
     };
+
+    setText = (text: string) => {
+        this.overlay.innerHTML = '';
+
+        const textContainer = document.createElement('div');
+        textContainer.style.fontSize = 'xx-large';
+        textContainer.style.color = 'red';
+
+        textContainer.innerText = text;
+
+        this.overlay.appendChild(textContainer);
+    };
 }

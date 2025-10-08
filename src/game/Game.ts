@@ -10,6 +10,7 @@ export default class Game extends Engine {
 
     setup = async () => {
         this.overlayManager.showOverlay();
+        this.overlayManager.setText('Initializing systems...');
 
         // Rendering systems
         this.registry.addSystem(Systems.RenderSystem);
@@ -53,13 +54,15 @@ export default class Game extends Engine {
 
         // await this.levelManager.addLevelToAssets('snapshot', '/assets/levels/snapshot.json');
         // await this.levelManager.loadLevelFromAssets('snapshot');
-
+        
+        this.overlayManager.setText('Loading assets...');
         await this.levelManager.addLevelToAssets('grass', '/assets/levels/grass.json');
         await this.levelManager.loadLevelFromAssets('grass');
 
         // await this.levelManager.addLevelToAssets('test', '/assets/levels/test.json');
         // await this.levelManager.loadLevelFromAssets('test');
         this.gameStatus = GameStatus.PLAYING;
+        this.overlayManager.setText('Running game...');
         this.overlayManager.hideOverlay();
     };
 
