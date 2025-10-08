@@ -139,16 +139,23 @@ export default abstract class Engine {
     };
 
     public runFrame = (deltaTime: number) => {
-        if (this.isDebug) {
-            this.updateDebugInfo(deltaTime);
-        }
+        try {
+            if (this.isDebug) {
+                this.updateDebugInfo(deltaTime);
+            }
 
-        this.processInput();
-        this.update(deltaTime);
-        this.render();
+            this.processInput();
+            this.update(deltaTime);
+            this.render();
+        } catch (error: any) {
+            this.overlayManager.showOverlay();
+            this.overlayManager.setText('A fatal error occurred: "' + error.message + '"');
+            throw error;
+        }
     };
 
     public run = async () => {
+        // TODO: can we catch errors for each of these methods??
         console.log('Initializing Engine');
         this.initialize();
 
