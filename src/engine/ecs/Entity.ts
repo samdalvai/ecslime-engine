@@ -77,7 +77,9 @@ export default class Entity {
     removeGroup() {
         this._registry.removeEntityGroup(this);
     }
-
+    
+    // TODO: adding a component from an entity requires explicitely adding it 
+    // also to related system, find a way to do it automatically and in an efficient way
     addComponent<T extends ComponentClass>(
         ComponentClass: T,
         ...args: ConstructorParameters<T>
