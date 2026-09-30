@@ -1212,4 +1212,29 @@ describe('Testing Registry related functions', () => {
         expect(system1?.getSystemEntities().length).toEqual(0);
         expect(system2?.getSystemEntities().length).toEqual(0);
     });
+
+    test('Adding a component to an entity should add it to the pending component change queue', () => {
+        class MyComponent extends Component {}
+
+        const registry = new Registry();
+        const entity = registry.createEntity();
+        registry.update();
+
+        entity.addComponent(MyComponent);
+
+        expect(registry.pendingComponentChange.size).toBe(1);
+    });
+
+    test('Adding a component twice to an entity should add it to the pending component change queue once', () => {
+        class MyComponent extends Component {}
+
+        const registry = new Registry();
+        const entity = registry.createEntity();
+        registry.update();
+
+        entity.addComponent(MyComponent);
+        entity.addComponent(MyComponent);
+
+        expect(registry.pendingComponentChange.size).toBe(1);
+    });
 });
