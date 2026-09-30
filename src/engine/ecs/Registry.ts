@@ -6,6 +6,8 @@ import Pool, { IPool } from './Pool';
 import Signature from './Signature';
 import System, { SystemClass } from './System';
 
+type ComponentChange = { kind: 'add'; component: Component } | { kind: 'remove' };
+
 export default class Registry {
     private _numEntities: number;
     private _entities: Map<number, Entity>;
@@ -21,6 +23,9 @@ export default class Registry {
 
     private _entitiesToBeAdded: Entity[];
     private _entitiesToBeKilled: Entity[];
+
+    // Pending component add or remove by device id
+    private _pendingComponentChange: Map<number, Map<number, ComponentChange>>;
 
     // Entity tags (one tag name per entity)
     private _entityPerTag: Map<string, Entity>;
@@ -40,6 +45,7 @@ export default class Registry {
         this._systems = new Map();
         this._entitiesToBeAdded = [];
         this._entitiesToBeKilled = [];
+        this._pendingComponentChange = new Map();
         this._entityPerTag = new Map();
         this._tagPerEntity = new Map();
         this._entitiesPerGroup = new Map();
@@ -73,6 +79,10 @@ export default class Registry {
 
     get entitiesToBeKilled(): readonly Entity[] {
         return this._entitiesToBeKilled;
+    }
+
+    get pendingComponentChange(): Map<number, Map<number, ComponentChange>> {
+        return this._pendingComponentChange;
     }
 
     get entityPerTag(): ReadonlyMap<string, Entity> {
@@ -166,6 +176,9 @@ export default class Registry {
 
         this._entitiesToBeAdded = [];
 
+        // TODO: handle component add queue
+        // TODO: handle component remove queue
+
         for (const entity of this._entitiesToBeKilled) {
             this.removeEntityFromSystems(entity);
             this._entityComponentSignatures[entity.getId()].reset();
@@ -191,6 +204,7 @@ export default class Registry {
         }
 
         this._entitiesToBeKilled = [];
+        this._pendingComponentChange.clear();
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -381,6 +395,7 @@ export default class Registry {
         const componentId = ComponentClass.getComponentId();
         const entityId = entity.getId();
 
+        // TODO: updating component pools should be deferred to the component processing queue
         if (this._componentPools[componentId] === undefined) {
             const newComponentPool = new Pool<InstanceType<T>>();
             this._componentPools[componentId] = newComponentPool;
@@ -390,7 +405,20 @@ export default class Registry {
         (this._componentPools[componentId] as Pool<InstanceType<T>>).set(entityId, newComponent);
 
         this._entityComponentSignatures[entityId].set(componentId);
-        return newComponent
+
+        let pendingChanges = this._pendingComponentChange.get(entityId);
+
+        if (!pendingChanges) {
+            pendingChanges = new Map();
+            this._pendingComponentChange.set(entityId, pendingChanges);
+        }
+
+        pendingChanges.set(componentId, {
+            kind: 'add',
+            component: newComponent,
+        });
+
+        return newComponent;
     }
 
     removeComponent<T extends ComponentClass>(entity: Entity, ComponentClass: T) {
