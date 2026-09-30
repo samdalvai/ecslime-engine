@@ -83,8 +83,8 @@ export default class Entity {
     addComponent<T extends ComponentClass>(
         ComponentClass: T,
         ...args: ConstructorParameters<T>
-    ): void {
-        this._registry.addComponent(this, ComponentClass, ...args);
+    ): InstanceType<T> {
+        return this._registry.addComponent(this, ComponentClass, ...args);
     }
 
     // TODO: removing a component from an entity requires explicitely removing it 
