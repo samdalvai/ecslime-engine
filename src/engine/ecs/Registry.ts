@@ -377,7 +377,7 @@ export default class Registry {
         entity: Entity,
         ComponentClass: T,
         ...args: ConstructorParameters<T>
-    ) {
+    ): InstanceType<T> {
         const componentId = ComponentClass.getComponentId();
         const entityId = entity.getId();
 
@@ -390,7 +390,7 @@ export default class Registry {
         (this._componentPools[componentId] as Pool<InstanceType<T>>).set(entityId, newComponent);
 
         this._entityComponentSignatures[entityId].set(componentId);
-        // console.log('Component with id ' + componentId + ' was added to entity with id ' + entityId);
+        return newComponent
     }
 
     removeComponent<T extends ComponentClass>(entity: Entity, ComponentClass: T) {
