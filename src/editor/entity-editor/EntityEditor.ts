@@ -189,13 +189,7 @@ export default class EntityEditor {
         if (entity.hasComponent(ComponentClass)) {
             showAlert(`Entity with id ${entity.getId()} already has component ` + entityComponentSelector.value);
         } else {
-            entity.addComponent(ComponentClass);
-
-            const component = entity.getComponent(ComponentClass);
-
-            if (!component) {
-                throw new Error('Could not find new component for entity ' + entity.getId());
-            }
+            const component = entity.addComponent(ComponentClass);
 
             // Entities are added to systems only on creation, here we force and update to all systems
             this.registry.removeEntityFromSystems(entity);
