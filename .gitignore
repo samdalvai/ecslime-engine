@@ -4,6 +4,9 @@ dist/*
 .DS_STORE
 .benchmark-dist/
 
+# Placeholder for reference version to be benchmarked
+src_reference/
+
 !dist/assets/
 .vercel
 *.sh
