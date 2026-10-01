@@ -234,6 +234,7 @@ describe('Testing deserialization related functions', () => {
         };
 
         const entity = deserializeEntity(entityMap, registry, componentCatalog);
+        registry.update();
         const transform = entity.getComponent(TransformComponent);
 
         expect(transform).toEqual({
@@ -274,6 +275,7 @@ describe('Testing deserialization related functions', () => {
         };
 
         const entity = deserializeEntity(entityMap, registry, componentCatalog);
+        registry.update();
         const transform = entity.getComponent(TransformComponent);
         const rigidbody = entity.getComponent(RigidBodyComponent);
 
@@ -377,6 +379,7 @@ describe('Testing deserialization related functions', () => {
         ];
 
         const entities = deserializeEntities(entityMaps, registry, componentCatalog);
+        registry.update();
         const transform1 = entities[0].getComponent(TransformComponent);
         const transform2 = entities[1].getComponent(TransformComponent);
 
@@ -452,6 +455,7 @@ describe('Testing deserialization related functions', () => {
         ];
 
         const entities = deserializeEntities(entityMaps, registry, componentCatalog);
+        registry.update();
         const transform1 = entities[0].getComponent(TransformComponent);
         const transform2 = entities[1].getComponent(TransformComponent);
         const rigidbody1 = entities[0].getComponent(RigidBodyComponent);
@@ -533,6 +537,7 @@ describe('Testing deserialization related functions', () => {
         };
 
         const entity = deserializeEntity(entityMap, registry, testOnlyCatalog);
+        registry.update();
 
         expect(entity.getComponent(TestOnlyComponent)).toEqual({
             value: 42,
