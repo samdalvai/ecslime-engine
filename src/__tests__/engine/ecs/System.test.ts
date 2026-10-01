@@ -195,25 +195,4 @@ describe('Testing System related functions', () => {
 
         expect(registry.getSystem(MySystem)?.hasEntity(entity)).toBe(false);
     });
-
-    test('Manually adding an entity already present in a system should throw an error', () => {
-        class MyComponent extends Component {}
-        class MySystem extends System {
-            constructor() {
-                super();
-                this.requireComponent(MyComponent);
-            }
-        }
-
-        const registry = new Registry();
-        registry.addSystem(MySystem);
-
-        const entity = registry.createEntity();
-        registry.update();
-
-        entity.addComponent(MyComponent);
-        registry.update();
-
-        expect(() => entity.addToSystem(MySystem)).toThrowError();
-    });
 });

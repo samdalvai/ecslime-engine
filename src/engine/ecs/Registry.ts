@@ -400,18 +400,7 @@ export default class Registry {
         ...args: ConstructorParameters<T>
     ): InstanceType<T> {
         const componentId = ComponentClass.getComponentId();
-        const entityId = entity.getId();
-
-        // TODO: updating component pools should be deferred to the component processing queue
-        // if (this._componentPools[componentId] === undefined) {
-        //     const newComponentPool = new Pool<InstanceType<T>>();
-        //     this._componentPools[componentId] = newComponentPool;
-        // }
-
         const newComponent = new ComponentClass(...args) as InstanceType<T>;
-        // (this._componentPools[componentId] as Pool<InstanceType<T>>).set(entityId, newComponent);
-
-        // this._entityComponentSignatures[entityId].set(componentId);
 
         let pendingChanges = this._pendingComponentChange.get(entity);
 
@@ -430,14 +419,7 @@ export default class Registry {
 
     removeComponent<T extends ComponentClass>(entity: Entity, ComponentClass: T) {
         const componentId = ComponentClass.getComponentId();
-        const entityId = entity.getId();
 
-        // Remove the component from the component list for that entity
-        // const componentPool = this._componentPools[componentId] as Pool<InstanceType<T>>;
-        // componentPool?.remove(entityId);
-
-        // Set this component signature for that entity to false
-        // this._entityComponentSignatures[entityId].remove(componentId);
         let pendingChanges = this._pendingComponentChange.get(entity);
 
         if (!pendingChanges) {
@@ -580,6 +562,10 @@ export default class Registry {
         system.removeEntityFromSystem(entity);
     }
 
+    /**
+     * @deprecated This method should not be used anymore, systems syncing is automatic on registry update
+     * @param entity 
+     */
     addEntityToSystems(entity: Entity) {
         const entityId = entity.getId();
 
@@ -594,7 +580,9 @@ export default class Registry {
 
     removeEntityFromSystems(entity: Entity) {
         for (const system of this._systems.values()) {
-            system.removeEntityFromSystem(entity);
+            if (system.hasEntity(entity)) {
+                system.removeEntityFromSystem(entity);
+            }
         }
     }
 

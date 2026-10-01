@@ -2,7 +2,6 @@ import EntityDestinationComponent from '../components/EntityDestinationComponent
 import RigidBodyComponent from '../components/RigidBodyComponent';
 import TransformComponent from '../components/TransformComponent';
 import { System, computeDirectionVector, computeUnitVector } from '../../engine';
-import DebugEntityDestinationSystem from './DebugEntityDestinationSystem';
 
 export default class EntityDestinationSystem extends System {
     constructor() {
@@ -27,8 +26,6 @@ export default class EntityDestinationSystem extends System {
                 Math.abs(entityDestination.destinationY - transform.position.y) <= 5
             ) {
                 entity.removeComponent(EntityDestinationComponent);
-                entity.removeFromSystem(DebugEntityDestinationSystem);
-                entity.removeFromSystem(EntityDestinationSystem);
                 rigidBody.velocity = { x: 0, y: 0 };
                 continue;
             }
