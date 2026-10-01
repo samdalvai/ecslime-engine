@@ -170,24 +170,21 @@ export default class Registry {
     }
 
     update<T extends Component>() {
-        for (const entity of this._entitiesToBeAdded) {
-            this.addEntityToSystems(entity);
-        }
+        for (const [entity, changes] of this._pendingComponentChange) {
+            if (entity.isPendingKill()) {
+                continue;
+            }
 
-        this._entitiesToBeAdded = [];
-        for (const [entity, changes] of this.pendingComponentChange) {
-            console.log('Entity: ', entity.getId());
-            // const changes = this.pendingComponentChange.get(entityId);
-            // console.log(changes);
-            // if (!changes) {
-            //     throw new Error('No component change registered for entity with id ' + entityId);
-            // }
-            console.log('changes 1: ', changes);
             this.processComponentChanges(entity, changes);
         }
 
-        // TODO: handle component add queue
-        // TODO: handle component remove queue
+        for (const entity of this._entitiesToBeAdded) {
+            if (!entity.isPendingKill() && !this._pendingComponentChange.has(entity)) {
+                this.addEntityToSystems(entity);
+            }
+        }
+
+        this._entitiesToBeAdded = [];
 
         for (const entity of this._entitiesToBeKilled) {
             this.removeEntityFromSystems(entity);
@@ -455,6 +452,7 @@ export default class Registry {
 
     processComponentChanges(entity: Entity, changes: Map<number, ComponentChange>): void {
         const entityId = entity.getId();
+        const before = this.getEntitySignature(entity);
 
         for (const [componentId, change] of changes) {
             if (change.kind === 'add') {
@@ -466,12 +464,25 @@ export default class Registry {
                 componentPool.set(entityId, change.component);
                 this._entityComponentSignatures[entityId].set(componentId);
             } else {
-                // Remove the component from the component list for that entity
                 const componentPool = this._componentPools[componentId] as Pool<Component>;
-                componentPool?.remove(entityId);
-
-                // Set this component signature for that entity to false
+                componentPool?.removeEntityFromPool(entityId);
                 this._entityComponentSignatures[entityId].remove(componentId);
+            }
+        }
+
+        const after = this.getEntitySignature(entity);
+        if (before === after) {
+            return;
+        }
+
+        for (const system of this._systems.values()) {
+            const matchedBefore = system.isInterestedIn(before);
+            const matchesNow = system.isInterestedIn(after);
+
+            if (!matchedBefore && matchesNow && !system.hasEntity(entity)) {
+                system.addEntityToSystem(entity);
+            } else if (matchedBefore && !matchesNow && system.hasEntity(entity)) {
+                system.removeEntityFromSystem(entity);
             }
         }
     }
@@ -598,6 +609,7 @@ export default class Registry {
         this._entityComponentSignatures = [];
         this._entitiesToBeAdded = [];
         this._entitiesToBeKilled = [];
+        this._pendingComponentChange.clear();
         this._entityPerTag = new Map();
         this._tagPerEntity = new Map();
         this._entitiesPerGroup = new Map();
