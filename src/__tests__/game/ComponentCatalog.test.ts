@@ -10,8 +10,10 @@ describe('Testing game component catalog', () => {
         const entity = registry.createEntity();
 
         entity.addComponent(TransformComponent, { x: 100, y: 100 }, { x: 2, y: 2 });
+        registry.update();
 
         const entityCopy = entity.duplicate(gameComponentCatalog);
+        registry.update();
 
         expect(entityCopy.getComponent(TransformComponent)).toEqual(entity.getComponent(TransformComponent));
 

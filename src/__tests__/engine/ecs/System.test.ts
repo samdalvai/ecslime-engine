@@ -109,7 +109,9 @@ describe('Testing System related functions', () => {
 
         const system = registry.getSystem(MySystem);
         entity.addComponent(MyComponent);
-        entity.addToSystem(MySystem);
+        expect(system?.getSystemEntities().length).toBe(0);
+
+        registry.update();
 
         expect(system?.getSystemEntities().length).toBe(1);
         expect(system?.getSystemEntities()[0]).toEqual(entity);
@@ -133,12 +135,48 @@ describe('Testing System related functions', () => {
 
         const system = registry.getSystem(MySystem);
         entity.removeComponent(MyComponent);
-        entity.removeFromSystem(MySystem);
+        expect(system?.getSystemEntities().length).toBe(1);
+
+        registry.update();
 
         expect(system?.getSystemEntities().length).toBe(0);
     });
 
-    test('Adding the same entity multiple times to a system should throw an error', () => {
+    test('Reconciles membership once from the final component signature', () => {
+        class FirstComponent extends Component {}
+        class SecondComponent extends Component {}
+        class MySystem extends System {
+            constructor() {
+                super();
+                this.requireComponent(FirstComponent);
+                this.requireComponent(SecondComponent);
+            }
+        }
+
+        const registry = new Registry();
+        registry.addSystem(MySystem);
+        const entity = registry.createEntity();
+        const system = registry.getSystem(MySystem);
+
+        entity.addComponent(FirstComponent);
+        registry.update();
+        expect(system?.hasEntity(entity)).toBe(false);
+
+        entity.addComponent(SecondComponent);
+        registry.update();
+        expect(system?.hasEntity(entity)).toBe(true);
+
+        entity.removeComponent(FirstComponent);
+        entity.addComponent(FirstComponent);
+        registry.update();
+        expect(system?.getSystemEntities()).toEqual([entity]);
+
+        entity.removeComponent(SecondComponent);
+        registry.update();
+        expect(system?.hasEntity(entity)).toBe(false);
+    });
+
+    test('Does not add an entity scheduled for deletion from pending component changes', () => {
         class MyComponent extends Component {}
         class MySystem extends System {
             constructor() {
@@ -149,13 +187,12 @@ describe('Testing System related functions', () => {
 
         const registry = new Registry();
         registry.addSystem(MySystem);
-
         const entity = registry.createEntity();
+        entity.addComponent(MyComponent);
+        entity.kill();
+
         registry.update();
 
-        entity.addComponent(MyComponent);
-        entity.addToSystem(MySystem);
-
-        expect(() => entity.addToSystem(MySystem)).toThrowError();
+        expect(registry.getSystem(MySystem)?.hasEntity(entity)).toBe(false);
     });
 });
