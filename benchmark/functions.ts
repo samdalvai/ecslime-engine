@@ -1,7 +1,7 @@
-import OriginalComponent from '../src/engine/ecs/Component';
-import { createComponentCatalog as createOriginalComponentCatalog } from '../src/engine/ecs/ComponentCatalog';
-import OriginalRegistry from '../src/engine/ecs/Registry';
-import OriginalSystem from '../src/engine/ecs/System';
+import OriginalComponent from '../src_reference/engine/ecs/Component';
+import { createComponentCatalog as createOriginalComponentCatalog } from '../src_reference/engine/ecs/ComponentCatalog';
+import OriginalRegistry from '../src_reference/engine/ecs/Registry';
+import OriginalSystem from '../src_reference/engine/ecs/System';
 
 import ModifiedComponent from '../src/engine/ecs/Component';
 import { createComponentCatalog as createModifiedComponentCatalog } from '../src/engine/ecs/ComponentCatalog';
@@ -382,3 +382,40 @@ export function runOriginal() {
 export function runModified() {
     return runEngineBenchmark(modifiedBindings);
 }
+
+function createSteadyFrameBenchmark(bindings: EngineBindings) {
+    const registry = new bindings.RegistryClass();
+    registry.addSystem(bindings.MovementSystem);
+
+    for (let i = 0; i < ENTITY_COUNT; i++) {
+        const entity = registry.createEntity();
+        entity.addComponent(bindings.PositionComponent, { x: i, y: i * 2 });
+
+        if (i % 2 === 0) {
+            entity.addComponent(bindings.VelocityComponent, { x: 1 + (i % 5), y: i % 3 });
+        }
+    }
+
+    // Setup is outside the timed callback, including the first membership sync.
+    registry.update();
+    const movementSystem = registry.getSystem(bindings.MovementSystem);
+
+    return () => {
+        let checksum = 0;
+
+        for (const entity of movementSystem.getSystemEntities()) {
+            const position = entity.getComponent(bindings.PositionComponent);
+            const velocity = entity.getComponent(bindings.VelocityComponent);
+
+            position.position.x += velocity.velocity.x;
+            position.position.y += velocity.velocity.y;
+            checksum += position.position.x + position.position.y;
+        }
+
+        registry.update();
+        return checksum;
+    };
+}
+
+export const runOriginalSteadyFrame = createSteadyFrameBenchmark(originalBindings);
+export const runModifiedSteadyFrame = createSteadyFrameBenchmark(modifiedBindings);
