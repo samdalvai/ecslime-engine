@@ -22,11 +22,6 @@ import MouseMoveEvent from '../events/MouseMoveEvent';
 import MousePressedEvent from '../events/MousePressedEvent';
 import RangedAttackEmitEvent from '../events/RangedAttackEmitEvent';
 import SoundEmitEvent from '../events/SoundEmitEvent';
-import CollisionSystem from './CollisionSystem';
-import DebugEntityDestinationSystem from './DebugEntityDestinationSystem';
-import EntityDestinationSystem from './EntityDestinationSystem';
-import MovementSystem from './MovementSystem';
-import RenderSystem from './RenderSystem';
 
 export default class PlayerControlSystem extends System {
     eventBus: EventBus;
@@ -68,8 +63,6 @@ export default class PlayerControlSystem extends System {
 
         if (player.hasComponent(EntityDestinationComponent)) {
             player.removeComponent(EntityDestinationComponent);
-            player.removeFromSystem(DebugEntityDestinationSystem);
-            player.removeFromSystem(EntityDestinationSystem);
         }
 
         let enemyHighlighted = false;
@@ -161,8 +154,6 @@ export default class PlayerControlSystem extends System {
         }
 
         player.addComponent(EntityDestinationComponent, x, y, playerControl.velocity);
-        player.addToSystem(DebugEntityDestinationSystem);
-        player.addToSystem(EntityDestinationSystem);
 
         const currentDestination = this.registry.getEntityByTag('player-destination');
 
@@ -302,10 +293,6 @@ export default class PlayerControlSystem extends System {
             throw new Error('Could not find some component(s) of entity with id ' + player.getId());
         }
 
-        player.removeFromSystem(RenderSystem);
-        player.removeFromSystem(CollisionSystem);
-        player.removeFromSystem(MovementSystem);
-
         const teleportSpriteWidth = 32;
         const teleportSpriteHeight = 64;
 
@@ -321,8 +308,6 @@ export default class PlayerControlSystem extends System {
 
         if (player.hasComponent(EntityDestinationComponent)) {
             player.removeComponent(EntityDestinationComponent);
-            player.removeFromSystem(DebugEntityDestinationSystem);
-            player.removeFromSystem(EntityDestinationSystem);
         }
 
         playerControl.teleportLastEmissionTime = performance.now();
@@ -331,10 +316,6 @@ export default class PlayerControlSystem extends System {
         setTimeout(() => {
             playerTransform.position = { ...mousePosition };
             playerTeleport.isTeleporting = false;
-
-            player.addToSystem(RenderSystem);
-            player.addToSystem(CollisionSystem);
-            player.addToSystem(MovementSystem);
 
             const teleportDestination = this.registry.createEntity();
             teleportDestination.addComponent(TransformComponent, { ...mousePosition });
