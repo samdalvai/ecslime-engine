@@ -1,7 +1,5 @@
 import { describe, expect, test } from '@jest/globals';
 
-import RigidBodyComponent from '../../../apps/game/components/RigidBodyComponent';
-import TransformComponent from '../../../apps/game/components/TransformComponent';
 import Engine from '../../../src/Engine';
 import AssetStore from '../../../src/asset-store/AssetStore';
 import Component from '../../../src/ecs/Component';
@@ -9,17 +7,18 @@ import Entity from '../../../src/ecs/Entity';
 import Registry from '../../../src/ecs/Registry';
 import { serializeEntities, serializeEntity, serializeLevel } from '../../../src/serialization/serialization';
 import { EntityMap, LevelMap } from '../../../src/types/map';
+import { MockRigidBodyComponent, MockTransformComponent } from '../../mocks/components';
 
 describe('Testing serialization related functions', () => {
     test('Should serialize entity with one component to a valid Entity Map', () => {
         const registry = new Registry();
         const entity = registry.createEntity();
-        entity.addComponent(TransformComponent, { x: 100, y: 100 }, { x: 1, y: 1 }, 0);
+        entity.addComponent(MockTransformComponent, { x: 100, y: 100 }, { x: 1, y: 1 }, 0);
 
         const expected: EntityMap = {
             components: [
                 {
-                    name: 'TransformComponent',
+                    name: 'MockTransformComponent',
                     properties: {
                         position: { x: 100, y: 100 },
                         scale: { x: 1, y: 1 },
@@ -38,13 +37,13 @@ describe('Testing serialization related functions', () => {
     test('Should serialize entity with two components to a valid Entity Map', () => {
         const registry = new Registry();
         const entity = registry.createEntity();
-        entity.addComponent(TransformComponent, { x: 100, y: 100 }, { x: 1, y: 1 }, 0);
-        entity.addComponent(RigidBodyComponent, { x: 100, y: 100 }, { x: 1, y: 0 });
+        entity.addComponent(MockTransformComponent, { x: 100, y: 100 }, { x: 1, y: 1 }, 0);
+        entity.addComponent(MockRigidBodyComponent, { x: 100, y: 100 }, { x: 1, y: 0 });
 
         const expected: EntityMap = {
             components: [
                 {
-                    name: 'TransformComponent',
+                    name: 'MockTransformComponent',
                     properties: {
                         position: { x: 100, y: 100 },
                         scale: { x: 1, y: 1 },
@@ -53,7 +52,7 @@ describe('Testing serialization related functions', () => {
                     },
                 },
                 {
-                    name: 'RigidBodyComponent',
+                    name: 'MockRigidBodyComponent',
                     properties: {
                         velocity: { x: 100, y: 100 },
                         direction: { x: 1, y: 0 },
@@ -112,16 +111,16 @@ describe('Testing serialization related functions', () => {
         const registry = new Registry();
 
         const entity1 = registry.createEntity();
-        entity1.addComponent(TransformComponent, { x: 100, y: 100 }, { x: 1, y: 1 }, 0);
+        entity1.addComponent(MockTransformComponent, { x: 100, y: 100 }, { x: 1, y: 1 }, 0);
 
         const entity2 = registry.createEntity();
-        entity2.addComponent(TransformComponent, { x: 200, y: 200 }, { x: 1, y: 1 }, 0);
+        entity2.addComponent(MockTransformComponent, { x: 200, y: 200 }, { x: 1, y: 1 }, 0);
 
         const expected: EntityMap[] = [
             {
                 components: [
                     {
-                        name: 'TransformComponent',
+                        name: 'MockTransformComponent',
                         properties: {
                             position: { x: 100, y: 100 },
                             scale: { x: 1, y: 1 },
@@ -134,7 +133,7 @@ describe('Testing serialization related functions', () => {
             {
                 components: [
                     {
-                        name: 'TransformComponent',
+                        name: 'MockTransformComponent',
                         properties: {
                             position: { x: 200, y: 200 },
                             scale: { x: 1, y: 1 },
@@ -155,18 +154,18 @@ describe('Testing serialization related functions', () => {
         const registry = new Registry();
 
         const entity1 = registry.createEntity();
-        entity1.addComponent(TransformComponent, { x: 100, y: 100 }, { x: 1, y: 1 }, 0);
-        entity1.addComponent(RigidBodyComponent, { x: 100, y: 100 }, { x: 1, y: 0 });
+        entity1.addComponent(MockTransformComponent, { x: 100, y: 100 }, { x: 1, y: 1 }, 0);
+        entity1.addComponent(MockRigidBodyComponent, { x: 100, y: 100 }, { x: 1, y: 0 });
 
         const entity2 = registry.createEntity();
-        entity2.addComponent(TransformComponent, { x: 200, y: 200 }, { x: 1, y: 1 }, 0);
-        entity2.addComponent(RigidBodyComponent, { x: 200, y: 200 }, { x: 0, y: 1 });
+        entity2.addComponent(MockTransformComponent, { x: 200, y: 200 }, { x: 1, y: 1 }, 0);
+        entity2.addComponent(MockRigidBodyComponent, { x: 200, y: 200 }, { x: 0, y: 1 });
 
         const expected: EntityMap[] = [
             {
                 components: [
                     {
-                        name: 'TransformComponent',
+                        name: 'MockTransformComponent',
                         properties: {
                             position: { x: 100, y: 100 },
                             scale: { x: 1, y: 1 },
@@ -175,7 +174,7 @@ describe('Testing serialization related functions', () => {
                         },
                     },
                     {
-                        name: 'RigidBodyComponent',
+                        name: 'MockRigidBodyComponent',
                         properties: {
                             velocity: { x: 100, y: 100 },
                             direction: { x: 1, y: 0 },
@@ -186,7 +185,7 @@ describe('Testing serialization related functions', () => {
             {
                 components: [
                     {
-                        name: 'TransformComponent',
+                        name: 'MockTransformComponent',
                         properties: {
                             position: { x: 200, y: 200 },
                             scale: { x: 1, y: 1 },
@@ -195,7 +194,7 @@ describe('Testing serialization related functions', () => {
                         },
                     },
                     {
-                        name: 'RigidBodyComponent',
+                        name: 'MockRigidBodyComponent',
                         properties: {
                             velocity: { x: 200, y: 200 },
                             direction: { x: 0, y: 1 },
@@ -354,7 +353,7 @@ describe('Testing serialization related functions', () => {
         const assetStore = new AssetStore();
 
         const entity = registry.createEntity();
-        entity.addComponent(TransformComponent, { x: 100, y: 100 }, { x: 1, y: 1 }, 0);
+        entity.addComponent(MockTransformComponent, { x: 100, y: 100 }, { x: 1, y: 1 }, 0);
 
         const expected: LevelMap = {
             mapWidth: 500,
@@ -363,7 +362,7 @@ describe('Testing serialization related functions', () => {
                 {
                     components: [
                         {
-                            name: 'TransformComponent',
+                            name: 'MockTransformComponent',
                             properties: {
                                 position: { x: 100, y: 100 },
                                 scale: { x: 1, y: 1 },
@@ -391,10 +390,10 @@ describe('Testing serialization related functions', () => {
         const assetStore = new AssetStore();
 
         const entity1 = registry.createEntity();
-        entity1.addComponent(TransformComponent, { x: 100, y: 100 }, { x: 1, y: 1 }, 0);
+        entity1.addComponent(MockTransformComponent, { x: 100, y: 100 }, { x: 1, y: 1 }, 0);
 
         const entity2 = registry.createEntity();
-        entity2.addComponent(TransformComponent, { x: 200, y: 200 }, { x: 1, y: 1 }, 0);
+        entity2.addComponent(MockTransformComponent, { x: 200, y: 200 }, { x: 1, y: 1 }, 0);
 
         const expected: LevelMap = {
             mapWidth: 500,
@@ -403,7 +402,7 @@ describe('Testing serialization related functions', () => {
                 {
                     components: [
                         {
-                            name: 'TransformComponent',
+                            name: 'MockTransformComponent',
                             properties: {
                                 position: { x: 100, y: 100 },
                                 scale: { x: 1, y: 1 },
@@ -416,7 +415,7 @@ describe('Testing serialization related functions', () => {
                 {
                     components: [
                         {
-                            name: 'TransformComponent',
+                            name: 'MockTransformComponent',
                             properties: {
                                 position: { x: 200, y: 200 },
                                 scale: { x: 1, y: 1 },
@@ -444,10 +443,10 @@ describe('Testing serialization related functions', () => {
         const assetStore = new AssetStore();
 
         const entity1 = registry.createEntity();
-        entity1.addComponent(TransformComponent, { x: 100, y: 100 }, { x: 1, y: 1 }, 0);
+        entity1.addComponent(MockTransformComponent, { x: 100, y: 100 }, { x: 1, y: 1 }, 0);
 
         const entity2 = registry.createEntity();
-        entity2.addComponent(TransformComponent, { x: 200, y: 200 }, { x: 1, y: 1 }, 0);
+        entity2.addComponent(MockTransformComponent, { x: 200, y: 200 }, { x: 1, y: 1 }, 0);
 
         entity1.kill();
         registry.update();
@@ -459,7 +458,7 @@ describe('Testing serialization related functions', () => {
                 {
                     components: [
                         {
-                            name: 'TransformComponent',
+                            name: 'MockTransformComponent',
                             properties: {
                                 position: { x: 200, y: 200 },
                                 scale: { x: 1, y: 1 },
