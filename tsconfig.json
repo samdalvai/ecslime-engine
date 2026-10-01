@@ -9,6 +9,8 @@
   },
   "include": [
     "src/**/*",
+    "apps/**/*",
+    "__tests__/**/*",
     "benchmark/**/*"
   ],
   "exclude": [

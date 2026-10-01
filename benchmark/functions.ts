@@ -1,12 +1,12 @@
-import OriginalComponent from '../src_reference/engine/ecs/Component';
-import { createComponentCatalog as createOriginalComponentCatalog } from '../src_reference/engine/ecs/ComponentCatalog';
-import OriginalRegistry from '../src_reference/engine/ecs/Registry';
-import OriginalSystem from '../src_reference/engine/ecs/System';
+import OriginalComponent from '../src_reference/ecs/Component';
+import { createComponentCatalog as createOriginalComponentCatalog } from '../src_reference/ecs/ComponentCatalog';
+import OriginalRegistry from '../src_reference/ecs/Registry';
+import OriginalSystem from '../src_reference/ecs/System';
 
-import ModifiedComponent from '../src/engine/ecs/Component';
-import { createComponentCatalog as createModifiedComponentCatalog } from '../src/engine/ecs/ComponentCatalog';
-import ModifiedRegistry from '../src/engine/ecs/Registry';
-import ModifiedSystem from '../src/engine/ecs/System';
+import ModifiedComponent from '../src/ecs/Component';
+import { createComponentCatalog as createModifiedComponentCatalog } from '../src/ecs/ComponentCatalog';
+import ModifiedRegistry from '../src/ecs/Registry';
+import ModifiedSystem from '../src/ecs/System';
 
 type Vector = {
     x: number;
