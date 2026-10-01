@@ -43,6 +43,10 @@ export default class System extends ISystem {
         const entityId = entity.getId();
 
         if (this.entityIdToIndex.has(entityId)) {
+            const SystemClass = this.constructor as typeof System;
+            console.warn(
+                `Entity with id ${entityId} already added to ${SystemClass.name} (id ${SystemClass.getSystemId()})`,
+            );
             return;
         }
 
@@ -55,6 +59,10 @@ export default class System extends ISystem {
         const entityIndex = this.entityIdToIndex.get(entityId);
 
         if (entityIndex === undefined) {
+            const SystemClass = this.constructor as typeof System;
+            console.warn(
+                `Entity with id ${entityId} is not assigned to ${SystemClass.name} (id ${SystemClass.getSystemId()})`,
+            );
             return;
         }
 

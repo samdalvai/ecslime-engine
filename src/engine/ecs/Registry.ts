@@ -6,6 +6,8 @@ import Pool, { IPool } from './Pool';
 import Signature from './Signature';
 import System, { SystemClass } from './System';
 
+type ComponentChange = { kind: 'add'; component: Component } | { kind: 'remove' };
+
 export default class Registry {
     private _numEntities: number;
     private _entities: Map<number, Entity>;
@@ -19,8 +21,10 @@ export default class Registry {
     // [Map key = system type id]
     private _systems: Map<number, System>;
 
-    private _entitiesToBeAdded: Entity[];
     private _entitiesToBeKilled: Entity[];
+
+    // Pending component add or remove by component id and entity
+    private _pendingComponentChange: Map<Entity, Map<number, ComponentChange>>;
 
     // Entity tags (one tag name per entity)
     private _entityPerTag: Map<string, Entity>;
@@ -38,8 +42,8 @@ export default class Registry {
         this._componentPools = [];
         this._entityComponentSignatures = [];
         this._systems = new Map();
-        this._entitiesToBeAdded = [];
         this._entitiesToBeKilled = [];
+        this._pendingComponentChange = new Map();
         this._entityPerTag = new Map();
         this._tagPerEntity = new Map();
         this._entitiesPerGroup = new Map();
@@ -67,12 +71,12 @@ export default class Registry {
         return this._systems;
     }
 
-    get entitiesToBeAdded(): readonly Entity[] {
-        return this._entitiesToBeAdded;
-    }
-
     get entitiesToBeKilled(): readonly Entity[] {
         return this._entitiesToBeKilled;
+    }
+
+    get pendingComponentChange(): Map<Entity, Map<number, ComponentChange>> {
+        return this._pendingComponentChange;
     }
 
     get entityPerTag(): ReadonlyMap<string, Entity> {
@@ -101,14 +105,6 @@ export default class Registry {
 
     getAllocatedEntityCount() {
         return this._numEntities;
-    }
-
-    getPendingEntityCount() {
-        return this._entitiesToBeAdded.length + this._entitiesToBeKilled.length;
-    }
-
-    getPendingEntityAddCount() {
-        return this._entitiesToBeAdded.length;
     }
 
     getPendingEntityKillCount() {
@@ -160,11 +156,14 @@ export default class Registry {
     }
 
     update<T extends Component>() {
-        for (const entity of this._entitiesToBeAdded) {
-            this.addEntityToSystems(entity);
+        for (const [entity, changes] of this._pendingComponentChange) {
+            if (entity.isPendingKill()) {
+                continue;
+            }
+
+            this.processComponentChanges(entity, changes);
         }
 
-        this._entitiesToBeAdded = [];
 
         for (const entity of this._entitiesToBeKilled) {
             this.removeEntityFromSystems(entity);
@@ -191,6 +190,7 @@ export default class Registry {
         }
 
         this._entitiesToBeKilled = [];
+        this._pendingComponentChange.clear();
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -210,7 +210,6 @@ export default class Registry {
         }
 
         const entity = new Entity(entityId, this);
-        this._entitiesToBeAdded.push(entity);
         this._entities.set(entity.getId(), entity);
 
         return entity;
@@ -379,30 +378,73 @@ export default class Registry {
         ...args: ConstructorParameters<T>
     ): InstanceType<T> {
         const componentId = ComponentClass.getComponentId();
-        const entityId = entity.getId();
+        const newComponent = new ComponentClass(...args) as InstanceType<T>;
 
-        if (this._componentPools[componentId] === undefined) {
-            const newComponentPool = new Pool<InstanceType<T>>();
-            this._componentPools[componentId] = newComponentPool;
+        let pendingChanges = this._pendingComponentChange.get(entity);
+
+        if (!pendingChanges) {
+            pendingChanges = new Map();
+            this._pendingComponentChange.set(entity, pendingChanges);
         }
 
-        const newComponent = new ComponentClass(...args) as InstanceType<T>;
-        (this._componentPools[componentId] as Pool<InstanceType<T>>).set(entityId, newComponent);
+        pendingChanges.set(componentId, {
+            kind: 'add',
+            component: newComponent,
+        });
 
-        this._entityComponentSignatures[entityId].set(componentId);
-        return newComponent
+        return newComponent;
     }
 
     removeComponent<T extends ComponentClass>(entity: Entity, ComponentClass: T) {
         const componentId = ComponentClass.getComponentId();
+
+        let pendingChanges = this._pendingComponentChange.get(entity);
+
+        if (!pendingChanges) {
+            pendingChanges = new Map();
+            this._pendingComponentChange.set(entity, pendingChanges);
+        }
+
+        pendingChanges.set(componentId, {
+            kind: 'remove',
+        });
+    }
+
+    processComponentChanges(entity: Entity, changes: Map<number, ComponentChange>): void {
         const entityId = entity.getId();
+        const before = this.getEntitySignature(entity);
 
-        // Remove the component from the component list for that entity
-        const componentPool = this._componentPools[componentId] as Pool<InstanceType<T>>;
-        componentPool?.remove(entityId);
+        for (const [componentId, change] of changes) {
+            if (change.kind === 'add') {
+                if (!this._componentPools[componentId]) {
+                    this._componentPools[componentId] = new Pool<Component>();
+                }
 
-        // Set this component signature for that entity to false
-        this._entityComponentSignatures[entityId].remove(componentId);
+                const componentPool = this._componentPools[componentId] as Pool<Component>;
+                componentPool.set(entityId, change.component);
+                this._entityComponentSignatures[entityId].set(componentId);
+            } else {
+                const componentPool = this._componentPools[componentId] as Pool<Component>;
+                componentPool?.removeEntityFromPool(entityId);
+                this._entityComponentSignatures[entityId].remove(componentId);
+            }
+        }
+
+        const after = this.getEntitySignature(entity);
+        if (before === after) {
+            return;
+        }
+
+        for (const system of this._systems.values()) {
+            const matchedBefore = system.isInterestedIn(before);
+            const matchesNow = system.isInterestedIn(after);
+
+            if (!matchedBefore && matchesNow && !system.hasEntity(entity)) {
+                system.addEntityToSystem(entity);
+            } else if (matchedBefore && !matchesNow && system.hasEntity(entity)) {
+                system.removeEntityFromSystem(entity);
+            }
+        }
     }
 
     hasComponent<T extends ComponentClass>(entity: Entity, ComponentClass: T): boolean {
@@ -455,64 +497,11 @@ export default class Registry {
         return system as T;
     }
 
-    addEntityToSystem<T extends System>(entity: Entity, SystemClass: SystemClass<T>) {
-        const entityId = entity.getId();
-        const entityComponentSignature = this._entityComponentSignatures[entityId];
-
-        const system = this._systems.get(SystemClass.getSystemId());
-
-        if (!system) {
-            throw new Error('System with id ' + SystemClass.getSystemId() + ' does not exist');
-        }
-
-        const systemComponentSignature = system.getComponentSignature();
-
-        if (systemComponentSignature === 0) {
-            throw new Error('System with id ' + SystemClass.getSystemId() + ' has signature 0, no entity can be added');
-        }
-
-        const isInterested = system.isInterestedIn(entityComponentSignature.signature);
-
-        if (!isInterested) {
-            throw new Error(
-                'Entity with id ' + entityId + ' cannot be added to system with id ' + SystemClass.getSystemId(),
-            );
-        }
-
-        if (system.hasEntity(entity)) {
-            throw new Error(
-                'Entity with id ' + entityId + ' is already present in system with id ' + SystemClass.getSystemId(),
-            );
-        }
-
-        system.addEntityToSystem(entity);
-    }
-
-    removeEntityFromSystem<T extends System>(entity: Entity, SystemClass: SystemClass<T>) {
-        const system = this._systems.get(SystemClass.getSystemId());
-
-        if (!system) {
-            throw new Error('System with id ' + SystemClass.getSystemId() + ' does not exist');
-        }
-
-        system.removeEntityFromSystem(entity);
-    }
-
-    addEntityToSystems(entity: Entity) {
-        const entityId = entity.getId();
-
-        const entityComponentSignature = this._entityComponentSignatures[entityId];
-
-        for (const system of this._systems.values()) {
-            if (system.isInterestedIn(entityComponentSignature.signature)) {
-                system.addEntityToSystem(entity);
-            }
-        }
-    }
-
     removeEntityFromSystems(entity: Entity) {
         for (const system of this._systems.values()) {
-            system.removeEntityFromSystem(entity);
+            if (system.hasEntity(entity)) {
+                system.removeEntityFromSystem(entity);
+            }
         }
     }
 
@@ -525,8 +514,8 @@ export default class Registry {
         this._numEntities = 0;
         this._componentPools = [];
         this._entityComponentSignatures = [];
-        this._entitiesToBeAdded = [];
         this._entitiesToBeKilled = [];
+        this._pendingComponentChange.clear();
         this._entityPerTag = new Map();
         this._tagPerEntity = new Map();
         this._entitiesPerGroup = new Map();
