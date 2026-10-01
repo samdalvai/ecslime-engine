@@ -23,7 +23,7 @@ export type ComponentCatalog = {
     list(): ComponentDefinition[];
 };
 
-export const createComponentCatalog = (definitions: ComponentDefinition[]): ComponentCatalog => {
+export const createComponentCatalog = (definitions: ComponentDefinition<any>[]): ComponentCatalog => {
     const definitionsByName = new Map<string, ComponentDefinition>();
     const definitionsByConstructor = new Map<AnyComponentClass, ComponentDefinition>();
 

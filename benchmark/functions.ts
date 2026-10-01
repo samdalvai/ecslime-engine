@@ -328,15 +328,12 @@ const runEngineBenchmark = (bindings: EngineBindings) => {
     for (let i = 0; i < MUTATION_COUNT; i++) {
         const entityWithVelocity = entities[i * 2];
         entityWithVelocity.removeComponent(bindings.VelocityComponent);
-        entityWithVelocity.removeFromSystem(bindings.MovementSystem);
 
         const entityWithoutVelocity = entities[i * 2 + 1];
         entityWithoutVelocity.addComponent(bindings.VelocityComponent, { x: 3, y: 2 });
-        entityWithoutVelocity.addToSystem(bindings.MovementSystem);
 
         const renderedEntity = entities[i * 3];
         renderedEntity.removeComponent(bindings.RenderableComponent);
-        renderedEntity.removeFromSystem(bindings.RenderSystem);
     }
 
     checksum += movementSystem.getSystemEntities().length;
