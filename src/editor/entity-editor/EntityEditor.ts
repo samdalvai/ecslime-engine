@@ -190,11 +190,6 @@ export default class EntityEditor {
             showAlert(`Entity with id ${entity.getId()} already has component ` + entityComponentSelector.value);
         } else {
             const component = entity.addComponent(ComponentClass);
-
-            // Entities are added to systems only on creation, here we force and update to all systems
-            this.registry.removeEntityFromSystems(entity);
-            this.registry.addEntityToSystems(entity);
-
             const componentContainer = this.getComponentContainer(component, entity);
             componentList.appendChild(componentContainer);
 
@@ -213,8 +208,6 @@ export default class EntityEditor {
         if (!ComponentClass) throw new Error(`Component class not found: ${component.constructor.name}`);
 
         entity.removeComponent(ComponentClass);
-        this.registry.removeEntityFromSystems(entity);
-        this.registry.addEntityToSystems(entity);
     };
 
     ////////////////////////////////////////////////////////////////////////////////

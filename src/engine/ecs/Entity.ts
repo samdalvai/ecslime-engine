@@ -1,7 +1,6 @@
 import Component, { ComponentClass } from './Component';
 import { ComponentCatalog } from './ComponentCatalog';
 import Registry from './Registry';
-import System, { SystemClass } from './System';
 
 export default class Entity {
     private id: number;
@@ -77,18 +76,11 @@ export default class Entity {
     removeGroup() {
         this._registry.removeEntityGroup(this);
     }
-    
-    // TODO: adding a component from an entity requires explicitely adding it 
-    // also to related system, find a way to do it automatically and in an efficient way
-    addComponent<T extends ComponentClass>(
-        ComponentClass: T,
-        ...args: ConstructorParameters<T>
-    ): InstanceType<T> {
+
+    addComponent<T extends ComponentClass>(ComponentClass: T, ...args: ConstructorParameters<T>): InstanceType<T> {
         return this._registry.addComponent(this, ComponentClass, ...args);
     }
 
-    // TODO: removing a component from an entity requires explicitely removing it 
-    // also from related system, find a way to do it automatically and in an efficient way
     removeComponent<T extends ComponentClass>(ComponentClass: T): void {
         this._registry.removeComponent(this, ComponentClass);
     }
@@ -103,13 +95,5 @@ export default class Entity {
 
     getComponents<T extends Component>(): T[] {
         return this._registry.getAllEntityComponents(this);
-    }
-
-    addToSystem<T extends System>(SystemClass: SystemClass<T>) {
-        this._registry.addEntityToSystem(this, SystemClass);
-    }
-
-    removeFromSystem<T extends System>(SystemClass: SystemClass<T>) {
-        this._registry.removeEntityFromSystem(this, SystemClass);
     }
 }
