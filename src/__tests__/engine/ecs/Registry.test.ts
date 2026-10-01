@@ -15,13 +15,13 @@ describe('Testing Registry related functions', () => {
     // Entities creation
     ////////////////////////////////////////////////////////////////////////////////
 
-    test('Should add entity to registry entities to be added', () => {
+    test('Should make a newly created entity available in the registry', () => {
         const registry = new Registry();
         const entity = registry.createEntity();
 
         expect(entity.getId()).toBe(0);
         expect(entity.getRegistry()).toEqual(registry);
-        expect(registry.getPendingEntityAddCount()).toBe(1);
+        expect(registry.getEntityById(entity.getId())).toBe(entity);
     });
 
     test('Should add entity to registry entities to be killed', () => {
@@ -43,7 +43,7 @@ describe('Testing Registry related functions', () => {
 
         expect(entity.getId()).toBe(recycledEntity.getId());
         expect(entity.getRegistry()).toEqual(registry);
-        expect(registry.getPendingEntityAddCount()).toBe(1);
+        expect(registry.getEntityById(entity.getId())).toBe(entity);
         expect(registry.getReusableEntityIdCount()).toBe(0);
     });
 
