@@ -24,8 +24,8 @@ export default class Registry {
     private _entitiesToBeAdded: Entity[];
     private _entitiesToBeKilled: Entity[];
 
-    // Pending component add or remove by component id and device id
-    private _pendingComponentChange: Map<number, Map<number, ComponentChange>>;
+    // Pending component add or remove by component id and entity
+    private _pendingComponentChange: Map<Entity, Map<number, ComponentChange>>;
 
     // Entity tags (one tag name per entity)
     private _entityPerTag: Map<string, Entity>;
@@ -81,7 +81,7 @@ export default class Registry {
         return this._entitiesToBeKilled;
     }
 
-    get pendingComponentChange(): Map<number, Map<number, ComponentChange>> {
+    get pendingComponentChange(): Map<Entity, Map<number, ComponentChange>> {
         return this._pendingComponentChange;
     }
 
@@ -175,15 +175,15 @@ export default class Registry {
         }
 
         this._entitiesToBeAdded = [];
-        for (const [entityId, changes] of this.pendingComponentChange) {
-            console.log('entityId: ', entityId);
+        for (const [entity, changes] of this.pendingComponentChange) {
+            console.log('Entity: ', entity.getId());
             // const changes = this.pendingComponentChange.get(entityId);
             // console.log(changes);
             // if (!changes) {
             //     throw new Error('No component change registered for entity with id ' + entityId);
             // }
             console.log('changes 1: ', changes);
-            this.syncComponentChange(entityId, changes);
+            this.processComponentChanges(entity, changes);
         }
 
         // TODO: handle component add queue
@@ -416,11 +416,11 @@ export default class Registry {
 
         // this._entityComponentSignatures[entityId].set(componentId);
 
-        let pendingChanges = this._pendingComponentChange.get(entityId);
+        let pendingChanges = this._pendingComponentChange.get(entity);
 
         if (!pendingChanges) {
             pendingChanges = new Map();
-            this._pendingComponentChange.set(entityId, pendingChanges);
+            this._pendingComponentChange.set(entity, pendingChanges);
         }
 
         pendingChanges.set(componentId, {
@@ -441,11 +441,11 @@ export default class Registry {
 
         // Set this component signature for that entity to false
         // this._entityComponentSignatures[entityId].remove(componentId);
-        let pendingChanges = this._pendingComponentChange.get(entityId);
+        let pendingChanges = this._pendingComponentChange.get(entity);
 
         if (!pendingChanges) {
             pendingChanges = new Map();
-            this._pendingComponentChange.set(entityId, pendingChanges);
+            this._pendingComponentChange.set(entity, pendingChanges);
         }
 
         pendingChanges.set(componentId, {
@@ -453,10 +453,10 @@ export default class Registry {
         });
     }
 
-    syncComponentChange(entityId: number, changes: Map<number, ComponentChange>): void {
+    processComponentChanges(entity: Entity, changes: Map<number, ComponentChange>): void {
+        const entityId = entity.getId();
+
         for (const [componentId, change] of changes) {
-            console.log('componentId: ', componentId);
-            console.log('change: ', change);
             if (change.kind === 'add') {
                 if (!this._componentPools[componentId]) {
                     this._componentPools[componentId] = new Pool<Component>();
