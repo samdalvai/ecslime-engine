@@ -1,4 +1,4 @@
-import { System, EventBus } from '../../../src';
+import { EventBus, System } from '../../../src';
 import CameraShakeEvent from '../events/CameraShakeEvent';
 
 const SHAKE_MAX_MOVEMENT = 10;

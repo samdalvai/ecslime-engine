@@ -1,4 +1,4 @@
-import { Entity, System, EventBus } from '../../../src';
+import { Entity, EventBus, System } from '../../../src';
 import CameraShakeComponent from '../components/CameraShakeComponent';
 import EntityEffectComponent from '../components/EntityEffectComponent';
 import HealthComponent from '../components/HealthComponent';

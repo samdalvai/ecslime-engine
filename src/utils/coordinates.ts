@@ -86,12 +86,7 @@ export const getSpriteBounds = (position: Vector, size: Size, scale: Vector): Wo
  * Returns the world bounds of a centre-anchored collider. Collider offset is
  * local and therefore scales together with the transform.
  */
-export const getColliderBounds = (
-    position: Vector,
-    size: Size,
-    offset: Vector,
-    scale: Vector,
-): WorldBounds => {
+export const getColliderBounds = (position: Vector, size: Size, offset: Vector, scale: Vector): WorldBounds => {
     const center = {
         x: position.x + offset.x * scale.x,
         y: position.y + offset.y * scale.y,

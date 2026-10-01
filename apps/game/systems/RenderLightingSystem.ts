@@ -1,4 +1,12 @@
-import { Camera, Engine, getCameraBounds, getSpriteBounds, System, worldBoundsOverlap, worldToScreen } from '../../../src';
+import {
+    Camera,
+    Engine,
+    System,
+    getCameraBounds,
+    getSpriteBounds,
+    worldBoundsOverlap,
+    worldToScreen,
+} from '../../../src';
 import LightEmitComponent from '../components/LightEmitComponent';
 import SpriteComponent from '../components/SpriteComponent';
 import TransformComponent from '../components/TransformComponent';
@@ -45,7 +53,10 @@ export default class RenderLightingSystem extends System {
                 { width: sprite.width, height: sprite.height },
                 transform.scale,
             );
-            if (!worldBoundsOverlap(spriteBounds, cameraBounds) || (!isEditor && !worldBoundsOverlap(spriteBounds, mapBounds))) {
+            if (
+                !worldBoundsOverlap(spriteBounds, cameraBounds) ||
+                (!isEditor && !worldBoundsOverlap(spriteBounds, mapBounds))
+            ) {
                 continue;
             }
 

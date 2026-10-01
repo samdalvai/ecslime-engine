@@ -2,10 +2,10 @@ import { describe, expect, test } from '@jest/globals';
 
 import BoxColliderComponent from '../../../apps/game/components/BoxColliderComponent';
 import TransformComponent from '../../../apps/game/components/TransformComponent';
-import Registry from '../../../src/ecs/Registry';
-import EventBus from '../../../src/event-bus/EventBus';
 import CollisionEvent from '../../../apps/game/events/CollisionEvent';
 import CollisionSystem from '../../../apps/game/systems/CollisionSystem';
+import Registry from '../../../src/ecs/Registry';
+import EventBus from '../../../src/event-bus/EventBus';
 import { Vector } from '../../../src/types/utils';
 
 describe('Testing Collision system related functions', () => {

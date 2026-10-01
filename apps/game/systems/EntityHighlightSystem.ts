@@ -1,7 +1,7 @@
+import { Engine, System, getSpriteBounds } from '../../../src';
 import HighlightComponent from '../components/HighlightComponent';
 import SpriteComponent from '../components/SpriteComponent';
 import TransformComponent from '../components/TransformComponent';
-import { getSpriteBounds, System, Engine } from '../../../src';
 
 export default class EntityHighlightSystem extends System {
     constructor() {

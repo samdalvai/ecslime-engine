@@ -1,10 +1,10 @@
+import { Registry, System, isPointInsideCircle } from '../../../src';
 import DamageRadiusComponent from '../components/DamageRadiusComponent';
 import EntityEffectComponent from '../components/EntityEffectComponent';
 import EntityFollowComponent from '../components/EntityFollowComponent';
 import SlowTimeComponent from '../components/SlowTimeComponent';
 import SpriteComponent from '../components/SpriteComponent';
 import TransformComponent from '../components/TransformComponent';
-import { Registry, System, isPointInsideCircle } from '../../../src';
 
 export default class EntityEffectSystem extends System {
     constructor() {

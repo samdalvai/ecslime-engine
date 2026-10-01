@@ -1,4 +1,4 @@
-import { Entity, System, EventBus } from '../../../src';
+import { Entity, EventBus, System } from '../../../src';
 import { HealthComponent, PickableItemComponent } from '../components';
 import { PickupEffect } from '../components/PickableItemComponent';
 import CollisionEvent from '../events/CollisionEvent';

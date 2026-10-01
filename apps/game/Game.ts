@@ -1,4 +1,4 @@
-import { beginWorldRender, Camera, endWorldRender, Engine, GameStatus, screenToWorld } from '../../src';
+import { Camera, Engine, GameStatus, beginWorldRender, endWorldRender, screenToWorld } from '../../src';
 import { gameComponentCatalog } from './components/componentCatalog';
 import * as GameEvents from './events';
 import * as Systems from './systems';

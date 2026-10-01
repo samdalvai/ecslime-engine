@@ -1,4 +1,4 @@
-import { Camera, getCameraBounds, getColliderBounds, System, worldBoundsOverlap } from '../../../src';
+import { Camera, System, getCameraBounds, getColliderBounds, worldBoundsOverlap } from '../../../src';
 import BoxColliderComponent from '../components/BoxColliderComponent';
 import TransformComponent from '../components/TransformComponent';
 

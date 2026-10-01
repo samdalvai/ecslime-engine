@@ -1,5 +1,7 @@
 import { describe, expect, test } from '@jest/globals';
 
+import RigidBodyComponent from '../../../apps/game/components/RigidBodyComponent';
+import TransformComponent from '../../../apps/game/components/TransformComponent';
 import Component from '../../../src/ecs/Component';
 import { createComponentCatalog } from '../../../src/ecs/ComponentCatalog';
 import Registry from '../../../src/ecs/Registry';
@@ -11,8 +13,6 @@ import {
 } from '../../../src/serialization/deserialization';
 import { EntityMap } from '../../../src/types/map';
 import { DEFAULT_SPRITE } from '../../../src/utils/constants';
-import RigidBodyComponent from '../../../apps/game/components/RigidBodyComponent';
-import TransformComponent from '../../../apps/game/components/TransformComponent';
 
 const componentCatalog = createComponentCatalog([
     { name: 'RigidBodyComponent', constructor: RigidBodyComponent },
@@ -521,9 +521,7 @@ describe('Testing deserialization related functions', () => {
         }
 
         const registry = new Registry();
-        const testOnlyCatalog = createComponentCatalog([
-            { name: 'TestOnlyComponent', constructor: TestOnlyComponent },
-        ]);
+        const testOnlyCatalog = createComponentCatalog([{ name: 'TestOnlyComponent', constructor: TestOnlyComponent }]);
 
         const entityMap: EntityMap = {
             components: [

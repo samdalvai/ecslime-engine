@@ -1,9 +1,15 @@
+import {
+    EventBus,
+    System,
+    computeDirectionVector,
+    computeDistanceBetweenPoints,
+    computeUnitVector,
+} from '../../../src';
 import EntityFollowComponent from '../components/EntityFollowComponent';
 import RigidBodyComponent from '../components/RigidBodyComponent';
 import ScriptComponent from '../components/ScriptComponent';
 import SpriteComponent from '../components/SpriteComponent';
 import TransformComponent from '../components/TransformComponent';
-import { System, EventBus, computeDirectionVector, computeDistanceBetweenPoints, computeUnitVector } from '../../../src';
 import EntityKilledEvent from '../events/EntityKilledEvent';
 
 export default class EntityFollowSystem extends System {

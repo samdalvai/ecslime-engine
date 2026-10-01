@@ -1,4 +1,4 @@
-import { AssetStore, Engine, Registry, System, EventBus, LevelManager, GameStatus, Rectangle } from '../../../src';
+import { AssetStore, Engine, EventBus, GameStatus, LevelManager, Rectangle, Registry, System } from '../../../src';
 import Game from '../Game';
 import { MousePressedEvent } from '../events';
 

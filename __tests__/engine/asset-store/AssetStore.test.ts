@@ -39,7 +39,9 @@ describe('AssetStore built-in assets', () => {
 
         expect(assetStore.getAllTexturesIds()).toEqual([DEFAULT_SPRITE, 'level-texture']);
         expect(assetStore.getTexture('missing-texture')).toBe(defaultTexture);
-        expect(assetStore.getTexturesFilePaths()).toEqual([{ assetId: 'level-texture', filePath: 'assets/sprites/level.png' }]);
+        expect(assetStore.getTexturesFilePaths()).toEqual([
+            { assetId: 'level-texture', filePath: 'assets/sprites/level.png' },
+        ]);
 
         assetStore.clear();
 

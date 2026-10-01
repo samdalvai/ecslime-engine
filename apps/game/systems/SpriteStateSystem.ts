@@ -1,8 +1,8 @@
+import { System } from '../../../src';
 import HealthComponent from '../components/HealthComponent';
 import RigidBodyComponent from '../components/RigidBodyComponent';
 import SpriteComponent from '../components/SpriteComponent';
 import SpriteStateComponent from '../components/SpriteStateComponent';
-import { System } from '../../../src';
 
 export default class SpriteStateSystem extends System {
     constructor() {

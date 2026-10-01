@@ -71,18 +71,18 @@ export default abstract class Engine {
     protected initialize = async () => {
         const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
         const ctx = canvas.getContext('2d');
-        
+
         if (!ctx) {
             throw new Error('Failed to get 2D context for the canvas.');
         }
-        
+
         this.resize(canvas, this.camera);
         canvas.style.cursor = 'none';
-        
+
         this.canvas = canvas;
         this.ctx = ctx;
         this.isRunning = true;
-        
+
         window.addEventListener('resize', () => {
             if (this.canvas && this.camera) {
                 this.resize(this.canvas, this.camera);

@@ -92,7 +92,7 @@ export default class System extends ISystem {
 
     isInterestedIn(signature: number) {
         const systemSignature = this.componentSignature.signature;
-        
+
         // Systems with no required components match no entities
         if (systemSignature === 0) {
             return false;

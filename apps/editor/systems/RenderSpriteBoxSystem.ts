@@ -2,10 +2,10 @@ import {
     Camera,
     DEFAULT_SPRITE,
     Engine,
-    getCameraBounds,
-    getSpriteBounds,
     System,
     WorldBounds,
+    getCameraBounds,
+    getSpriteBounds,
     worldBoundsOverlap,
 } from '../../../src';
 import SpriteComponent from '../../game/components/SpriteComponent';

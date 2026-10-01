@@ -1,8 +1,8 @@
-import { getColliderBounds, System, Vector, WorldBounds, worldBoundsOverlap } from '../../../src';
+import { System, Vector, WorldBounds, getColliderBounds, worldBoundsOverlap } from '../../../src';
+import { EventBus } from '../../../src';
 import BoxColliderComponent from '../components/BoxColliderComponent';
 import TransformComponent from '../components/TransformComponent';
 import CollisionEvent from '../events/CollisionEvent';
-import { EventBus } from '../../../src';
 
 export default class CollisionSystem extends System {
     constructor() {

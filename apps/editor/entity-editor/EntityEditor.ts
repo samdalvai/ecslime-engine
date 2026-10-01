@@ -1,4 +1,15 @@
-import { AssetStore, Component, Entity, Registry, EventBus, LevelManager, EntityMap, Rectangle, Vector, isValidEntityMap } from '../../../src';
+import {
+    AssetStore,
+    Component,
+    Entity,
+    EntityMap,
+    EventBus,
+    LevelManager,
+    Rectangle,
+    Registry,
+    Vector,
+    isValidEntityMap,
+} from '../../../src';
 import * as GameComponents from '../../game/components';
 import Editor from '../Editor';
 import EntityDeleteEvent from '../events/EntityDeleteEvent';

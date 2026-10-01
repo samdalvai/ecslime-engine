@@ -1,8 +1,8 @@
+import { EventBus, Registry, System, isPointInsideCircle } from '../../../src';
 import EntityFollowComponent from '../components/EntityFollowComponent';
 import RigidBodyComponent from '../components/RigidBodyComponent';
 import SpriteComponent from '../components/SpriteComponent';
 import TransformComponent from '../components/TransformComponent';
-import { Registry, System, EventBus, isPointInsideCircle } from '../../../src';
 import EntityHitEvent from '../events/EntityHitEvent';
 
 export default class PlayerDetectionSystem extends System {

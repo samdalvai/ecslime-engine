@@ -1,5 +1,7 @@
 import { describe, expect, test } from '@jest/globals';
 
+import RigidBodyComponent from '../../../apps/game/components/RigidBodyComponent';
+import TransformComponent from '../../../apps/game/components/TransformComponent';
 import Engine from '../../../src/Engine';
 import AssetStore from '../../../src/asset-store/AssetStore';
 import Component from '../../../src/ecs/Component';
@@ -7,8 +9,6 @@ import Entity from '../../../src/ecs/Entity';
 import Registry from '../../../src/ecs/Registry';
 import { serializeEntities, serializeEntity, serializeLevel } from '../../../src/serialization/serialization';
 import { EntityMap, LevelMap } from '../../../src/types/map';
-import RigidBodyComponent from '../../../apps/game/components/RigidBodyComponent';
-import TransformComponent from '../../../apps/game/components/TransformComponent';
 
 describe('Testing serialization related functions', () => {
     test('Should serialize entity with one component to a valid Entity Map', () => {

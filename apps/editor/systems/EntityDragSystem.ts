@@ -276,10 +276,8 @@ export default class EntityDragSystem extends System {
                 };
             }
 
-            const intendedSelectionLeft =
-                Engine.mousePositionWorld.x - this.dragOffsetFromSelectionBounds.x;
-            const intendedSelectionBottom =
-                Engine.mousePositionWorld.y - this.dragOffsetFromSelectionBounds.y;
+            const intendedSelectionLeft = Engine.mousePositionWorld.x - this.dragOffsetFromSelectionBounds.x;
+            const intendedSelectionBottom = Engine.mousePositionWorld.y - this.dragOffsetFromSelectionBounds.y;
             const snappedSelectionLeft = Math.round(intendedSelectionLeft / gridSize) * gridSize;
             const snappedSelectionBottom = Math.round(intendedSelectionBottom / gridSize) * gridSize;
             const diffX = snappedSelectionLeft - selectionLeft;
