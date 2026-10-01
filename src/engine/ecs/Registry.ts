@@ -24,7 +24,7 @@ export default class Registry {
     private _entitiesToBeAdded: Entity[];
     private _entitiesToBeKilled: Entity[];
 
-    // Pending component add or remove by device id
+    // Pending component add or remove by component id and device id
     private _pendingComponentChange: Map<number, Map<number, ComponentChange>>;
 
     // Entity tags (one tag name per entity)
@@ -175,6 +175,16 @@ export default class Registry {
         }
 
         this._entitiesToBeAdded = [];
+        for (const [entityId, changes] of this.pendingComponentChange) {
+            console.log('entityId: ', entityId);
+            // const changes = this.pendingComponentChange.get(entityId);
+            // console.log(changes);
+            // if (!changes) {
+            //     throw new Error('No component change registered for entity with id ' + entityId);
+            // }
+            console.log('changes 1: ', changes);
+            this.syncComponentChange(entityId, changes);
+        }
 
         // TODO: handle component add queue
         // TODO: handle component remove queue
@@ -396,15 +406,15 @@ export default class Registry {
         const entityId = entity.getId();
 
         // TODO: updating component pools should be deferred to the component processing queue
-        if (this._componentPools[componentId] === undefined) {
-            const newComponentPool = new Pool<InstanceType<T>>();
-            this._componentPools[componentId] = newComponentPool;
-        }
+        // if (this._componentPools[componentId] === undefined) {
+        //     const newComponentPool = new Pool<InstanceType<T>>();
+        //     this._componentPools[componentId] = newComponentPool;
+        // }
 
         const newComponent = new ComponentClass(...args) as InstanceType<T>;
-        (this._componentPools[componentId] as Pool<InstanceType<T>>).set(entityId, newComponent);
+        // (this._componentPools[componentId] as Pool<InstanceType<T>>).set(entityId, newComponent);
 
-        this._entityComponentSignatures[entityId].set(componentId);
+        // this._entityComponentSignatures[entityId].set(componentId);
 
         let pendingChanges = this._pendingComponentChange.get(entityId);
 
@@ -426,11 +436,44 @@ export default class Registry {
         const entityId = entity.getId();
 
         // Remove the component from the component list for that entity
-        const componentPool = this._componentPools[componentId] as Pool<InstanceType<T>>;
-        componentPool?.remove(entityId);
+        // const componentPool = this._componentPools[componentId] as Pool<InstanceType<T>>;
+        // componentPool?.remove(entityId);
 
         // Set this component signature for that entity to false
-        this._entityComponentSignatures[entityId].remove(componentId);
+        // this._entityComponentSignatures[entityId].remove(componentId);
+        let pendingChanges = this._pendingComponentChange.get(entityId);
+
+        if (!pendingChanges) {
+            pendingChanges = new Map();
+            this._pendingComponentChange.set(entityId, pendingChanges);
+        }
+
+        pendingChanges.set(componentId, {
+            kind: 'remove',
+        });
+    }
+
+    syncComponentChange(entityId: number, changes: Map<number, ComponentChange>): void {
+        for (const [componentId, change] of changes) {
+            console.log('componentId: ', componentId);
+            console.log('change: ', change);
+            if (change.kind === 'add') {
+                if (!this._componentPools[componentId]) {
+                    this._componentPools[componentId] = new Pool<Component>();
+                }
+
+                const componentPool = this._componentPools[componentId] as Pool<Component>;
+                componentPool.set(entityId, change.component);
+                this._entityComponentSignatures[entityId].set(componentId);
+            } else {
+                // Remove the component from the component list for that entity
+                const componentPool = this._componentPools[componentId] as Pool<Component>;
+                componentPool?.remove(entityId);
+
+                // Set this component signature for that entity to false
+                this._entityComponentSignatures[entityId].remove(componentId);
+            }
+        }
     }
 
     hasComponent<T extends ComponentClass>(entity: Entity, ComponentClass: T): boolean {
