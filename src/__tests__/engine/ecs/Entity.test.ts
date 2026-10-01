@@ -35,6 +35,7 @@ describe('Testing Entity related functions', () => {
         const entity = registry.createEntity();
         entity.addComponent(MyComponent1);
         entity.addComponent(MyComponent2);
+        registry.update();
 
         const components = entity.getComponents();
         expect(components[0]).toEqual(entity.getComponent(MyComponent1));
@@ -65,6 +66,7 @@ describe('Testing Entity related functions', () => {
 
         const entity2 = registry.createEntity();
         entity2.addComponent(MyComponent3);
+        registry.update();
 
         const components = entity1.getComponents();
         expect(components[0]).toEqual(entity1.getComponent(MyComponent1));
@@ -77,8 +79,10 @@ describe('Testing Entity related functions', () => {
 
         const entity = registry.createEntity();
         entity.addComponent(TestTransformComponent, { x: 100, y: 100 }, { x: 2, y: 2 });
+        registry.update();
 
         const entityCopy = entity.duplicate(componentCatalog);
+        registry.update();
         const components = entityCopy.getComponents();
         expect(components[0]).toEqual(entity.getComponent(TestTransformComponent));
         expect(components.length).toBe(1);
@@ -89,8 +93,10 @@ describe('Testing Entity related functions', () => {
 
         const entity = registry.createEntity();
         entity.addComponent(TestTransformComponent, { x: 100, y: 100 }, { x: 2, y: 2 });
+        registry.update();
 
         const entityCopy = entity.duplicate(componentCatalog);
+        registry.update();
 
         const originalTransform = entity.getComponent(TestTransformComponent);
         originalTransform!.position.x = 200;
@@ -119,6 +125,7 @@ describe('Testing Entity related functions', () => {
 
         const entity = registry.createEntity();
         entity.addComponent(TestTransformComponent, { x: 100, y: 100 }, { x: 2, y: 2 });
+        registry.update();
 
         const entityCopy1 = entity.duplicate(componentCatalog);
         registry.update();
@@ -129,6 +136,7 @@ describe('Testing Entity related functions', () => {
         registry.update();
 
         const entityCopy2 = entityCopy1.duplicate(componentCatalog);
+        registry.update();
         const components = entityCopy2.getComponents();
 
         expect(entityCopy2.getComponent(TestTransformComponent)!.position.x).toEqual(200);

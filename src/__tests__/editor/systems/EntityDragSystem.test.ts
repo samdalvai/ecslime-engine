@@ -40,6 +40,7 @@ describe('EntityDragSystem grid snapping', () => {
         const entity = registry.createEntity();
         entity.addComponent(TransformComponent, { x: 64, y: 96 }, { x: 2, y: 2 });
         entity.addComponent(SpriteComponent, 'sprite', 32, 32);
+        registry.update();
 
         Editor.selectedEntities = [entity];
         Editor.entityDragStart = { x: 64, y: 96 };
@@ -63,6 +64,7 @@ describe('EntityDragSystem grid snapping', () => {
         const grabbedEntity = registry.createEntity();
         grabbedEntity.addComponent(TransformComponent, { x: 120, y: 96 });
         grabbedEntity.addComponent(SpriteComponent, 'grabbed-sprite', 64, 32);
+        registry.update();
 
         Editor.selectedEntities = [firstEntity, grabbedEntity];
         Editor.entityDragStart = { x: 120, y: 96 };
