@@ -16,6 +16,12 @@
     },
     "author": "Samuel Dalvai",
     "license": "MIT",
+    "jest": {
+        "moduleNameMapper": {
+            "^url:.*\\.png$": "<rootDir>/src/__tests__/mocks/image.ts"
+        },
+        "testPathIgnorePatterns": ["<rootDir>/src/__tests__/mocks/"]
+    },
     "devDependencies": {
         "@babel/core": "^7.26.0",
         "@babel/preset-env": "^7.26.0",
