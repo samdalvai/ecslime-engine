@@ -1,7 +1,7 @@
+import { System, computeDirectionVector, computeUnitVector } from '../../../src';
 import EntityDestinationComponent from '../components/EntityDestinationComponent';
 import RigidBodyComponent from '../components/RigidBodyComponent';
 import TransformComponent from '../components/TransformComponent';
-import { System, computeDirectionVector, computeUnitVector } from '../../../src';
 
 export default class EntityDestinationSystem extends System {
     constructor() {

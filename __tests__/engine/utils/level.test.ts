@@ -32,5 +32,4 @@ describe('Testing level utils related functions', () => {
 
         expect(isValidLevelMap(object)).toBe(false);
     });
-
 });

@@ -1,6 +1,17 @@
-import { Engine, AssetStore, Entity, Registry, System, EventBus, LevelManager, deserializeEntity, LevelMap, isValidLevelMap } from '../../../src';
-import { gameComponentCatalog } from '../../game/components/componentCatalog';
+import {
+    AssetStore,
+    Engine,
+    Entity,
+    EventBus,
+    LevelManager,
+    LevelMap,
+    Registry,
+    System,
+    deserializeEntity,
+    isValidLevelMap,
+} from '../../../src';
 import { TransformComponent } from '../../game/components';
+import { gameComponentCatalog } from '../../game/components/componentCatalog';
 import EntityKilledEvent from '../../game/events/EntityKilledEvent';
 import * as GameSystems from '../../game/systems';
 import Editor from '../Editor';

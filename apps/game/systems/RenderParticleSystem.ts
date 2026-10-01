@@ -1,8 +1,8 @@
-import { getCameraBounds, getSpriteBounds, System, WorldBounds, worldBoundsOverlap } from '../../../src';
+import { System, WorldBounds, getCameraBounds, getSpriteBounds, worldBoundsOverlap } from '../../../src';
+import { Camera } from '../../../src';
 import Game from '../Game';
 import ParticleComponent from '../components/ParticleComponent';
 import TransformComponent from '../components/TransformComponent';
-import { Camera } from '../../../src';
 
 export default class RenderParticleSystem extends System {
     constructor() {

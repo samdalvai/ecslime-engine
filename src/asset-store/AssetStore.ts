@@ -1,6 +1,7 @@
+import defaultSpriteUrl from 'url:./default.png';
+
 import { Asset } from '../types/map';
 import { DEFAULT_SPRITE } from '../utils/constants';
-import defaultSpriteUrl from 'url:./default.png';
 
 export default class AssetStore {
     private builtInTextures: Map<string, HTMLImageElement>;

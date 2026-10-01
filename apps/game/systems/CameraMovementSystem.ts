@@ -1,4 +1,4 @@
-import { Camera, clampCameraCenter, Engine, screenToWorld, System } from '../../../src';
+import { Camera, Engine, System, clampCameraCenter, screenToWorld } from '../../../src';
 import CameraFollowComponent from '../components/CameraFollowComponent';
 import TransformComponent from '../components/TransformComponent';
 

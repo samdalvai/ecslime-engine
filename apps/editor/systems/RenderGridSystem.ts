@@ -1,4 +1,4 @@
-import { Camera, getCameraBounds, System } from '../../../src';
+import { Camera, System, getCameraBounds } from '../../../src';
 import Editor from '../Editor';
 
 export default class RenderGridSystem extends System {

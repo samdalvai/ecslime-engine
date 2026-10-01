@@ -1,4 +1,4 @@
-import { GameEvent, EntityMap } from '../../../src';
+import { EntityMap, GameEvent } from '../../../src';
 
 export default class EntityPasteEvent extends GameEvent {
     entities: EntityMap[];

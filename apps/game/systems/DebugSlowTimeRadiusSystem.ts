@@ -1,4 +1,4 @@
-import { Camera, getCameraBounds, getSpriteBounds, System, worldBoundsOverlap } from '../../../src';
+import { Camera, System, getCameraBounds, getSpriteBounds, worldBoundsOverlap } from '../../../src';
 import SlowTimeComponent from '../components/SlowTimeComponent';
 import SpriteComponent from '../components/SpriteComponent';
 import TransformComponent from '../components/TransformComponent';
@@ -25,7 +25,11 @@ export default class DebugSlowTimeRadiusSystem extends System {
 
             if (
                 !worldBoundsOverlap(
-                    getSpriteBounds(transform.position, { width: sprite.width, height: sprite.height }, transform.scale),
+                    getSpriteBounds(
+                        transform.position,
+                        { width: sprite.width, height: sprite.height },
+                        transform.scale,
+                    ),
                     cameraBounds,
                 )
             ) {

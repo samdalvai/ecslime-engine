@@ -7,13 +7,7 @@ export default class TextLabelComponent extends Component {
     fontSize: number;
     fontFamily: string;
 
-    constructor(
-        offset = { x: 0, y: 0 },
-        text = '',
-        color = { r: 0, g: 0, b: 0 },
-        fontSize = 14,
-        fontFamily = 'Arial',
-    ) {
+    constructor(offset = { x: 0, y: 0 }, text = '', color = { r: 0, g: 0, b: 0 }, fontSize = 14, fontFamily = 'Arial') {
         super();
         this.offset = offset;
         this.text = text;

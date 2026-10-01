@@ -46,12 +46,7 @@ describe('Testing LevelManager', () => {
         const levelLoadPromise = levelManager.loadLevelFromLevelMap(level);
         await Promise.resolve();
 
-        expect(loadOrder).toEqual([
-            'texture:texture-1',
-            'texture:texture-2',
-            'sound:sound-1',
-            'sound:sound-2',
-        ]);
+        expect(loadOrder).toEqual(['texture:texture-1', 'texture:texture-2', 'sound:sound-1', 'sound:sound-2']);
         expect(pendingAssetLoads).toHaveLength(4);
 
         for (const resolveAssetLoad of pendingAssetLoads) {

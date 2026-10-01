@@ -1,4 +1,13 @@
-import { Engine, Entity, EventBus, getColliderBounds, getSpriteBounds, System, Vector, WorldBounds } from '../../../src';
+import {
+    Engine,
+    Entity,
+    EventBus,
+    System,
+    Vector,
+    WorldBounds,
+    getColliderBounds,
+    getSpriteBounds,
+} from '../../../src';
 import BoxColliderComponent from '../components/BoxColliderComponent';
 import EntityEffectComponent from '../components/EntityEffectComponent';
 import RigidBodyComponent from '../components/RigidBodyComponent';

@@ -1,9 +1,9 @@
+import { System, Vector } from '../../../src';
 import LifetimeComponent from '../components/LifetimeComponent';
 import ParticleComponent from '../components/ParticleComponent';
 import ParticleEmitComponent from '../components/ParticleEmitComponent';
 import RigidBodyComponent from '../components/RigidBodyComponent';
 import TransformComponent from '../components/TransformComponent';
-import { System, Vector } from '../../../src';
 
 export default class ParticleEmitSystem extends System {
     constructor() {

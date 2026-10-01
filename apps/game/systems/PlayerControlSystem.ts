@@ -1,4 +1,14 @@
-import { Engine, Registry, System, EventBus, MouseButton, Flip, Vector, computeDirectionVector, computeUnitVector } from '../../../src';
+import {
+    Engine,
+    EventBus,
+    Flip,
+    MouseButton,
+    Registry,
+    System,
+    Vector,
+    computeDirectionVector,
+    computeUnitVector,
+} from '../../../src';
 import AnimationComponent from '../components/AnimationComponent';
 import BoxColliderComponent from '../components/BoxColliderComponent';
 import DamageRadiusComponent from '../components/DamageRadiusComponent';
@@ -232,21 +242,13 @@ export default class PlayerControlSystem extends System {
         const scale = 1.0;
 
         const bubbleFloor = this.registry.createEntity();
-        bubbleFloor.addComponent(
-            TransformComponent,
-            { ...mousePosition },
-            { x: scale, y: scale },
-        );
+        bubbleFloor.addComponent(TransformComponent, { ...mousePosition }, { x: scale, y: scale });
         bubbleFloor.addComponent(SpriteComponent, 'magic_bubble', 128, 128, 1, 1, 0, Flip.NONE, 0.5);
         bubbleFloor.addComponent(AnimationComponent, 4, 20, false);
         bubbleFloor.addComponent(LifetimeComponent, 5000);
 
         const bubbleTop = this.registry.createEntity();
-        bubbleTop.addComponent(
-            TransformComponent,
-            { ...mousePosition },
-            { x: scale, y: scale },
-        );
+        bubbleTop.addComponent(TransformComponent, { ...mousePosition }, { x: scale, y: scale });
         bubbleTop.addComponent(SpriteComponent, 'magic_bubble', 128, 128, 3, 2, 0, Flip.NONE, 0.3);
         bubbleTop.addComponent(AnimationComponent, 4, 20, false);
         bubbleTop.addComponent(SlowTimeComponent, 60 * scale, 0.2, true);
@@ -336,12 +338,7 @@ export default class PlayerControlSystem extends System {
         const scale = 1.0;
 
         const fireCircleFloor = this.registry.createEntity();
-        fireCircleFloor.addComponent(
-            TransformComponent,
-            { ...mousePosition },
-            { x: scale, y: scale },
-            0,
-        );
+        fireCircleFloor.addComponent(TransformComponent, { ...mousePosition }, { x: scale, y: scale }, 0);
         fireCircleFloor.addComponent(SpriteComponent, 'fire_circle', 128, 128, 1, 0, 0, Flip.NONE, 0.5);
         fireCircleFloor.addComponent(AnimationComponent, 4, 20, false);
         fireCircleFloor.addComponent(LifetimeComponent, 250);
@@ -352,12 +349,7 @@ export default class PlayerControlSystem extends System {
 
         setTimeout(() => {
             const fireCircleFlames = this.registry.createEntity();
-            fireCircleFlames.addComponent(
-                TransformComponent,
-                { ...mousePosition },
-                { x: scale, y: scale },
-                0,
-            );
+            fireCircleFlames.addComponent(TransformComponent, { ...mousePosition }, { x: scale, y: scale }, 0);
             fireCircleFlames.addComponent(SpriteComponent, 'fire_circle', 128, 128, 1, 1, 0, Flip.NONE, 1);
             fireCircleFlames.addComponent(AnimationComponent, 4, 10, true);
             fireCircleFlames.addComponent(LifetimeComponent, 5000);

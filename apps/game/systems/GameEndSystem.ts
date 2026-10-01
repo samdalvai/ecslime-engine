@@ -1,4 +1,4 @@
-import { System, GameStatus } from '../../../src';
+import { GameStatus, System } from '../../../src';
 import Game from '../Game';
 import { HealthComponent } from '../components';
 

@@ -51,10 +51,7 @@ export default class RenderCursorSystem extends System {
         this.renderDefaultCursor(ctx, assetStore);
     }
 
-    private renderAttackCursor = (
-        ctx: CanvasRenderingContext2D,
-        assetStore: AssetStore,
-    ) => {
+    private renderAttackCursor = (ctx: CanvasRenderingContext2D, assetStore: AssetStore) => {
         ctx.drawImage(
             assetStore.getTexture('cursor'),
             32,
@@ -68,10 +65,7 @@ export default class RenderCursorSystem extends System {
         );
     };
 
-    private renderDefaultCursor = (
-        ctx: CanvasRenderingContext2D,
-        assetStore: AssetStore,
-    ) => {
+    private renderDefaultCursor = (ctx: CanvasRenderingContext2D, assetStore: AssetStore) => {
         ctx.drawImage(
             assetStore.getTexture('cursor'),
             0,

@@ -1,4 +1,4 @@
-import { System, EventBus } from '../../../src';
+import { EventBus, System } from '../../../src';
 import {
     AnimationComponent,
     BoxColliderComponent,

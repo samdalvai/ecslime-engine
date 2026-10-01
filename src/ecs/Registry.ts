@@ -164,7 +164,6 @@ export default class Registry {
             this.processComponentChanges(entity, changes);
         }
 
-
         for (const entity of this._entitiesToBeKilled) {
             this.removeEntityFromSystems(entity);
             this._entityComponentSignatures[entity.getId()].reset();

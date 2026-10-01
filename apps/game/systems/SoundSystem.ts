@@ -1,4 +1,4 @@
-import { AssetStore, System, EventBus } from '../../../src';
+import { AssetStore, EventBus, System } from '../../../src';
 import SoundComponent from '../components/SoundComponent';
 import SoundEmitEvent from '../events/SoundEmitEvent';
 

@@ -1,3 +1,13 @@
+import {
+    Engine,
+    Entity,
+    EventBus,
+    Registry,
+    System,
+    Vector,
+    computeDirectionVector,
+    computeUnitVector,
+} from '../../../src';
 import AnimationComponent from '../components/AnimationComponent';
 import BoxColliderComponent from '../components/BoxColliderComponent';
 import EntityEffectComponent from '../components/EntityEffectComponent';
@@ -10,7 +20,6 @@ import RigidBodyComponent from '../components/RigidBodyComponent';
 import ShadowComponent from '../components/ShadowComponent';
 import SpriteComponent from '../components/SpriteComponent';
 import TransformComponent from '../components/TransformComponent';
-import { Entity, Registry, System, EventBus, Vector, computeDirectionVector, computeUnitVector, Engine } from '../../../src';
 import RangedAttackEmitEvent from '../events/RangedAttackEmitEvent';
 
 export default class RangedAttackEmitSystem extends System {
@@ -140,20 +149,14 @@ export default class RangedAttackEmitSystem extends System {
             if (entity.hasTag('player')) {
                 const framesPerSecond = 8 / (rangedAttackEmitter.repeatFrequency / 1000);
                 const cooldownAnimation = this.registry.createEntity();
-                cooldownAnimation.addComponent(
-                    SpriteComponent,
-                    'cooldown_skill',
-                    32,
-                    32,
-                    2
-                );
+                cooldownAnimation.addComponent(SpriteComponent, 'cooldown_skill', 32, 32, 2);
                 cooldownAnimation.addComponent(AnimationComponent, 8, framesPerSecond, false);
                 cooldownAnimation.addComponent(
                     TransformComponent,
                     { x: 2 * 25 + 32 * 3 * 2 + 32, y: Engine.windowHeight - 64 - 25 + 32 },
                     { x: 2, y: 2 },
                     0,
-                    true
+                    true,
                 );
                 cooldownAnimation.addComponent(LifetimeComponent, rangedAttackEmitter.repeatFrequency);
             }

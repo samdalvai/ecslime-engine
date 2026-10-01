@@ -1,4 +1,4 @@
-import { Component, Flip, DEFAULT_SPRITE } from '../../../src';
+import { Component, DEFAULT_SPRITE, Flip } from '../../../src';
 
 export default class SpriteComponent extends Component {
     assetId: string;

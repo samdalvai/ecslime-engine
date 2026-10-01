@@ -1,4 +1,4 @@
-import { Camera, getCameraBounds, getSpriteBounds, System, worldBoundsOverlap } from '../../../src';
+import { Camera, System, getCameraBounds, getSpriteBounds, worldBoundsOverlap } from '../../../src';
 import HealthComponent from '../components/HealthComponent';
 import SpriteComponent from '../components/SpriteComponent';
 import TransformComponent from '../components/TransformComponent';

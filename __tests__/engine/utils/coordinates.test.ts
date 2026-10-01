@@ -59,9 +59,12 @@ describe('standard coordinate helpers', () => {
             bottom: 14,
             top: 26,
         });
-        expect(
-            getColliderBounds({ x: 10, y: 20 }, { width: 4, height: 6 }, { x: 2, y: -1 }, { x: 2, y: 3 }),
-        ).toEqual({ left: 10, right: 18, bottom: 8, top: 26 });
+        expect(getColliderBounds({ x: 10, y: 20 }, { width: 4, height: 6 }, { x: 2, y: -1 }, { x: 2, y: 3 })).toEqual({
+            left: 10,
+            right: 18,
+            bottom: 8,
+            top: 26,
+        });
     });
 
     test('uses strict AABB overlap so touching bounds do not collide', () => {

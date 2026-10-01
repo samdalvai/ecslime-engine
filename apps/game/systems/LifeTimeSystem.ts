@@ -1,4 +1,4 @@
-import { System, EventBus } from '../../../src';
+import { EventBus, System } from '../../../src';
 import LifetimeComponent from '../components/LifetimeComponent';
 import EntityKilledEvent from '../events/EntityKilledEvent';
 

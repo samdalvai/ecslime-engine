@@ -1,11 +1,11 @@
 import { describe, expect, test } from '@jest/globals';
 
-import Engine from '../../../src/Engine';
-import Registry from '../../../src/ecs/Registry';
-import { Camera } from '../../../src/types/utils';
 import CameraFollowComponent from '../../../apps/game/components/CameraFollowComponent';
 import TransformComponent from '../../../apps/game/components/TransformComponent';
 import CameraMovementSystem from '../../../apps/game/systems/CameraMovementSystem';
+import Engine from '../../../src/Engine';
+import Registry from '../../../src/ecs/Registry';
+import { Camera } from '../../../src/types/utils';
 
 describe('CameraMovementSystem', () => {
     test('follows a centre-anchored transform, clamps to the map, and updates the Y-up pointer position', () => {

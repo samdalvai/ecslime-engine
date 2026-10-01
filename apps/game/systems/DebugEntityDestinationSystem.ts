@@ -1,4 +1,4 @@
-import { Camera, getCameraBounds, System, worldBoundsOverlap } from '../../../src';
+import { Camera, System, getCameraBounds, worldBoundsOverlap } from '../../../src';
 import EntityDestinationComponent from '../components/EntityDestinationComponent';
 
 export default class DebugEntityDestinationSystem extends System {

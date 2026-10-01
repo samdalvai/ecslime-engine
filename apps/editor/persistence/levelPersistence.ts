@@ -1,11 +1,4 @@
-import {
-    AssetStore,
-    Entity,
-    Registry,
-    serializeEntities,
-    serializeLevel,
-    LevelMap,
-} from '../../../src';
+import { AssetStore, Entity, LevelMap, Registry, serializeEntities, serializeLevel } from '../../../src';
 
 export const saveLevelToJson = (registry: Registry, assetStore: AssetStore): void => {
     const jsonString = JSON.stringify(serializeLevel(registry, assetStore), null, 2);
@@ -37,11 +30,7 @@ export const saveEntitiesToJson = (entities: Entity[]): void => {
     console.log('Entity snapshot saved to json');
 };
 
-export const saveCurrentLevelToLocalStorage = (
-    levelId: string | null,
-    registry: Registry,
-    assetStore: AssetStore,
-) => {
+export const saveCurrentLevelToLocalStorage = (levelId: string | null, registry: Registry, assetStore: AssetStore) => {
     if (!levelId) {
         throw new Error('Could not determine currently selected level');
     }

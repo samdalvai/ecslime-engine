@@ -1,10 +1,10 @@
+import { EventBus, System } from '../../../src';
 import DeadBodyOnDeathComponent from '../components/DeadBodyOnDeathComponent';
 import LifetimeComponent from '../components/LifetimeComponent';
 import RigidBodyComponent from '../components/RigidBodyComponent';
 import ShadowComponent from '../components/ShadowComponent';
 import SpriteComponent from '../components/SpriteComponent';
 import TransformComponent from '../components/TransformComponent';
-import { System, EventBus } from '../../../src';
 import EntityKilledEvent from '../events/EntityKilledEvent';
 
 export default class DeadBodyOnDeathSystem extends System {
@@ -46,7 +46,14 @@ export default class DeadBodyOnDeathSystem extends System {
                     spriteOffset = 3;
                 }
 
-                deadBody.addComponent(SpriteComponent, sprite.assetId, sprite.width, sprite.height, sprite.zIndex, 12 + spriteOffset);
+                deadBody.addComponent(
+                    SpriteComponent,
+                    sprite.assetId,
+                    sprite.width,
+                    sprite.height,
+                    sprite.zIndex,
+                    12 + spriteOffset,
+                );
                 deadBody.addComponent(LifetimeComponent, 5000);
 
                 if (entity.hasComponent(ShadowComponent)) {
