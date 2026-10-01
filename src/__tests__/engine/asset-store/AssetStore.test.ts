@@ -34,6 +34,7 @@ describe('AssetStore built-in assets', () => {
 
         await assetStore.initialize();
         const defaultTexture = assetStore.getTexture(DEFAULT_SPRITE);
+        expect(defaultTexture.src).toBe('/test-assets/default.png');
         await assetStore.addTexture('level-texture', 'assets/sprites/level.png');
 
         expect(assetStore.getAllTexturesIds()).toEqual([DEFAULT_SPRITE, 'level-texture']);
