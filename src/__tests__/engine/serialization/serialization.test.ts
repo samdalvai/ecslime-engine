@@ -30,6 +30,8 @@ describe('Testing serialization related functions', () => {
             ],
         };
 
+        registry.update();
+
         expect(serializeEntity(entity)).toEqual(expected);
     });
 
@@ -59,6 +61,8 @@ describe('Testing serialization related functions', () => {
                 },
             ],
         };
+
+        registry.update();
 
         expect(serializeEntity(entity)).toEqual(expected);
     });
@@ -142,6 +146,8 @@ describe('Testing serialization related functions', () => {
             },
         ];
 
+        registry.update();
+
         expect(serializeEntities([entity1, entity2])).toEqual(expected);
     });
 
@@ -198,6 +204,8 @@ describe('Testing serialization related functions', () => {
                 ],
             },
         ];
+
+        registry.update();
 
         expect(serializeEntities([entity1, entity2])).toEqual(expected);
     });
@@ -303,6 +311,8 @@ describe('Testing serialization related functions', () => {
             ],
         };
 
+        registry.update();
+
         expect(serializeEntity(entity)).toEqual(expected);
     });
 
@@ -333,6 +343,8 @@ describe('Testing serialization related functions', () => {
                 },
             ],
         };
+
+        registry.update();
 
         expect(serializeEntity(entity)).toEqual(expected);
     });
@@ -368,6 +380,8 @@ describe('Testing serialization related functions', () => {
 
         Engine.mapWidth = 500;
         Engine.mapHeight = 500;
+
+        registry.update();
 
         expect(serializeLevel(registry, assetStore)).toEqual(expected);
     });
@@ -419,6 +433,8 @@ describe('Testing serialization related functions', () => {
 
         Engine.mapWidth = 500;
         Engine.mapHeight = 500;
+
+        registry.update();
 
         expect(serializeLevel(registry, assetStore)).toEqual(expected);
     });
