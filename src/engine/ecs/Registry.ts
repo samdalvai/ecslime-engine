@@ -497,65 +497,6 @@ export default class Registry {
         return system as T;
     }
 
-    addEntityToSystem<T extends System>(entity: Entity, SystemClass: SystemClass<T>) {
-        const entityId = entity.getId();
-        const entityComponentSignature = this._entityComponentSignatures[entityId];
-
-        const system = this._systems.get(SystemClass.getSystemId());
-
-        if (!system) {
-            throw new Error('System with id ' + SystemClass.getSystemId() + ' does not exist');
-        }
-
-        const systemComponentSignature = system.getComponentSignature();
-
-        if (systemComponentSignature === 0) {
-            throw new Error('System with id ' + SystemClass.getSystemId() + ' has signature 0, no entity can be added');
-        }
-
-        const isInterested = system.isInterestedIn(entityComponentSignature.signature);
-
-        if (!isInterested) {
-            throw new Error(
-                'Entity with id ' + entityId + ' cannot be added to system with id ' + SystemClass.getSystemId(),
-            );
-        }
-
-        if (system.hasEntity(entity)) {
-            throw new Error(
-                'Entity with id ' + entityId + ' is already present in system with id ' + SystemClass.getSystemId(),
-            );
-        }
-
-        system.addEntityToSystem(entity);
-    }
-
-    removeEntityFromSystem<T extends System>(entity: Entity, SystemClass: SystemClass<T>) {
-        const system = this._systems.get(SystemClass.getSystemId());
-
-        if (!system) {
-            throw new Error('System with id ' + SystemClass.getSystemId() + ' does not exist');
-        }
-
-        system.removeEntityFromSystem(entity);
-    }
-
-    /**
-     * @deprecated This method should not be used anymore, systems syncing is automatic on registry update
-     * @param entity 
-     */
-    addEntityToSystems(entity: Entity) {
-        const entityId = entity.getId();
-
-        const entityComponentSignature = this._entityComponentSignatures[entityId];
-
-        for (const system of this._systems.values()) {
-            if (system.isInterestedIn(entityComponentSignature.signature)) {
-                system.addEntityToSystem(entity);
-            }
-        }
-    }
-
     removeEntityFromSystems(entity: Entity) {
         for (const system of this._systems.values()) {
             if (system.hasEntity(entity)) {
