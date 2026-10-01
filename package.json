@@ -6,9 +6,7 @@
         "start": "parcel game.html",
         "start:editor": "parcel editor.html",
         "clean": "rm -rf .parcel-cache & find dist -maxdepth 1 -type f -exec rm {} +",
-        "test": "jest src/__tests__/**/*",
-        "test:dev": "jest src/__tests__/engine/ecs/Registry.test.ts",
-        "test:perf": "jest src/__tests__/Performance.test.ts",
+        "test": "jest __tests__",
         "lint": "eslint . --ext .js,.ts",
         "lint:fix": "eslint . --ext .js,.ts --fix",
         "build:game": "parcel build game.html --no-optimize --public-url ./ && mv dist/game.html dist/index.html",
@@ -19,9 +17,9 @@
     "license": "MIT",
     "jest": {
         "moduleNameMapper": {
-            "^url:.*\\.png$": "<rootDir>/src/__tests__/mocks/image.ts"
+            "^url:.*\\.png$": "<rootDir>/__tests__/mocks/image.ts"
         },
-        "testPathIgnorePatterns": ["<rootDir>/src/__tests__/mocks/"]
+        "testPathIgnorePatterns": ["<rootDir>/__tests__/mocks/"]
     },
     "devDependencies": {
         "@babel/core": "^7.26.0",
