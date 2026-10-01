@@ -21,7 +21,6 @@ export default class Registry {
     // [Map key = system type id]
     private _systems: Map<number, System>;
 
-    private _entitiesToBeAdded: Entity[];
     private _entitiesToBeKilled: Entity[];
 
     // Pending component add or remove by component id and entity
@@ -43,7 +42,6 @@ export default class Registry {
         this._componentPools = [];
         this._entityComponentSignatures = [];
         this._systems = new Map();
-        this._entitiesToBeAdded = [];
         this._entitiesToBeKilled = [];
         this._pendingComponentChange = new Map();
         this._entityPerTag = new Map();
@@ -71,10 +69,6 @@ export default class Registry {
 
     get systems(): ReadonlyMap<number, System> {
         return this._systems;
-    }
-
-    get entitiesToBeAdded(): readonly Entity[] {
-        return this._entitiesToBeAdded;
     }
 
     get entitiesToBeKilled(): readonly Entity[] {
@@ -111,14 +105,6 @@ export default class Registry {
 
     getAllocatedEntityCount() {
         return this._numEntities;
-    }
-
-    getPendingEntityCount() {
-        return this._entitiesToBeAdded.length + this._entitiesToBeKilled.length;
-    }
-
-    getPendingEntityAddCount() {
-        return this._entitiesToBeAdded.length;
     }
 
     getPendingEntityKillCount() {
@@ -178,13 +164,6 @@ export default class Registry {
             this.processComponentChanges(entity, changes);
         }
 
-        for (const entity of this._entitiesToBeAdded) {
-            if (!entity.isPendingKill() && !this._pendingComponentChange.has(entity)) {
-                this.addEntityToSystems(entity);
-            }
-        }
-
-        this._entitiesToBeAdded = [];
 
         for (const entity of this._entitiesToBeKilled) {
             this.removeEntityFromSystems(entity);
@@ -231,7 +210,6 @@ export default class Registry {
         }
 
         const entity = new Entity(entityId, this);
-        this._entitiesToBeAdded.push(entity);
         this._entities.set(entity.getId(), entity);
 
         return entity;
@@ -595,7 +573,6 @@ export default class Registry {
         this._numEntities = 0;
         this._componentPools = [];
         this._entityComponentSignatures = [];
-        this._entitiesToBeAdded = [];
         this._entitiesToBeKilled = [];
         this._pendingComponentChange.clear();
         this._entityPerTag = new Map();
