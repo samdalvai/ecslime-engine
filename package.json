@@ -6,7 +6,7 @@
         "start": "parcel game.html",
         "start:editor": "parcel editor.html",
         "clean": "rm -rf .parcel-cache & find dist -maxdepth 1 -type f -exec rm {} +",
-        "test": "jest __tests__",
+        "test": "jest",
         "lint": "eslint . --ext .js,.ts",
         "lint:fix": "eslint . --ext .js,.ts --fix",
         "build:game": "parcel build game.html --no-optimize --public-url ./ && mv dist/game.html dist/index.html",
@@ -16,6 +16,7 @@
     "author": "Samuel Dalvai",
     "license": "MIT",
     "jest": {
+        "testMatch": ["<rootDir>/__tests__/**/*.test.ts"],
         "moduleNameMapper": {
             "^url:.*\\.png$": "<rootDir>/__tests__/mocks/image.ts"
         },

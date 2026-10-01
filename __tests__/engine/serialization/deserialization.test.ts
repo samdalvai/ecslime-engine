@@ -1,7 +1,5 @@
 import { describe, expect, test } from '@jest/globals';
 
-import RigidBodyComponent from '../../../apps/game/components/RigidBodyComponent';
-import TransformComponent from '../../../apps/game/components/TransformComponent';
 import Component from '../../../src/ecs/Component';
 import { createComponentCatalog } from '../../../src/ecs/ComponentCatalog';
 import Registry from '../../../src/ecs/Registry';
@@ -13,10 +11,11 @@ import {
 } from '../../../src/serialization/deserialization';
 import { EntityMap } from '../../../src/types/map';
 import { DEFAULT_SPRITE } from '../../../src/utils/constants';
+import { MockRigidBodyComponent, MockTransformComponent } from '../../mocks/components';
 
 const componentCatalog = createComponentCatalog([
-    { name: 'RigidBodyComponent', constructor: RigidBodyComponent },
-    { name: 'TransformComponent', constructor: TransformComponent },
+    { name: 'MockRigidBodyComponent', constructor: MockRigidBodyComponent },
+    { name: 'MockTransformComponent', constructor: MockTransformComponent },
 ]);
 
 describe('Testing deserialization related functions', () => {
@@ -223,7 +222,7 @@ describe('Testing deserialization related functions', () => {
         const entityMap: EntityMap = {
             components: [
                 {
-                    name: 'TransformComponent',
+                    name: 'MockTransformComponent',
                     properties: {
                         position: { x: 100, y: 100 },
                         scale: { x: 1, y: 1 },
@@ -235,7 +234,7 @@ describe('Testing deserialization related functions', () => {
 
         const entity = deserializeEntity(entityMap, registry, componentCatalog);
         registry.update();
-        const transform = entity.getComponent(TransformComponent);
+        const transform = entity.getComponent(MockTransformComponent);
 
         expect(transform).toEqual({
             position: {
@@ -257,7 +256,7 @@ describe('Testing deserialization related functions', () => {
         const entityMap: EntityMap = {
             components: [
                 {
-                    name: 'TransformComponent',
+                    name: 'MockTransformComponent',
                     properties: {
                         position: { x: 100, y: 100 },
                         scale: { x: 1, y: 1 },
@@ -265,7 +264,7 @@ describe('Testing deserialization related functions', () => {
                     },
                 },
                 {
-                    name: 'RigidBodyComponent',
+                    name: 'MockRigidBodyComponent',
                     properties: {
                         velocity: { x: 100, y: 100 },
                         direction: { x: 1, y: 0 },
@@ -276,8 +275,8 @@ describe('Testing deserialization related functions', () => {
 
         const entity = deserializeEntity(entityMap, registry, componentCatalog);
         registry.update();
-        const transform = entity.getComponent(TransformComponent);
-        const rigidbody = entity.getComponent(RigidBodyComponent);
+        const transform = entity.getComponent(MockTransformComponent);
+        const rigidbody = entity.getComponent(MockRigidBodyComponent);
 
         expect(transform).toEqual({
             position: {
@@ -355,7 +354,7 @@ describe('Testing deserialization related functions', () => {
             {
                 components: [
                     {
-                        name: 'TransformComponent',
+                        name: 'MockTransformComponent',
                         properties: {
                             position: { x: 100, y: 100 },
                             scale: { x: 1, y: 1 },
@@ -367,7 +366,7 @@ describe('Testing deserialization related functions', () => {
             {
                 components: [
                     {
-                        name: 'TransformComponent',
+                        name: 'MockTransformComponent',
                         properties: {
                             position: { x: 200, y: 200 },
                             scale: { x: 1, y: 1 },
@@ -380,8 +379,8 @@ describe('Testing deserialization related functions', () => {
 
         const entities = deserializeEntities(entityMaps, registry, componentCatalog);
         registry.update();
-        const transform1 = entities[0].getComponent(TransformComponent);
-        const transform2 = entities[1].getComponent(TransformComponent);
+        const transform1 = entities[0].getComponent(MockTransformComponent);
+        const transform2 = entities[1].getComponent(MockTransformComponent);
 
         expect(transform1).toEqual({
             position: {
@@ -417,7 +416,7 @@ describe('Testing deserialization related functions', () => {
             {
                 components: [
                     {
-                        name: 'TransformComponent',
+                        name: 'MockTransformComponent',
                         properties: {
                             position: { x: 100, y: 100 },
                             scale: { x: 1, y: 1 },
@@ -425,7 +424,7 @@ describe('Testing deserialization related functions', () => {
                         },
                     },
                     {
-                        name: 'RigidBodyComponent',
+                        name: 'MockRigidBodyComponent',
                         properties: {
                             velocity: { x: 100, y: 100 },
                             direction: { x: 1, y: 0 },
@@ -436,7 +435,7 @@ describe('Testing deserialization related functions', () => {
             {
                 components: [
                     {
-                        name: 'TransformComponent',
+                        name: 'MockTransformComponent',
                         properties: {
                             position: { x: 200, y: 200 },
                             scale: { x: 1, y: 1 },
@@ -444,7 +443,7 @@ describe('Testing deserialization related functions', () => {
                         },
                     },
                     {
-                        name: 'RigidBodyComponent',
+                        name: 'MockRigidBodyComponent',
                         properties: {
                             velocity: { x: 200, y: 200 },
                             direction: { x: 0, y: 1 },
@@ -456,10 +455,10 @@ describe('Testing deserialization related functions', () => {
 
         const entities = deserializeEntities(entityMaps, registry, componentCatalog);
         registry.update();
-        const transform1 = entities[0].getComponent(TransformComponent);
-        const transform2 = entities[1].getComponent(TransformComponent);
-        const rigidbody1 = entities[0].getComponent(RigidBodyComponent);
-        const rigidbody2 = entities[1].getComponent(RigidBodyComponent);
+        const transform1 = entities[0].getComponent(MockTransformComponent);
+        const transform2 = entities[1].getComponent(MockTransformComponent);
+        const rigidbody1 = entities[0].getComponent(MockRigidBodyComponent);
+        const rigidbody2 = entities[1].getComponent(MockRigidBodyComponent);
 
         expect(transform1).toEqual({
             position: {
