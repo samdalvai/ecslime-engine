@@ -1,5 +1,6 @@
 import { Asset } from '../types/map';
 import { DEFAULT_SPRITE } from '../utils/constants';
+import defaultSpriteUrl from 'url:./default.png';
 
 export default class AssetStore {
     private builtInTextures: Map<string, HTMLImageElement>;
@@ -169,7 +170,7 @@ export default class AssetStore {
                 this.builtInAssetsReady = null;
                 reject(new Error('Failed to load built-in default texture'));
             };
-            defaultTexture.src = 'assets/sprites/default.png';
+            defaultTexture.src = defaultSpriteUrl;
             this.builtInTextures.set(DEFAULT_SPRITE, defaultTexture);
         });
 
