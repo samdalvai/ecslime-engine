@@ -1,7 +1,7 @@
 import { describe, expect, test } from '@jest/globals';
 
-import VersionManager from '../../../apps/editor/version-manager/VersionManager';
-import { LevelMap } from '../../../src';
+import VersionManager from '../../../../apps/editor/version-manager/VersionManager';
+import { LevelMap } from '../../../../src';
 
 describe('Testing version manager related functions', () => {
     test('Should add a new level version with no existing versions', () => {

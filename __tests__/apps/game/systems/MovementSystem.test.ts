@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, test } from '@jest/globals';
 
-import RigidBodyComponent from '../../../apps/game/components/RigidBodyComponent';
-import TransformComponent from '../../../apps/game/components/TransformComponent';
-import MovementSystem from '../../../apps/game/systems/MovementSystem';
-import Engine from '../../../src/Engine';
-import Registry from '../../../src/ecs/Registry';
+import RigidBodyComponent from '../../../../apps/game/components/RigidBodyComponent';
+import TransformComponent from '../../../../apps/game/components/TransformComponent';
+import MovementSystem from '../../../../apps/game/systems/MovementSystem';
+import Engine from '../../../../src/Engine';
+import Registry from '../../../../src/ecs/Registry';
 
 describe('Testing Movement system related functions', () => {
     beforeEach(() => {
