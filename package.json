@@ -16,11 +16,11 @@
     "author": "Samuel Dalvai",
     "license": "MIT",
     "jest": {
-        "testMatch": ["<rootDir>/__tests__/**/*.test.ts"],
+        "testMatch": ["<rootDir>/**/*.test.ts"],
         "moduleNameMapper": {
-            "^url:.*\\.png$": "<rootDir>/__tests__/mocks/image.ts"
+            "^url:.*\\.png$": "<rootDir>/__tests__/engine/mocks/image.ts"
         },
-        "testPathIgnorePatterns": ["<rootDir>/__tests__/mocks/"]
+        "testPathIgnorePatterns": ["<rootDir>/__tests__/engine/mocks/"]
     },
     "devDependencies": {
         "@babel/core": "^7.26.0",

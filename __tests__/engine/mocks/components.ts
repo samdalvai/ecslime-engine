@@ -1,4 +1,4 @@
-import { Component, Vector } from '../../src';
+import { Component, Vector } from '../../../src';
 
 /** Test-only components with predictable constructor parameters and serialized fields. */
 export class MockTransformComponent extends Component {
