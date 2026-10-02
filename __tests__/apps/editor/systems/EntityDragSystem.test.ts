@@ -4,8 +4,8 @@ import Editor from '../../../../apps/editor/Editor';
 import EntityEditor from '../../../../apps/editor/entity-editor/EntityEditor';
 import { EntityDragSystem } from '../../../../apps/editor/systems';
 import { SpriteComponent, TransformComponent } from '../../../../apps/game/components';
-import Engine from '../../../../src/Engine';
-import Registry from '../../../../src/ecs/Registry';
+import { Engine } from 'ecslime-engine';
+import { Registry } from 'ecslime-engine';
 
 describe('EntityDragSystem grid snapping', () => {
     const originalDocument = globalThis.document;

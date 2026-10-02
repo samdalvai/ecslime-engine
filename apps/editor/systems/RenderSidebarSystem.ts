@@ -9,7 +9,7 @@ import {
     System,
     deserializeEntity,
     isValidLevelMap,
-} from '../../../src';
+} from 'ecslime-engine';
 import { TransformComponent } from '../../game/components';
 import { gameComponentCatalog } from '../../game/components/componentCatalog';
 import EntityKilledEvent from '../../game/events/EntityKilledEvent';

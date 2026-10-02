@@ -1,4 +1,4 @@
-import { Camera, System, getCameraBounds } from '../../../src';
+import { Camera, System, getCameraBounds } from 'ecslime-engine';
 import Editor from '../Editor';
 
 export default class RenderGridSystem extends System {

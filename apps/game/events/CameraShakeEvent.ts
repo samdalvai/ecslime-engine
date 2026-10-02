@@ -1,4 +1,4 @@
-import { GameEvent } from '../../../src';
+import { GameEvent } from 'ecslime-engine';
 
 export default class CameraShakeEvent extends GameEvent {
     shakeDuration: number;

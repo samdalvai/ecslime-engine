@@ -1,4 +1,4 @@
-import { Component, Vector } from '../../../src';
+import { Component, Vector } from 'ecslime-engine';
 
 export default class ParticleEmitComponent extends Component {
     dimension: number;

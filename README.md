@@ -19,21 +19,27 @@ This project expands on the [JS 2D ECS Game Engine](https://github.com/samdalvai
 npm install
 ```
 
-## Run in game mode
+## Run the demo apps
 
-```
-npm start
+```sh
+npm start                 # Game
+npm run start:editor      # Editor
 ```
 
-## Run in editor mode
+Both commands build the engine library in `lib/`, watch engine changes, and serve the selected app. The game runs at `http://localhost:1234` and the editor at `http://localhost:1235`, so you can run both commands in separate terminals.
 
+To build production bundles:
+
+```sh
+npm run build:game        # dist/index.html
+npm run build:editor      # dist/editor.html
 ```
-npm run start:editor
-```
+
+Use `npm run build:package` to compile just the reusable engine. Its JavaScript and TypeScript declarations are generated in `lib/`.
 
 ## Clean build files
 
-You may need to clean the build files when switching between game mode and editor mode:
+To remove generated files while keeping the checked-in demo assets:
 
 ```
 npm run clean
@@ -76,7 +82,8 @@ A demonstration RPG-style 2D game built with this engine, where the player can c
 # Project structure
 
 ```text
-src/                    -> Reusable engine code and public API (index.ts)
+src/                    -> Reusable engine source and public API (index.ts)
+lib/                    -> Generated engine library (ignored by Git)
 apps/
     game/               -> Example game, components, events, and systems
     editor/             -> Editor for the example game
@@ -91,20 +98,13 @@ dist/assets/            -> Game assets
 
 # Engine API
 
-The reusable engine code lives under `src` and is exported through `src/index.ts`.
-Game and editor code should import engine classes, types, and utilities from that public barrel instead of deep engine paths.
-
-From files directly under `apps/game` or `apps/editor`:
+The reusable engine code lives under `src` and is exported through `src/index.ts`. `npm run build:package` compiles it into `lib/`. Both apps import the compiled library through the package's public API, regardless of the importing file's location:
 
 ```ts
-import { Engine, RAFLoopStrategy } from '../../src';
+import { Engine, RAFLoopStrategy, Component } from 'ecslime-engine';
 ```
 
-From nested app folders such as `apps/game/components` or `apps/editor/systems`:
-
-```ts
-import { Component, System, Rectangle } from '../../../src';
-```
+Engine unit tests import `src/` directly. App tests import `ecslime-engine`, so they use the same engine instance as the apps. The test command builds the package first.
 
 `src` should not import from `apps/game` or `apps/editor`. App-specific components are provided to engine serialization and duplication through the game component catalog.
 
@@ -121,7 +121,7 @@ If you want to develop a new game mechanic you can do so by performing these ste
 1. If needed create a new component for an entity under `apps/game/components`
 
 ```ts
-import { Component } from '../../../src';
+import { Component } from 'ecslime-engine';
 
 export default class MyNewComponent extends Component {
     myProperty: number;
@@ -145,7 +145,7 @@ export { default as MyNewComponent } from './MyNewComponent';
 3. Create a new system under `apps/game/systems`
 
 ```ts
-import { System } from '../../../src';
+import { System } from 'ecslime-engine';
 import MyNewComponent from '../components/MyNewComponent';
 
 export default class MyNewSystem extends System {

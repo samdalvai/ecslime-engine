@@ -1,4 +1,4 @@
-import { EventBus, System } from '../../../src';
+import { EventBus, System } from 'ecslime-engine';
 import DeadBodyOnDeathComponent from '../components/DeadBodyOnDeathComponent';
 import LifetimeComponent from '../components/LifetimeComponent';
 import RigidBodyComponent from '../components/RigidBodyComponent';

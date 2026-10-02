@@ -1,4 +1,4 @@
-import { Component, DEFAULT_SPRITE, Flip } from '../../../src';
+import { Component, DEFAULT_SPRITE, Flip } from 'ecslime-engine';
 
 export default class SpriteComponent extends Component {
     assetId: string;

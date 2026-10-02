@@ -1,4 +1,4 @@
-import { Component, Vector } from '../../../src';
+import { Component, Vector } from 'ecslime-engine';
 
 export default class TransformComponent extends Component {
     /** Centre position in the standard Y-up world coordinate system. */

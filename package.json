@@ -3,24 +3,37 @@
     "version": "1.0.0",
     "description": "A JavaScript game engine for the browser. Built around an Entity Component System (ECS) architecture.",
     "scripts": {
-        "start": "parcel game.html",
-        "start:editor": "parcel editor.html",
-        "clean": "rm -rf .parcel-cache & find dist -maxdepth 1 -type f -exec rm {} +",
+        "prestart": "npm run build:package",
+        "start": "concurrently --kill-others-on-fail --names engine,game \"npm run watch:package\" \"npm run serve:game\"",
+        "prestart:editor": "npm run build:package",
+        "start:editor": "concurrently --kill-others-on-fail --names engine,editor \"npm run watch:package\" \"npm run serve:editor\"",
+        "watch:package": "tsc --project tsconfig.build.json --watch --preserveWatchOutput",
+        "serve:game": "parcel game.html --target game --port 1234",
+        "serve:editor": "parcel editor.html --target editor --port 1235",
+        "build:package": "rm -rf lib && tsc --project tsconfig.build.json && cp src/asset-store/default.png lib/asset-store/default.png",
+        "clean": "rm -rf .parcel-cache lib && find dist -maxdepth 1 -type f -delete",
+        "pretest": "npm run build:package",
         "test": "jest",
         "lint": "eslint . --ext .js,.ts",
         "lint:fix": "eslint . --ext .js,.ts --fix",
-        "build:game": "parcel build game.html --no-optimize --public-url ./ && mv dist/game.html dist/index.html",
-        "build:editor": "parcel build editor.html",
+        "prebuild:game": "npm run build:package",
+        "build:game": "parcel build game.html --target game --no-optimize && mv dist/game.html dist/index.html",
+        "prebuild:editor": "npm run build:package",
+        "build:editor": "parcel build editor.html --target editor",
         "benchmark": "rm -rf .benchmark-dist && tsc --outDir .benchmark-dist --rootDir . --module commonjs --target es2020 benchmark/index.ts && node .benchmark-dist/benchmark/index.js"
     },
     "author": "Samuel Dalvai",
     "license": "MIT",
     "jest": {
-        "testMatch": ["<rootDir>/**/*.test.ts"],
+        "testMatch": [
+            "<rootDir>/**/*.test.ts"
+        ],
         "moduleNameMapper": {
             "^url:.*\\.png$": "<rootDir>/__tests__/src/mocks/image.ts"
         },
-        "testPathIgnorePatterns": ["<rootDir>/__tests__/src/mocks/"]
+        "testPathIgnorePatterns": [
+            "<rootDir>/__tests__/src/mocks/"
+        ]
     },
     "devDependencies": {
         "@babel/core": "^7.26.0",
@@ -37,7 +50,8 @@
         "parcel": "^2.15.4",
         "path-browserify": "^1.0.1",
         "process": "^0.11.10",
-        "typescript": "^5.7.2"
+        "typescript": "^5.7.2",
+        "concurrently": "^9.2.4"
     },
     "babel": {
         "presets": [
@@ -54,5 +68,30 @@
             ],
             "@babel/preset-typescript"
         ]
+    },
+    "main": "./lib/index.js",
+    "types": "./lib/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./lib/index.d.ts",
+            "require": "./lib/index.js",
+            "default": "./lib/index.js"
+        }
+    },
+    "files": [
+        "lib"
+    ],
+    "targets": {
+        "game": {
+            "distDir": "dist",
+            "publicUrl": "./"
+        },
+        "editor": {
+            "distDir": "dist",
+            "publicUrl": "./"
+        }
+    },
+    "@parcel/resolver-default": {
+        "packageExports": true
     }
 }

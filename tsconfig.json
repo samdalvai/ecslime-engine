@@ -5,7 +5,12 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "ecslime-engine": [
+        "./lib/index.d.ts"
+      ]
+    }
   },
   "include": [
     "src/**/*",

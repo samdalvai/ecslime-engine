@@ -1,4 +1,4 @@
-import { Component } from '../../../src';
+import { Component } from 'ecslime-engine';
 
 export default class CameraShakeComponent extends Component {
     shakeDuration: number;

@@ -1,4 +1,4 @@
-import { AssetStore, EventBus, System } from '../../../src';
+import { AssetStore, EventBus, System } from 'ecslime-engine';
 import SoundComponent from '../components/SoundComponent';
 import SoundEmitEvent from '../events/SoundEmitEvent';
 

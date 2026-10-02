@@ -1,4 +1,4 @@
-import { Component, Vector } from '../../../src';
+import { Component, Vector } from 'ecslime-engine';
 
 export default class RigidBodyComponent extends Component {
     /** Linear velocity in world units; positive Y points up. */

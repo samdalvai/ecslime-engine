@@ -1,4 +1,4 @@
-import { Component, Entity } from '../../../src';
+import { Component, Entity } from 'ecslime-engine';
 
 export default class EntityFollowComponent extends Component {
     detectionRadius: number;

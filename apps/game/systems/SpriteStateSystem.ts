@@ -1,4 +1,4 @@
-import { System } from '../../../src';
+import { System } from 'ecslime-engine';
 import HealthComponent from '../components/HealthComponent';
 import RigidBodyComponent from '../components/RigidBodyComponent';
 import SpriteComponent from '../components/SpriteComponent';

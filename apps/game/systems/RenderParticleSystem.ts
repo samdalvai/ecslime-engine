@@ -1,5 +1,5 @@
-import { System, WorldBounds, getCameraBounds, getSpriteBounds, worldBoundsOverlap } from '../../../src';
-import { Camera } from '../../../src';
+import { System, WorldBounds, getCameraBounds, getSpriteBounds, worldBoundsOverlap } from 'ecslime-engine';
+import { Camera } from 'ecslime-engine';
 import Game from '../Game';
 import ParticleComponent from '../components/ParticleComponent';
 import TransformComponent from '../components/TransformComponent';

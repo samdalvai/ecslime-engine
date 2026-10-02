@@ -1,4 +1,4 @@
-import { RAFLoopStrategy } from '../../src';
+import { RAFLoopStrategy } from 'ecslime-engine';
 import Editor from './Editor';
 
 const editor = new Editor();

@@ -1,4 +1,4 @@
-import { GameEvent } from '../../../src';
+import { GameEvent } from 'ecslime-engine';
 
 export default class ScrollEvent extends GameEvent {
     direction: 'up' | 'down';

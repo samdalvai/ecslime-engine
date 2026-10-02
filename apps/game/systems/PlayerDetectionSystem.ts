@@ -1,4 +1,4 @@
-import { EventBus, Registry, System, isPointInsideCircle } from '../../../src';
+import { EventBus, Registry, System, isPointInsideCircle } from 'ecslime-engine';
 import EntityFollowComponent from '../components/EntityFollowComponent';
 import RigidBodyComponent from '../components/RigidBodyComponent';
 import SpriteComponent from '../components/SpriteComponent';

@@ -4,7 +4,7 @@ import {
     computeDirectionVector,
     computeDistanceBetweenPoints,
     computeUnitVector,
-} from '../../../src';
+} from 'ecslime-engine';
 import EntityFollowComponent from '../components/EntityFollowComponent';
 import RigidBodyComponent from '../components/RigidBodyComponent';
 import ScriptComponent from '../components/ScriptComponent';

@@ -8,7 +8,7 @@ import {
     Vector,
     computeDirectionVector,
     computeUnitVector,
-} from '../../../src';
+} from 'ecslime-engine';
 import AnimationComponent from '../components/AnimationComponent';
 import BoxColliderComponent from '../components/BoxColliderComponent';
 import DamageRadiusComponent from '../components/DamageRadiusComponent';

@@ -1,4 +1,4 @@
-import { EntityMap, GameEvent } from '../../../src';
+import { EntityMap, GameEvent } from 'ecslime-engine';
 
 export default class EntityPasteEvent extends GameEvent {
     entities: EntityMap[];

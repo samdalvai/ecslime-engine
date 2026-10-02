@@ -1,4 +1,4 @@
-import { Engine, System } from '../../../src';
+import { Engine, System } from 'ecslime-engine';
 
 export default class RenderGameBorderSystem extends System {
     update(ctx: CanvasRenderingContext2D, zoom: number) {

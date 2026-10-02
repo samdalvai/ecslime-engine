@@ -1,4 +1,4 @@
-import { AssetStore, Engine, System } from '../../../src';
+import { AssetStore, Engine, System } from 'ecslime-engine';
 
 // TODO: remove this and create entities instead
 export default class RenderGUISystem extends System {

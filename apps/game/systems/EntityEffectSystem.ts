@@ -1,4 +1,4 @@
-import { Registry, System, isPointInsideCircle } from '../../../src';
+import { Registry, System, isPointInsideCircle } from 'ecslime-engine';
 import DamageRadiusComponent from '../components/DamageRadiusComponent';
 import EntityEffectComponent from '../components/EntityEffectComponent';
 import EntityFollowComponent from '../components/EntityFollowComponent';

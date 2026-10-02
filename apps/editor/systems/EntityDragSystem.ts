@@ -9,7 +9,7 @@ import {
     WorldBounds,
     getSpriteBounds,
     worldBoundsOverlap,
-} from '../../../src';
+} from 'ecslime-engine';
 import SpriteComponent from '../../game/components/SpriteComponent';
 import TransformComponent from '../../game/components/TransformComponent';
 import { KeyPressedEvent, MouseMoveEvent, MousePressedEvent, MouseReleasedEvent } from '../../game/events';

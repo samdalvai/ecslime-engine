@@ -1,4 +1,4 @@
-import { Component } from '../../../src';
+import { Component } from 'ecslime-engine';
 
 export default class ProjectileComponent extends Component {
     isFriendly: boolean;

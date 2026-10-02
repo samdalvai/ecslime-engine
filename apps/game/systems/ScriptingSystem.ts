@@ -1,4 +1,4 @@
-import { System } from '../../../src';
+import { System } from 'ecslime-engine';
 import RigidBodyComponent from '../components/RigidBodyComponent';
 import ScriptComponent from '../components/ScriptComponent';
 

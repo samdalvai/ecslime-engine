@@ -1,4 +1,4 @@
-import { System } from '../../../src';
+import { System } from 'ecslime-engine';
 import AnimationComponent from '../components/AnimationComponent';
 import EntityEffectComponent from '../components/EntityEffectComponent';
 import SpriteComponent from '../components/SpriteComponent';
