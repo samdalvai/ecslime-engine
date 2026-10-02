@@ -40,7 +40,7 @@ export default class Game extends Engine {
         this.isDebug = true;
 
         const entity1 = this.registry.createEntity();
-        entity1.addComponent(TransformComponent, { x: 0, y: 0 });
+        entity1.addComponent(TransformComponent, { x: 15, y: 0 });
         entity1.addComponent(RigidBodyComponent, 1);
 
         const entity2 = this.registry.createEntity();
