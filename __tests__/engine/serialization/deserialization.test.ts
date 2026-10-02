@@ -11,7 +11,7 @@ import {
 } from '../../../src/serialization/deserialization';
 import { EntityMap } from '../../../src/types/map';
 import { DEFAULT_SPRITE } from '../../../src/utils/constants';
-import { MockRigidBodyComponent, MockTransformComponent } from '../../mocks/components';
+import { MockRigidBodyComponent, MockTransformComponent } from '../mocks/components';
 
 const componentCatalog = createComponentCatalog([
     { name: 'MockRigidBodyComponent', constructor: MockRigidBodyComponent },

@@ -7,7 +7,7 @@ import Entity from '../../../src/ecs/Entity';
 import Registry from '../../../src/ecs/Registry';
 import { serializeEntities, serializeEntity, serializeLevel } from '../../../src/serialization/serialization';
 import { EntityMap, LevelMap } from '../../../src/types/map';
-import { MockRigidBodyComponent, MockTransformComponent } from '../../mocks/components';
+import { MockRigidBodyComponent, MockTransformComponent } from '../mocks/components';
 
 describe('Testing serialization related functions', () => {
     test('Should serialize entity with one component to a valid Entity Map', () => {
