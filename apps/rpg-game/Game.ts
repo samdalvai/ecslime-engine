@@ -3,8 +3,6 @@ import { Camera, Engine, GameStatus, beginWorldRender, endWorldRender, screenToW
 import { gameComponentCatalog } from './catalog/gameComponentCatalog';
 import * as GameEvents from './events';
 import * as Systems from './systems';
-import GameEndSystem from './systems/GameEndSystem';
-import RenderMenuSystem from './systems/RenderMenuSystem';
 
 export default class Game extends Engine {
     constructor() {
@@ -138,10 +136,10 @@ export default class Game extends Engine {
         // Update entities to be created/killed
         this.registry.update();
 
-        this.registry.getSystem(GameEndSystem)?.update();
+        this.registry.getSystem(Systems.GameEndSystem)?.update();
 
         if (Game.gameStatus !== GameStatus.PLAYING) {
-            this.registry.getSystem(RenderMenuSystem)?.subscribeToEvents(this.eventBus);
+            this.registry.getSystem(Systems.RenderMenuSystem)?.subscribeToEvents(this.eventBus);
             return;
         }
 
@@ -205,7 +203,7 @@ export default class Game extends Engine {
         this.registry.getSystem(Systems.RenderGUISystem)?.update(this.ctx, this.assetStore);
 
         if (Game.gameStatus !== GameStatus.PLAYING) {
-            this.registry.getSystem(RenderMenuSystem)?.update(this.ctx);
+            this.registry.getSystem(Systems.RenderMenuSystem)?.update(this.ctx);
         }
 
         this.registry.getSystem(Systems.RenderCursorSystem)?.update(this.ctx, this.assetStore, this.registry);
