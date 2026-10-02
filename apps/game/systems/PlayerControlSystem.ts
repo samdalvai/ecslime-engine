@@ -296,6 +296,8 @@ export default class PlayerControlSystem extends System {
             throw new Error('Could not find some component(s) of entity with id ' + player.getId());
         }
 
+        playerSprite.isVisible = false;
+
         const teleportSpriteWidth = 32;
         const teleportSpriteHeight = 64;
 
@@ -319,6 +321,7 @@ export default class PlayerControlSystem extends System {
         setTimeout(() => {
             playerTransform.position = { ...mousePosition };
             playerTeleport.isTeleporting = false;
+            playerSprite.isVisible = true;
 
             const teleportDestination = this.registry.createEntity();
             teleportDestination.addComponent(TransformComponent, { ...mousePosition });
