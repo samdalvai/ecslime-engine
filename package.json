@@ -2,6 +2,9 @@
     "name": "ecslime-engine",
     "version": "1.0.0",
     "description": "A JavaScript game engine for the browser. Built around an Entity Component System (ECS) architecture.",
+    "workspaces": [
+        "gravity.js"
+    ],
     "scripts": {
         "prestart": "npm run build:package",
         "start": "concurrently --kill-others-on-fail --names engine,game \"npm run watch:package\" \"npm run serve:game\"",
@@ -10,7 +13,8 @@
         "watch:package": "tsc --project tsconfig.build.json --watch --preserveWatchOutput",
         "serve:game": "parcel game.html --target game --port 1234",
         "serve:editor": "parcel editor.html --target editor --port 1235",
-        "build:package": "rm -rf lib && tsc --project tsconfig.build.json && cp src/asset-store/default.png lib/asset-store/default.png",
+        "build:package": "npm run build:gravity && rm -rf lib && tsc --project tsconfig.build.json && cp src/asset-store/default.png lib/asset-store/default.png",
+        "build:gravity": "npm run build:package --workspace gravity.js",
         "clean": "rm -rf .parcel-cache lib && find dist -maxdepth 1 -type f -delete",
         "pretest": "npm run build:package",
         "test": "jest",
@@ -24,9 +28,12 @@
     },
     "author": "Samuel Dalvai",
     "license": "MIT",
+    "dependencies": {
+        "gravity.js": "1.0.0"
+    },
     "jest": {
         "testMatch": [
-            "<rootDir>/**/*.test.ts"
+            "<rootDir>/__tests__/**/*.test.ts"
         ],
         "moduleNameMapper": {
             "^url:.*\\.png$": "<rootDir>/__tests__/src/mocks/image.ts"
