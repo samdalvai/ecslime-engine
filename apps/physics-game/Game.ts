@@ -27,6 +27,9 @@ export default class Game extends Engine {
 
         // Debug systems
         // this.registry.addSystem(Systems.DebugColliderSystem);
+        if (this.canvas) {
+            this.canvas.style.cursor = 'default';
+        }
     };
 
     processInput = () => {
