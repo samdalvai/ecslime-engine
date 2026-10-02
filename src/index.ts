@@ -18,6 +18,7 @@ export { default as LevelManager } from './level-manager/LevelManager';
 export { default as FixedFPSLoopStrategy } from './loop-strategy/FixedFPSLoopStrategy';
 export { default as LoopStrategy } from './loop-strategy/LoopStrategy';
 export { default as RAFLoopStrategy } from './loop-strategy/RAFLoopStrategy';
+export { default as PhysicsBridge } from './physics/PhysicsBridge';
 export * from './serialization/deserialization';
 export * from './serialization/serialization';
 export * from './types/control';
