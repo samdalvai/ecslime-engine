@@ -10,3 +10,4 @@ src_reference/
 !dist/assets/
 .vercel
 *.sh
+lib/

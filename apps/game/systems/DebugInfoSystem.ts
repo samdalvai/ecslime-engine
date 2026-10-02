@@ -1,4 +1,4 @@
-import { Camera, Engine, Registry, System } from '../../../src';
+import { Camera, Engine, Registry, System } from 'ecslime-engine';
 
 export default class DebugInfoSystem extends System {
     constructor() {

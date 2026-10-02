@@ -1,4 +1,4 @@
-import { Entity, GameEvent } from '../../../src';
+import { Entity, GameEvent } from 'ecslime-engine';
 
 export default class EntitySelectEvent extends GameEvent {
     entities: Entity[];

@@ -1,4 +1,4 @@
-import { System } from '../../../src';
+import { System } from 'ecslime-engine';
 import { TransformComponent } from '../components';
 import TextLabelComponent from '../components/TextLabelComponent';
 

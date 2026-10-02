@@ -1,4 +1,4 @@
-import { AssetStore, Engine, Registry, System } from '../../../src';
+import { AssetStore, Engine, Registry, System } from 'ecslime-engine';
 import HighlightComponent from '../components/HighlightComponent';
 import PlayerControlComponent from '../components/PlayerControlComponent';
 

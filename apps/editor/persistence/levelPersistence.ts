@@ -1,4 +1,4 @@
-import { AssetStore, Entity, LevelMap, Registry, serializeEntities, serializeLevel } from '../../../src';
+import { AssetStore, Entity, LevelMap, Registry, serializeEntities, serializeLevel } from 'ecslime-engine';
 
 export const saveLevelToJson = (registry: Registry, assetStore: AssetStore): void => {
     const jsonString = JSON.stringify(serializeLevel(registry, assetStore), null, 2);

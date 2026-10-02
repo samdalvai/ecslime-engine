@@ -1,4 +1,4 @@
-import { EventBus, System } from '../../../src';
+import { EventBus, System } from 'ecslime-engine';
 import CameraShakeEvent from '../events/CameraShakeEvent';
 
 const SHAKE_MAX_MOVEMENT = 10;

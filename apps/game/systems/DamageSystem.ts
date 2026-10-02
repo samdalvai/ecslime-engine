@@ -1,4 +1,4 @@
-import { Entity, EventBus, System } from '../../../src';
+import { Entity, EventBus, System } from 'ecslime-engine';
 import CameraShakeComponent from '../components/CameraShakeComponent';
 import EntityEffectComponent from '../components/EntityEffectComponent';
 import HealthComponent from '../components/HealthComponent';

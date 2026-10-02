@@ -1,4 +1,4 @@
-import { Engine, System } from '../../../src';
+import { Engine, System } from 'ecslime-engine';
 
 export default class DebugCursorCoordinatesSystem extends System {
     constructor() {

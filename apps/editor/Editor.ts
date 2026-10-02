@@ -9,7 +9,7 @@ import {
     endWorldRender,
     screenToWorld,
     serializeEntity,
-} from '../../src';
+} from 'ecslime-engine';
 import { gameComponentCatalog } from '../game/components/componentCatalog';
 import * as GameEvents from '../game/events';
 import * as GameSystems from '../game/systems';

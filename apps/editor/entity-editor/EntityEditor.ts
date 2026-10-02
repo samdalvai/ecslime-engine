@@ -9,7 +9,7 @@ import {
     Registry,
     Vector,
     isValidEntityMap,
-} from '../../../src';
+} from 'ecslime-engine';
 import * as GameComponents from '../../game/components';
 import Editor from '../Editor';
 import EntityDeleteEvent from '../events/EntityDeleteEvent';

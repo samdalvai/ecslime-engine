@@ -1,4 +1,4 @@
-import { Camera, Engine, GameStatus, beginWorldRender, endWorldRender, screenToWorld } from '../../src';
+import { Camera, Engine, GameStatus, beginWorldRender, endWorldRender, screenToWorld } from 'ecslime-engine';
 import { gameComponentCatalog } from './components/componentCatalog';
 import * as GameEvents from './events';
 import * as Systems from './systems';

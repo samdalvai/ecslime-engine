@@ -1,4 +1,4 @@
-import { GameEvent } from '../../../src';
+import { GameEvent } from 'ecslime-engine';
 
 export default class SoundEmitEvent extends GameEvent {
     soundAssetId: string;

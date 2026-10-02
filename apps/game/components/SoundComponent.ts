@@ -1,4 +1,4 @@
-import { Component } from '../../../src';
+import { Component } from 'ecslime-engine';
 
 export default class SoundComponent extends Component {
     assetId: string;

@@ -1,4 +1,4 @@
-import { GameEvent, Vector } from '../../../src';
+import { GameEvent, Vector } from 'ecslime-engine';
 
 export default class RangedAttackEmitEvent extends GameEvent {
     coordinates: Vector;

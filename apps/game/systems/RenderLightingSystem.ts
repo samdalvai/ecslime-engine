@@ -6,7 +6,7 @@ import {
     getSpriteBounds,
     worldBoundsOverlap,
     worldToScreen,
-} from '../../../src';
+} from 'ecslime-engine';
 import LightEmitComponent from '../components/LightEmitComponent';
 import SpriteComponent from '../components/SpriteComponent';
 import TransformComponent from '../components/TransformComponent';

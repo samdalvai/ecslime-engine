@@ -1,4 +1,4 @@
-import { LevelMap } from '../../../src';
+import { LevelMap } from 'ecslime-engine';
 
 export default class VersionManager {
     private levelVersions: Map<string, string[]>;
