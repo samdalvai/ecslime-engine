@@ -680,8 +680,7 @@ export default class Editor extends Engine {
         this.isSystemActive('DebugSlowTimeRadiusSystem') &&
             this.registry.getSystem(GameSystems.DebugSlowTimeRadiusSystem).update(this.ctx, this.camera);
 
-        !this.testMode &&
-            this.registry.getSystem(EditorSystems.RenderMultipleSelectSystem).update(this.ctx, this.zoom);
+        !this.testMode && this.registry.getSystem(EditorSystems.RenderMultipleSelectSystem).update(this.ctx, this.zoom);
         !this.testMode &&
             this.registry.getSystem(EditorSystems.RenderSpriteBoxSystem).update(this.ctx, this.camera, this.zoom);
         !this.testMode && this.registry.getSystem(EditorSystems.RenderGameBorderSystem).update(this.ctx, this.zoom);

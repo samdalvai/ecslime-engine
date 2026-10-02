@@ -18,7 +18,7 @@ export default class DebugInfoSystem extends System {
         const x = Engine.windowWidth - 375;
         const y = 50;
 
-        console.log("x: ", x);
+        console.log('x: ', x);
 
         ctx.font = '18px Arial';
         ctx.fillStyle = 'red';
