@@ -1,13 +1,16 @@
-import { Camera, Engine, beginWorldRender, endWorldRender, screenToWorld } from 'ecslime-engine';
+import { Camera, Engine, PhysicsBridge, beginWorldRender, endWorldRender, screenToWorld } from 'ecslime-engine';
 
 import { gameComponentCatalog } from './catalog/gameComponentCatalog';
 import * as GameEvents from './events';
 import * as Systems from './systems';
 
 export default class Game extends Engine {
+    private physicsBridge: PhysicsBridge;
+
     constructor() {
         super();
         this.levelManager.setComponentCatalog(gameComponentCatalog);
+        this.physicsBridge = new PhysicsBridge();
     }
 
     protected createCamera(): Camera {
