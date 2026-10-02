@@ -9,6 +9,7 @@ export default class SpriteComponent extends Component {
     column: number;
     flip: Flip;
     transparency: number;
+    isVisible: boolean;
 
     constructor(
         assetId = DEFAULT_SPRITE,
@@ -19,6 +20,7 @@ export default class SpriteComponent extends Component {
         column = 0,
         flip: Flip = 0,
         transparency = 1,
+        isVisibile = true,
     ) {
         super();
         this.assetId = assetId;
@@ -31,5 +33,7 @@ export default class SpriteComponent extends Component {
 
         // Clamps value if it is less than 0 or more than 1
         this.transparency = Math.min(1, Math.max(0, transparency));
+
+        this.isVisible = isVisibile;
     }
 }
