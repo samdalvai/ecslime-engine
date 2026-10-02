@@ -110,7 +110,7 @@ Engine unit tests import `src/` directly. App tests import `ecslime-engine`, so 
 
 # Game Component Catalog
 
-Serializable game components are exposed through `apps/game/components/componentCatalog.ts`. The catalog is built from the exports in `apps/game/components/index.ts` and is passed to engine APIs that need to resolve component names, such as deserialization and entity duplication.
+Serializable game components are exposed through `apps/game/catalog/gameComponentCatalog.ts`. The catalog is built from the exports in `apps/game/components/index.ts` and is passed to engine APIs that need to resolve component names, such as deserialization and entity duplication.
 
 When adding a component, export it from `apps/game/components/index.ts`; that makes it available to the editor and the `gameComponentCatalog`.
 

@@ -1,4 +1,4 @@
-import Component, { ComponentClass } from './Component';
+import Component, { ComponentClass } from '../ecs/Component';
 
 type AnyComponentClass = ComponentClass<Component>;
 

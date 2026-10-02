@@ -1,6 +1,6 @@
 import Engine from '../Engine';
 import AssetStore from '../asset-store/AssetStore';
-import { ComponentCatalog } from '../ecs/ComponentCatalog';
+import { ComponentCatalog } from '../serialization/componentCatalog';
 import Registry from '../ecs/Registry';
 import { deserializeEntities } from '../serialization/deserialization';
 import { LevelMap } from '../types/map';

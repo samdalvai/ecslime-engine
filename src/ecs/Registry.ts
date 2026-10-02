@@ -1,6 +1,6 @@
 import { cloneComponentProperty, getComponentConstructorParamNames } from '../serialization/deserialization';
 import Component, { ComponentClass } from './Component';
-import { ComponentCatalog } from './ComponentCatalog';
+import { ComponentCatalog } from '../serialization/componentCatalog';
 import Entity from './Entity';
 import Pool, { IPool } from './Pool';
 import Signature from './Signature';

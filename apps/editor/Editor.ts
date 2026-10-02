@@ -10,7 +10,7 @@ import {
     screenToWorld,
     serializeEntity,
 } from 'ecslime-engine';
-import { gameComponentCatalog } from '../game/components/componentCatalog';
+import { gameComponentCatalog } from '../game/catalog/gameComponentCatalog';
 import * as GameEvents from '../game/events';
 import * as GameSystems from '../game/systems';
 import EntityEditor from './entity-editor/EntityEditor';

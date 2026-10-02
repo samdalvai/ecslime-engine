@@ -1,5 +1,5 @@
 import ModifiedComponent from '../src/ecs/Component';
-import { createComponentCatalog as createModifiedComponentCatalog } from '../src/ecs/ComponentCatalog';
+import { createComponentCatalog as createModifiedComponentCatalog } from '../src/serialization/componentCatalog';
 import ModifiedRegistry from '../src/ecs/Registry';
 import ModifiedSystem from '../src/ecs/System';
 import OriginalComponent from '../src_reference/ecs/Component';
