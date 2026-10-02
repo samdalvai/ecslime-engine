@@ -11,9 +11,9 @@ import {
     worldBoundsOverlap,
 } from 'ecslime-engine';
 
-import SpriteComponent from '../../game/components/SpriteComponent';
-import TransformComponent from '../../game/components/TransformComponent';
-import { KeyPressedEvent, MouseMoveEvent, MousePressedEvent, MouseReleasedEvent } from '../../game/events';
+import SpriteComponent from '../../rpg-game/components/SpriteComponent';
+import TransformComponent from '../../rpg-game/components/TransformComponent';
+import { KeyPressedEvent, MouseMoveEvent, MousePressedEvent, MouseReleasedEvent } from '../../rpg-game/events';
 import Editor from '../Editor';
 import EntityEditor from '../entity-editor/EntityEditor';
 import EntitySelectEvent from '../events/EntitySelectEvent';

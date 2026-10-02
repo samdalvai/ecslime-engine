@@ -9,8 +9,8 @@ import {
     worldBoundsOverlap,
 } from 'ecslime-engine';
 
-import SpriteComponent from '../../game/components/SpriteComponent';
-import TransformComponent from '../../game/components/TransformComponent';
+import SpriteComponent from '../../rpg-game/components/SpriteComponent';
+import TransformComponent from '../../rpg-game/components/TransformComponent';
 import Editor from '../Editor';
 
 type RenderableEntity = {

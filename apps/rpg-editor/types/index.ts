@@ -1,4 +1,4 @@
-import * as GameSystems from '../../game/systems';
+import * as GameSystems from '../../rpg-game/systems';
 
 export type EditorSettings = {
     activeSystems: Record<keyof typeof GameSystems, boolean>;

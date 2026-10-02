@@ -3,10 +3,10 @@ import { Registry } from 'ecslime-engine';
 import { EventBus } from 'ecslime-engine';
 import { Vector } from 'ecslime-engine';
 
-import BoxColliderComponent from '../../../../apps/game/components/BoxColliderComponent';
-import TransformComponent from '../../../../apps/game/components/TransformComponent';
-import CollisionEvent from '../../../../apps/game/events/CollisionEvent';
-import CollisionSystem from '../../../../apps/game/systems/CollisionSystem';
+import BoxColliderComponent from '../../../../apps/rpg-game/components/BoxColliderComponent';
+import TransformComponent from '../../../../apps/rpg-game/components/TransformComponent';
+import CollisionEvent from '../../../../apps/rpg-game/events/CollisionEvent';
+import CollisionSystem from '../../../../apps/rpg-game/systems/CollisionSystem';
 
 describe('Testing Collision system related functions', () => {
     test('Two entities having a box collider intersecting should collide with one another', () => {

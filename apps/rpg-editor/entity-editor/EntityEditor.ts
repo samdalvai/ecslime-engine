@@ -11,7 +11,7 @@ import {
     isValidEntityMap,
 } from 'ecslime-engine';
 
-import * as GameComponents from '../../game/components';
+import * as GameComponents from '../../rpg-game/components';
 import Editor from '../Editor';
 import EntityDeleteEvent from '../events/EntityDeleteEvent';
 import EntityDuplicateEvent from '../events/EntityDuplicateEvent';

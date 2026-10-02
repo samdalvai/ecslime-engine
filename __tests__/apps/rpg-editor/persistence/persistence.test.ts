@@ -1,6 +1,6 @@
 import { describe, expect, test } from '@jest/globals';
 
-import { getNextLevelId } from '../../../../apps/editor/persistence/persistence';
+import { getNextLevelId } from '../../../../apps/rpg-editor/persistence/persistence';
 
 describe('Testing persistence related functions', () => {
     test('Should get the next available level id with no levels', () => {

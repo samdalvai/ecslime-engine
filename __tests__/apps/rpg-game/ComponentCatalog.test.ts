@@ -1,8 +1,8 @@
 import { describe, expect, test } from '@jest/globals';
 import { Registry } from 'ecslime-engine';
 
-import { gameComponentCatalog } from '../../../apps/game/catalog/gameComponentCatalog';
-import TransformComponent from '../../../apps/game/components/TransformComponent';
+import { gameComponentCatalog } from '../../../apps/rpg-game/catalog/gameComponentCatalog';
+import TransformComponent from '../../../apps/rpg-game/components/TransformComponent';
 
 describe('Testing game component catalog', () => {
     test('Should duplicate an entity with game components', () => {

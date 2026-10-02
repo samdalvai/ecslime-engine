@@ -85,13 +85,13 @@ A demonstration RPG-style 2D game built with this engine, where the player can c
 src/                    -> Reusable engine source and public API (index.ts)
 lib/                    -> Generated engine library (ignored by Git)
 apps/
-    game/               -> Example game, components, events, and systems
-    editor/             -> Editor for the example game
+    rpg-game/           -> Example game, HTML/CSS, components, events, and systems
+    rpg-editor/         -> Editor HTML/CSS and source for the example game
 __tests__/
     src/                -> Tests for the engine, mirroring src/
     apps/
-        game/           -> Tests for the example game
-        editor/         -> Tests for the editor
+        rpg-game/       -> Tests for the example game
+        rpg-editor/     -> Tests for the editor
 spritesheets/           -> Game sprite sources
 dist/assets/            -> Game assets
 ```
@@ -106,19 +106,19 @@ import { Engine, RAFLoopStrategy, Component } from 'ecslime-engine';
 
 Engine unit tests import `src/` directly. App tests import `ecslime-engine`, so they use the same engine instance as the apps. The test command builds the package first.
 
-`src` should not import from `apps/game` or `apps/editor`. App-specific components are provided to engine serialization and duplication through the game component catalog.
+`src` should not import from `apps/rpg-game` or `apps/rpg-editor`. App-specific components are provided to engine serialization and duplication through the game component catalog.
 
 # Game Component Catalog
 
-Serializable game components are exposed through `apps/game/catalog/gameComponentCatalog.ts`. The catalog is built from the exports in `apps/game/components/index.ts` and is passed to engine APIs that need to resolve component names, such as deserialization and entity duplication.
+Serializable game components are exposed through `apps/rpg-game/catalog/gameComponentCatalog.ts`. The catalog is built from the exports in `apps/rpg-game/components/index.ts` and is passed to engine APIs that need to resolve component names, such as deserialization and entity duplication.
 
-When adding a component, export it from `apps/game/components/index.ts`; that makes it available to the editor and the `gameComponentCatalog`.
+When adding a component, export it from `apps/rpg-game/components/index.ts`; that makes it available to the editor and the `gameComponentCatalog`.
 
 # How to develop a new game mechanic
 
 If you want to develop a new game mechanic you can do so by performing these steps.
 
-1. If needed create a new component for an entity under `apps/game/components`
+1. If needed create a new component for an entity under `apps/rpg-game/components`
 
 ```ts
 import { Component } from 'ecslime-engine';
@@ -133,7 +133,7 @@ export default class MyNewComponent extends Component {
 }
 ```
 
-2. Add your new component to the list of exported game components under `apps/game/components/index.ts`. This also makes the component available through `gameComponentCatalog`.
+2. Add your new component to the list of exported game components under `apps/rpg-game/components/index.ts`. This also makes the component available through `gameComponentCatalog`.
 
 ```ts
 // ... other imports
@@ -142,7 +142,7 @@ export { default as TransformComponent } from './TransformComponent';
 export { default as MyNewComponent } from './MyNewComponent';
 ```
 
-3. Create a new system under `apps/game/systems`
+3. Create a new system under `apps/rpg-game/systems`
 
 ```ts
 import { System } from 'ecslime-engine';
@@ -165,7 +165,7 @@ export default class MyNewSystem extends System {
 }
 ```
 
-4. Add your new system to the list of exported game systems under `apps/game/systems/index.ts`. This is needed to have the system available when in editor mode.
+4. Add your new system to the list of exported game systems under `apps/rpg-game/systems/index.ts`. This is needed to have the system available when in editor mode.
 
 ```ts
 // ... other imports
@@ -174,7 +174,7 @@ export { default as RenderTextSystem } from './RenderTextSystem';
 export { default as MyNewSystem } from './MyNewSystem';
 ```
 
-5. Register your system in `apps/game/Game.ts:setup()`
+5. Register your system in `apps/rpg-game/Game.ts:setup()`
 
 ```ts
 setup = async () => {
@@ -185,7 +185,7 @@ setup = async () => {
 }
 ```
 
-6. Perform your update logic in `apps/game/Game.ts:update()` or `apps/game/Game.ts:render()`, depending on the type of system. For example, if a system needs to perform rendering, add it in the `render()` function.
+6. Perform your update logic in `apps/rpg-game/Game.ts:update()` or `apps/rpg-game/Game.ts:render()`, depending on the type of system. For example, if a system needs to perform rendering, add it in the `render()` function.
 
 ```ts
 update = (deltaTime: number) => {
