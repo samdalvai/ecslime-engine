@@ -7,10 +7,11 @@
     ],
     "scripts": {
         "prestart": "npm run build:package",
-        "start": "concurrently --kill-others-on-fail --names engine,game \"npm run watch:package\" \"npm run serve:game\"",
+        "start": "concurrently --kill-others-on-fail --names gravity,engine,game \"npm run watch:gravity\" \"npm run watch:package\" \"npm run serve:game\"",
         "prestart:editor": "npm run build:package",
-        "start:editor": "concurrently --kill-others-on-fail --names engine,editor \"npm run watch:package\" \"npm run serve:editor\"",
+        "start:editor": "concurrently --kill-others-on-fail --names gravity,engine,editor \"npm run watch:gravity\" \"npm run watch:package\" \"npm run serve:editor\"",
         "watch:package": "tsc --project tsconfig.build.json --watch --preserveWatchOutput",
+        "watch:gravity": "npm run watch:package --workspace gravity.js",
         "serve:game": "parcel game.html --target game --port 1234",
         "serve:editor": "parcel editor.html --target editor --port 1235",
         "build:package": "npm run build:gravity && rm -rf lib && tsc --project tsconfig.build.json && cp src/asset-store/default.png lib/asset-store/default.png",
