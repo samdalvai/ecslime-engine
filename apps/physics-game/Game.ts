@@ -41,6 +41,9 @@ export default class Game extends Engine {
 
         const entity1 = this.registry.createEntity();
         entity1.addComponent(TransformComponent, { x: 0, y: 0 });
+
+        const entity2 = this.registry.createEntity();
+        entity2.addComponent(TransformComponent, { x: 0, y: -50 });
     };
 
     processInput = () => {
