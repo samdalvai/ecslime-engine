@@ -1,6 +1,7 @@
 import { BoxShape, FIXED_DELTA_TIME, RigidBody, World } from 'gravity.js';
 
 import Entity from '../ecs/Entity';
+import { Vector } from '../types/utils';
 
 export default class PhysicsBridge {
     private accumulator = 0;
@@ -19,9 +20,9 @@ export default class PhysicsBridge {
     }
 
     // TODO: should add parameters to define shape and material properties
-    addPhysicsBody(entity: Entity) {
+    addPhysicsBody(entity: Entity, position: Vector, mass: number) {
         const shape = new BoxShape(20, 20);
-        const body = new RigidBody(shape, 0, 0, 1);
+        const body = new RigidBody(shape, position.x, position.y, mass);
         this._world.addBody(body);
 
         this._entityToBody.set(entity, body);
