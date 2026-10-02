@@ -1,4 +1,5 @@
 import { Camera, DEFAULT_SPRITE, System, getCameraBounds, getSpriteBounds, worldBoundsOverlap } from 'ecslime-engine';
+
 import { ParticleComponent } from '../../game/components';
 import SpriteComponent from '../../game/components/SpriteComponent';
 import TransformComponent from '../../game/components/TransformComponent';

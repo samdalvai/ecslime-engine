@@ -8,6 +8,7 @@ import {
     getColliderBounds,
     getSpriteBounds,
 } from 'ecslime-engine';
+
 import BoxColliderComponent from '../components/BoxColliderComponent';
 import EntityEffectComponent from '../components/EntityEffectComponent';
 import RigidBodyComponent from '../components/RigidBodyComponent';

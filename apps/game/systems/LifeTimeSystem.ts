@@ -1,4 +1,5 @@
 import { EventBus, System } from 'ecslime-engine';
+
 import LifetimeComponent from '../components/LifetimeComponent';
 import EntityKilledEvent from '../events/EntityKilledEvent';
 

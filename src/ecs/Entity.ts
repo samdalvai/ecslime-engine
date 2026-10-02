@@ -1,5 +1,5 @@
-import Component, { ComponentClass } from './Component';
 import { ComponentCatalog } from '../serialization/componentCatalog';
+import Component, { ComponentClass } from './Component';
 import Registry from './Registry';
 
 export default class Entity {

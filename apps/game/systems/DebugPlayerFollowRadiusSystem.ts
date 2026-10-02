@@ -1,4 +1,5 @@
 import { Camera, System, getCameraBounds, getSpriteBounds, worldBoundsOverlap } from 'ecslime-engine';
+
 import EntityFollowComponent from '../components/EntityFollowComponent';
 import SpriteComponent from '../components/SpriteComponent';
 import TransformComponent from '../components/TransformComponent';

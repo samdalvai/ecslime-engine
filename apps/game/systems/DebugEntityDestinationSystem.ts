@@ -1,4 +1,5 @@
 import { Camera, System, getCameraBounds, worldBoundsOverlap } from 'ecslime-engine';
+
 import EntityDestinationComponent from '../components/EntityDestinationComponent';
 
 export default class DebugEntityDestinationSystem extends System {

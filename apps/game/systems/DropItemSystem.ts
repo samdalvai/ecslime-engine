@@ -1,4 +1,5 @@
 import { EventBus, System } from 'ecslime-engine';
+
 import {
     AnimationComponent,
     BoxColliderComponent,

@@ -1,4 +1,5 @@
 import { EventBus, System } from 'ecslime-engine';
+
 import AnimationComponent from '../components/AnimationComponent';
 import LifetimeComponent from '../components/LifetimeComponent';
 import SpriteComponent from '../components/SpriteComponent';

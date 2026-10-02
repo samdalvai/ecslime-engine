@@ -1,4 +1,5 @@
 import { AssetStore, Engine, EventBus, GameStatus, LevelManager, Rectangle, Registry, System } from 'ecslime-engine';
+
 import Game from '../Game';
 import { MousePressedEvent } from '../events';
 

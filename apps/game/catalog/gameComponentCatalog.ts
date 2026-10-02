@@ -1,5 +1,6 @@
-import * as Components from '../components';
 import { Component, ComponentClass, createComponentCatalog } from 'ecslime-engine';
+
+import * as Components from '../components';
 
 export const gameComponentCatalog = createComponentCatalog(
     Object.entries(Components).map(([name, ComponentConstructor]) => ({

@@ -5,6 +5,7 @@ import {
     computeDistanceBetweenPoints,
     computeUnitVector,
 } from 'ecslime-engine';
+
 import EntityFollowComponent from '../components/EntityFollowComponent';
 import RigidBodyComponent from '../components/RigidBodyComponent';
 import ScriptComponent from '../components/ScriptComponent';

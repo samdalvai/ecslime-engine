@@ -1,12 +1,12 @@
 import { describe, expect, test } from '@jest/globals';
+import { Registry } from 'ecslime-engine';
+import { EventBus } from 'ecslime-engine';
+import { Vector } from 'ecslime-engine';
 
 import BoxColliderComponent from '../../../../apps/game/components/BoxColliderComponent';
 import TransformComponent from '../../../../apps/game/components/TransformComponent';
 import CollisionEvent from '../../../../apps/game/events/CollisionEvent';
 import CollisionSystem from '../../../../apps/game/systems/CollisionSystem';
-import { Registry } from 'ecslime-engine';
-import { EventBus } from 'ecslime-engine';
-import { Vector } from 'ecslime-engine';
 
 describe('Testing Collision system related functions', () => {
     test('Two entities having a box collider intersecting should collide with one another', () => {
