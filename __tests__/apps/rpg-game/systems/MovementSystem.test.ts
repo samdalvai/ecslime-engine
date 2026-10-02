@@ -25,7 +25,7 @@ describe('Testing Movement system related functions', () => {
 
         const deltaTime = 1;
 
-        registry.getSystem(MovementSystem)?.update(deltaTime);
+        registry.getSystem(MovementSystem).update(deltaTime);
 
         const transform = entity.getComponent(TransformComponent);
 
@@ -47,7 +47,7 @@ describe('Testing Movement system related functions', () => {
 
         const deltaTime = 1;
 
-        registry.getSystem(MovementSystem)?.update(deltaTime);
+        registry.getSystem(MovementSystem).update(deltaTime);
 
         const transform = entity.getComponent(TransformComponent);
 
@@ -69,7 +69,7 @@ describe('Testing Movement system related functions', () => {
 
         const deltaTime = 1;
 
-        registry.getSystem(MovementSystem)?.update(deltaTime);
+        registry.getSystem(MovementSystem).update(deltaTime);
 
         const transform = entity.getComponent(TransformComponent);
 
@@ -91,7 +91,7 @@ describe('Testing Movement system related functions', () => {
 
         const deltaTime = 1;
 
-        registry.getSystem(MovementSystem)?.update(deltaTime);
+        registry.getSystem(MovementSystem).update(deltaTime);
 
         const transform = entity.getComponent(TransformComponent);
 
@@ -115,7 +115,7 @@ describe('Testing Movement system related functions', () => {
         registry.addSystem(MovementSystem);
         registry.update();
 
-        registry.getSystem(MovementSystem)?.update(1);
+        registry.getSystem(MovementSystem).update(1);
 
         expect(entity.getComponent(TransformComponent)?.position).toEqual({ x: 10, y: 990 });
     });

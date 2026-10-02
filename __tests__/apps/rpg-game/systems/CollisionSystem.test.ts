@@ -36,7 +36,7 @@ describe('Testing Collision system related functions', () => {
         const myClassInstance = new MyClass();
 
         eventBus.subscribeToEvent(CollisionEvent, myClassInstance, myClassInstance.myCallBack);
-        registry.getSystem(CollisionSystem)?.update(eventBus);
+        registry.getSystem(CollisionSystem).update(eventBus);
 
         expect(myClassInstance.value).toBe(1);
     });
@@ -68,7 +68,7 @@ describe('Testing Collision system related functions', () => {
         const myClassInstance = new MyClass();
 
         eventBus.subscribeToEvent(CollisionEvent, myClassInstance, myClassInstance.myCallBack);
-        registry.getSystem(CollisionSystem)?.update(eventBus);
+        registry.getSystem(CollisionSystem).update(eventBus);
 
         expect(myClassInstance.value).toBe(0);
     });
@@ -98,7 +98,7 @@ describe('Testing Collision system related functions', () => {
 
         const listener = new CollisionListener();
         eventBus.subscribeToEvent(CollisionEvent, listener, listener.onCollision);
-        registry.getSystem(CollisionSystem)?.update(eventBus);
+        registry.getSystem(CollisionSystem).update(eventBus);
 
         expect(listener.normal).toEqual({ x: 0, y: -1 });
     });
