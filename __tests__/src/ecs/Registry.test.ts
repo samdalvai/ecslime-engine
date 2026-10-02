@@ -375,7 +375,7 @@ describe('Testing Registry related functions', () => {
         registry.addSystem(MySystem);
         registry.removeSystem(MySystem);
 
-        expect(registry.getSystem(MySystem)).toBe(undefined);
+        expect(() => registry.getSystem(MySystem)).toThrowError();
     });
 
     test('Should remove system from registry with multiple systems existing', () => {
@@ -388,7 +388,7 @@ describe('Testing Registry related functions', () => {
         registry.addSystem(MySystem2);
         registry.removeSystem(MySystem1);
 
-        expect(registry.getSystem(MySystem1)).toBe(undefined);
+        expect(() => registry.getSystem(MySystem1)).toThrowError();
     });
 
     test('Should return true when checking if system exists in registry', () => {
@@ -446,7 +446,7 @@ describe('Testing Registry related functions', () => {
         expect(registry.getSystem(MySystem1)).toBeInstanceOf(MySystem1);
     });
 
-    test('Should return undefined if system does not exist', () => {
+    test('Should throw error if system does not exist', () => {
         const registry = new Registry();
 
         class MySystem1 extends System {}
@@ -454,7 +454,7 @@ describe('Testing Registry related functions', () => {
 
         registry.addSystem(MySystem1);
 
-        expect(registry.getSystem(MySystem2)).toBe(undefined);
+        expect(() => registry.getSystem(MySystem2)).toThrowError();
     });
 
     test('Should add entity to system, when entity has component to which system is interested to', () => {

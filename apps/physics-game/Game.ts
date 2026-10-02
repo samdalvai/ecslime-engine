@@ -103,7 +103,7 @@ export default class Game extends Engine {
         // this.registry.getSystem(Systems.MovementSystem)?.subscribeToEvents(this.eventBus);
 
         // Invoke all the systems that need to update
-        // this.registry.getSystem(Systems.PlayerDetectionSystem)?.update(this.registry);
+        // this.registry.getSystem(Systems.PlayerDetectionSystem).update(this.registry);
     };
 
     render = () => {
@@ -115,18 +115,18 @@ export default class Game extends Engine {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         beginWorldRender(this.ctx, this.camera);
-        this.registry.getSystem(Systems.RenderSystem)?.update(this.ctx, this.assetStore, this.camera);
+        this.registry.getSystem(Systems.RenderSystem).update(this.ctx, this.assetStore, this.camera);
 
         if (this.isDebug) {
-            // this.registry.getSystem(Systems.DebugColliderSystem)?.update(this.ctx, this.camera);
+            // this.registry.getSystem(Systems.DebugColliderSystem).update(this.ctx, this.camera);
         }
         endWorldRender(this.ctx);
 
         if (this.isDebug) {
             this.registry
                 .getSystem(Systems.DebugInfoSystem)
-                ?.update(this.ctx, this.currentFPS, this.maxFPS, this.frameDuration, this.registry, this.camera);
-            // this.registry.getSystem(Systems.DebugCursorCoordinatesSystem)?.update(this.ctx);
+                .update(this.ctx, this.currentFPS, this.maxFPS, this.frameDuration, this.registry, this.camera);
+            // this.registry.getSystem(Systems.DebugCursorCoordinatesSystem).update(this.ctx);
         }
     };
 }
