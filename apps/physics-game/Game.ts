@@ -41,11 +41,15 @@ export default class Game extends Engine {
 
         const entity1 = this.registry.createEntity();
         entity1.addComponent(TransformComponent, { x: 15, y: 0 });
-        entity1.addComponent(RigidBodyComponent, 1);
+        entity1.addComponent(RigidBodyComponent, { shape: { kind: 'box', width: 20, height: 20 }, mass: 1 });
 
         const entity2 = this.registry.createEntity();
         entity2.addComponent(TransformComponent, { x: 0, y: -100 });
-        entity2.addComponent(RigidBodyComponent, 0);
+        entity2.addComponent(RigidBodyComponent, { shape: { kind: 'box', width: 20, height: 20 }, mass: 0 });
+
+        const floor = this.registry.createEntity();
+        floor.addComponent(TransformComponent, { x: 0, y: -175 });
+        floor.addComponent(RigidBodyComponent, { shape: { kind: 'box', width: 500, height: 10 }, mass: 0 });
     };
 
     processInput = () => {

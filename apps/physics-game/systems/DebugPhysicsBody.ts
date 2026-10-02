@@ -60,7 +60,7 @@ export default class DebugPhysicsBody extends System {
         const halfHeight = height / 2;
 
         ctx.beginPath();
-        ctx.rect(-halfWidth, -halfWidth, halfWidth * 2, halfHeight * 2);
+        ctx.rect(-halfWidth, -halfHeight, halfWidth * 2, halfHeight * 2);
         ctx.strokeStyle = color;
         ctx.stroke();
 

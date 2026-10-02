@@ -1,12 +1,11 @@
-import { Component, Vector } from 'ecslime-engine';
+import { Component, PhysicsBodyOptions } from 'ecslime-engine';
 
 export default class RigidBodyComponent extends Component {
-    mass: number;
-    restitution: number;
+    // TODO: we need to check if these properties are serializable in a level
+    options: PhysicsBodyOptions;
 
-    constructor(mass = 0, restitution = 0) {
+    constructor(options: PhysicsBodyOptions) {
         super();
-        this.mass = mass;
-        this.restitution = restitution;
+        this.options = options;
     }
 }
