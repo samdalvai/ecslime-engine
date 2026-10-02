@@ -1,8 +1,11 @@
-import { BoxShape, RigidBody, World } from 'gravity.js';
+import { BoxShape, FIXED_DELTA_TIME, RigidBody, World } from 'gravity.js';
 
 import Entity from '../ecs/Entity';
 
 export default class PhysicsBridge {
+    private accumulator = 0;
+    private readonly fixedDt = FIXED_DELTA_TIME;
+
     private _world: World;
 
     private _entityToBody: Map<Entity, RigidBody>;
@@ -55,8 +58,16 @@ export default class PhysicsBridge {
         return this._bodyToEntity.get(body)!;
     }
 
-    step() {
-        this._world.update();
+    update(deltaTime: number) {
+        // Limit catch-up work after a long pause.
+        this.accumulator = Math.min(this.accumulator + deltaTime, this.fixedDt * 5);
+
+        // This accumulator makes the physics run at fixed time steps regardless
+        // of the fps of the ecs game engine
+        while (this.accumulator >= this.fixedDt) {
+            this._world.update();
+            this.accumulator -= this.fixedDt;
+        }
     }
 
     hasPhysicsBody(entity: Entity) {
