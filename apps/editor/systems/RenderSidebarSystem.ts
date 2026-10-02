@@ -11,7 +11,7 @@ import {
     isValidLevelMap,
 } from 'ecslime-engine';
 import { TransformComponent } from '../../game/components';
-import { gameComponentCatalog } from '../../game/components/componentCatalog';
+import { gameComponentCatalog } from '../../game/catalog/gameComponentCatalog';
 import EntityKilledEvent from '../../game/events/EntityKilledEvent';
 import * as GameSystems from '../../game/systems';
 import Editor from '../Editor';

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test } from '@jest/globals';
 
 import Component, { IComponent } from '../../../src/ecs/Component';
-import { createComponentCatalog } from '../../../src/ecs/ComponentCatalog';
+import { createComponentCatalog } from '../../../src/serialization/componentCatalog';
 import Registry from '../../../src/ecs/Registry';
 import { ISystem } from '../../../src/ecs/System';
 

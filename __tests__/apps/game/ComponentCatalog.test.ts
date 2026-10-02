@@ -1,7 +1,7 @@
 import { describe, expect, test } from '@jest/globals';
 
 import TransformComponent from '../../../apps/game/components/TransformComponent';
-import { gameComponentCatalog } from '../../../apps/game/components/componentCatalog';
+import { gameComponentCatalog } from '../../../apps/game/catalog/gameComponentCatalog';
 import { Registry } from 'ecslime-engine';
 
 describe('Testing game component catalog', () => {

@@ -1,5 +1,5 @@
 import { Camera, Engine, GameStatus, beginWorldRender, endWorldRender, screenToWorld } from 'ecslime-engine';
-import { gameComponentCatalog } from './components/componentCatalog';
+import { gameComponentCatalog } from './catalog/gameComponentCatalog';
 import * as GameEvents from './events';
 import * as Systems from './systems';
 import GameEndSystem from './systems/GameEndSystem';

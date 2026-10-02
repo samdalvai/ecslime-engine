@@ -1,7 +1,7 @@
 import { describe, expect, test } from '@jest/globals';
 
 import Component from '../../../src/ecs/Component';
-import { createComponentCatalog } from '../../../src/ecs/ComponentCatalog';
+import { createComponentCatalog } from '../../../src/serialization/componentCatalog';
 import Registry from '../../../src/ecs/Registry';
 import {
     deserializeEntities,
