@@ -18,9 +18,9 @@
     "jest": {
         "testMatch": ["<rootDir>/**/*.test.ts"],
         "moduleNameMapper": {
-            "^url:.*\\.png$": "<rootDir>/__tests__/engine/mocks/image.ts"
+            "^url:.*\\.png$": "<rootDir>/__tests__/src/mocks/image.ts"
         },
-        "testPathIgnorePatterns": ["<rootDir>/__tests__/engine/mocks/"]
+        "testPathIgnorePatterns": ["<rootDir>/__tests__/src/mocks/"]
     },
     "devDependencies": {
         "@babel/core": "^7.26.0",

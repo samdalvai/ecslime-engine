@@ -1,8 +1,8 @@
 import { describe, expect, test } from '@jest/globals';
 
-import RigidBodyComponent from '../../../apps/game/components/RigidBodyComponent';
-import SpriteComponent from '../../../apps/game/components/SpriteComponent';
-import SpriteStateSystem from '../../../apps/game/systems/SpriteStateSystem';
+import RigidBodyComponent from '../../../../apps/game/components/RigidBodyComponent';
+import SpriteComponent from '../../../../apps/game/components/SpriteComponent';
+import SpriteStateSystem from '../../../../apps/game/systems/SpriteStateSystem';
 
 describe('Testing SpriteState system related functions', () => {
     const system = new SpriteStateSystem();

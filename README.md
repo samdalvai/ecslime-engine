@@ -76,83 +76,52 @@ A demonstration RPG-style 2D game built with this engine, where the player can c
 # Project structure
 
 ```text
-/src
-
-    /__tests__
-        /editor             -> Unit tests for editor related logic
-        /engine             -> Unit tests for engine related logic
-        /game               -> Unit tests for game related logic
-
-    /editor
-        main.ts              -> Editor app entrypoint
-        /entity-editor      -> Level and entity management with HTML elements logic
-        /events             -> Editor events (entity delete, entity paste, etc.)
-        /gui                -> HTML gui utilities
-        /persistence        -> Handling of levels storage and loading
-        /systems            -> Editor systems (entity drag, sidebar rendering, etc.)
-        /types              -> Editor related types
-        /version-manager    -> Handling of undo/redo and level versions
-
-    /engine
-        index.ts            -> Public engine API
-        /asset-store        -> Asset loading and retrieval (sprites, sounds, etc.)
-        /ecs                -> Logic for entity/components/systems architecture
-        /event-bus          -> Handling of game events
-        /input-manager      -> Handling of game inputs (mouse, keyboard)
-        /level-manager      -> Loading and initialization of levels
-        /loop-strategy      -> Definition of engine loop logic (fixed or default)
-        /serialization      -> Serialization and deserialization of levels and entities to/from json
-        /types              -> Core engine types
-        /utils              -> Engine utility and math-related functions
-
-    /game
-        main.ts             -> Game app entrypoint
-        /components         -> Entities components (sprite, transform, health, etc.) and component catalog
-        /events             -> Game events (collision, hit, etc.)
-        /systems            -> Game systems (movement, rendering, collision, etc.)
-
-    /spritesheets           -> Collection of game sprites with Piskel file
-
-    /dist
-        /assets             -> Game assets folder (spites, sounds, levels, etc.)
-
-
-
+src/                    -> Reusable engine code and public API (index.ts)
+apps/
+    game/               -> Example game, components, events, and systems
+    editor/             -> Editor for the example game
+__tests__/
+    src/                -> Tests for the engine, mirroring src/
+    apps/
+        game/           -> Tests for the example game
+        editor/         -> Tests for the editor
+spritesheets/           -> Game sprite sources
+dist/assets/            -> Game assets
 ```
 
 # Engine API
 
-The reusable engine code lives under `src/engine` and is exported through `src/engine/index.ts`.
+The reusable engine code lives under `src` and is exported through `src/index.ts`.
 Game and editor code should import engine classes, types, and utilities from that public barrel instead of deep engine paths.
 
-From files directly under `src/game` or `src/editor`:
+From files directly under `apps/game` or `apps/editor`:
 
 ```ts
-import { Engine, RAFLoopStrategy } from '../engine';
+import { Engine, RAFLoopStrategy } from '../../src';
 ```
 
-From nested app folders such as `src/game/components` or `src/editor/systems`:
+From nested app folders such as `apps/game/components` or `apps/editor/systems`:
 
 ```ts
-import { Component, System, Rectangle } from '../../engine';
+import { Component, System, Rectangle } from '../../../src';
 ```
 
-`src/engine` should not import from `src/game` or `src/editor`. App-specific components are provided to engine serialization and duplication through the game component catalog.
+`src` should not import from `apps/game` or `apps/editor`. App-specific components are provided to engine serialization and duplication through the game component catalog.
 
 # Game Component Catalog
 
-Serializable game components are exposed through `src/game/components/componentCatalog.ts`. The catalog is built from the exports in `src/game/components/index.ts` and is passed to engine APIs that need to resolve component names, such as deserialization and entity duplication.
+Serializable game components are exposed through `apps/game/components/componentCatalog.ts`. The catalog is built from the exports in `apps/game/components/index.ts` and is passed to engine APIs that need to resolve component names, such as deserialization and entity duplication.
 
-When adding a component, export it from `src/game/components/index.ts`; that makes it available to the editor and the `gameComponentCatalog`.
+When adding a component, export it from `apps/game/components/index.ts`; that makes it available to the editor and the `gameComponentCatalog`.
 
 # How to develop a new game mechanic
 
 If you want to develop a new game mechanic you can do so by performing these steps.
 
-1. If needed create a new component for an entity under `src/game/components`
+1. If needed create a new component for an entity under `apps/game/components`
 
 ```ts
-import { Component } from '../../engine';
+import { Component } from '../../../src';
 
 export default class MyNewComponent extends Component {
     myProperty: number;
@@ -164,7 +133,7 @@ export default class MyNewComponent extends Component {
 }
 ```
 
-2. Add your new component to the list of exported game components under `src/game/components/index.ts`. This also makes the component available through `gameComponentCatalog`.
+2. Add your new component to the list of exported game components under `apps/game/components/index.ts`. This also makes the component available through `gameComponentCatalog`.
 
 ```ts
 // ... other imports
@@ -173,10 +142,10 @@ export { default as TransformComponent } from './TransformComponent';
 export { default as MyNewComponent } from './MyNewComponent';
 ```
 
-3. Create a new system under `src/game/systems`
+3. Create a new system under `apps/game/systems`
 
 ```ts
-import { System } from '../../engine';
+import { System } from '../../../src';
 import MyNewComponent from '../components/MyNewComponent';
 
 export default class MyNewSystem extends System {
@@ -196,7 +165,7 @@ export default class MyNewSystem extends System {
 }
 ```
 
-4. Add your new system to the list of exported game systems under `src/game/systems/index.ts`. This is needed to have the system available when in editor mode.
+4. Add your new system to the list of exported game systems under `apps/game/systems/index.ts`. This is needed to have the system available when in editor mode.
 
 ```ts
 // ... other imports
@@ -205,7 +174,7 @@ export { default as RenderTextSystem } from './RenderTextSystem';
 export { default as MyNewSystem } from './MyNewSystem';
 ```
 
-5. Register your system in `src/game/Game.ts:setup()`
+5. Register your system in `apps/game/Game.ts:setup()`
 
 ```ts
 setup = async () => {
@@ -216,7 +185,7 @@ setup = async () => {
 }
 ```
 
-6. Perform your update logic in `src/game/Game.ts:update()` or `src/game/Game.ts:render()`, depending on the type of system. For example, if a system needs to perform rendering, add it in the `render()` function.
+6. Perform your update logic in `apps/game/Game.ts:update()` or `apps/game/Game.ts:render()`, depending on the type of system. For example, if a system needs to perform rendering, add it in the `render()` function.
 
 ```ts
 update = (deltaTime: number) => {
