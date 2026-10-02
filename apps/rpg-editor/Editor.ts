@@ -11,9 +11,9 @@ import {
     serializeEntity,
 } from 'ecslime-engine';
 
-import { gameComponentCatalog } from '../game/catalog/gameComponentCatalog';
-import * as GameEvents from '../game/events';
-import * as GameSystems from '../game/systems';
+import { gameComponentCatalog } from '../rpg-game/catalog/gameComponentCatalog';
+import * as GameEvents from '../rpg-game/events';
+import * as GameSystems from '../rpg-game/systems';
 import EntityEditor from './entity-editor/EntityEditor';
 import EntityDeleteEvent from './events/EntityDeleteEvent';
 import EntityPasteEvent from './events/EntityPasteEvent';

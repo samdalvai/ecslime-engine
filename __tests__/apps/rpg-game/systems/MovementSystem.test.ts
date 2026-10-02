@@ -2,9 +2,9 @@ import { beforeEach, describe, expect, test } from '@jest/globals';
 import { Engine } from 'ecslime-engine';
 import { Registry } from 'ecslime-engine';
 
-import RigidBodyComponent from '../../../../apps/game/components/RigidBodyComponent';
-import TransformComponent from '../../../../apps/game/components/TransformComponent';
-import MovementSystem from '../../../../apps/game/systems/MovementSystem';
+import RigidBodyComponent from '../../../../apps/rpg-game/components/RigidBodyComponent';
+import TransformComponent from '../../../../apps/rpg-game/components/TransformComponent';
+import MovementSystem from '../../../../apps/rpg-game/systems/MovementSystem';
 
 describe('Testing Movement system related functions', () => {
     beforeEach(() => {

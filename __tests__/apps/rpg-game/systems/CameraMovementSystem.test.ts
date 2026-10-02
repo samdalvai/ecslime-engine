@@ -3,9 +3,9 @@ import { Engine } from 'ecslime-engine';
 import { Registry } from 'ecslime-engine';
 import { Camera } from 'ecslime-engine';
 
-import CameraFollowComponent from '../../../../apps/game/components/CameraFollowComponent';
-import TransformComponent from '../../../../apps/game/components/TransformComponent';
-import CameraMovementSystem from '../../../../apps/game/systems/CameraMovementSystem';
+import CameraFollowComponent from '../../../../apps/rpg-game/components/CameraFollowComponent';
+import TransformComponent from '../../../../apps/rpg-game/components/TransformComponent';
+import CameraMovementSystem from '../../../../apps/rpg-game/systems/CameraMovementSystem';
 
 describe('CameraMovementSystem', () => {
     test('follows a centre-anchored transform, clamps to the map, and updates the Y-up pointer position', () => {

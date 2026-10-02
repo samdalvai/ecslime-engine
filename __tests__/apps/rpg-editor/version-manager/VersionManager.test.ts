@@ -1,7 +1,7 @@
 import { describe, expect, test } from '@jest/globals';
 import { LevelMap } from 'ecslime-engine';
 
-import VersionManager from '../../../../apps/editor/version-manager/VersionManager';
+import VersionManager from '../../../../apps/rpg-editor/version-manager/VersionManager';
 
 describe('Testing version manager related functions', () => {
     test('Should add a new level version with no existing versions', () => {

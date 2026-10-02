@@ -2,10 +2,10 @@ import { afterEach, beforeEach, describe, expect, test } from '@jest/globals';
 import { Engine } from 'ecslime-engine';
 import { Registry } from 'ecslime-engine';
 
-import Editor from '../../../../apps/editor/Editor';
-import EntityEditor from '../../../../apps/editor/entity-editor/EntityEditor';
-import { EntityDragSystem } from '../../../../apps/editor/systems';
-import { SpriteComponent, TransformComponent } from '../../../../apps/game/components';
+import Editor from '../../../../apps/rpg-editor/Editor';
+import EntityEditor from '../../../../apps/rpg-editor/entity-editor/EntityEditor';
+import { EntityDragSystem } from '../../../../apps/rpg-editor/systems';
+import { SpriteComponent, TransformComponent } from '../../../../apps/rpg-game/components';
 
 describe('EntityDragSystem grid snapping', () => {
     const originalDocument = globalThis.document;
