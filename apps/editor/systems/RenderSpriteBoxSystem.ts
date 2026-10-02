@@ -8,6 +8,7 @@ import {
     getSpriteBounds,
     worldBoundsOverlap,
 } from 'ecslime-engine';
+
 import SpriteComponent from '../../game/components/SpriteComponent';
 import TransformComponent from '../../game/components/TransformComponent';
 import Editor from '../Editor';

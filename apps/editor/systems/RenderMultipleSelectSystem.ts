@@ -1,4 +1,5 @@
 import { System } from 'ecslime-engine';
+
 import Editor from '../Editor';
 
 export default class RenderMultipleSelectSystem extends System {

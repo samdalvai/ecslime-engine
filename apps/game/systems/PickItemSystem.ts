@@ -1,4 +1,5 @@
 import { Entity, EventBus, System } from 'ecslime-engine';
+
 import { HealthComponent, PickableItemComponent } from '../components';
 import { PickupEffect } from '../components/PickableItemComponent';
 import CollisionEvent from '../events/CollisionEvent';

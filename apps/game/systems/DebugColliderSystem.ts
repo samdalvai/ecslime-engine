@@ -1,4 +1,5 @@
 import { Camera, System, getCameraBounds, getColliderBounds, worldBoundsOverlap } from 'ecslime-engine';
+
 import BoxColliderComponent from '../components/BoxColliderComponent';
 import TransformComponent from '../components/TransformComponent';
 

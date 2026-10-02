@@ -1,4 +1,5 @@
 import { System, Vector } from 'ecslime-engine';
+
 import LifetimeComponent from '../components/LifetimeComponent';
 import ParticleComponent from '../components/ParticleComponent';
 import ParticleEmitComponent from '../components/ParticleEmitComponent';

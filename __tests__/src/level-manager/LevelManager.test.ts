@@ -1,9 +1,9 @@
 import { describe, expect, jest, test } from '@jest/globals';
 
 import AssetStore from '../../../src/asset-store/AssetStore';
-import { createComponentCatalog } from '../../../src/serialization/componentCatalog';
 import Registry from '../../../src/ecs/Registry';
 import LevelManager from '../../../src/level-manager/LevelManager';
+import { createComponentCatalog } from '../../../src/serialization/componentCatalog';
 import { LevelMap } from '../../../src/types/map';
 import { DEFAULT_SPRITE } from '../../../src/utils/constants';
 

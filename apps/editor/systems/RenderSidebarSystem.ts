@@ -10,8 +10,9 @@ import {
     deserializeEntity,
     isValidLevelMap,
 } from 'ecslime-engine';
-import { TransformComponent } from '../../game/components';
+
 import { gameComponentCatalog } from '../../game/catalog/gameComponentCatalog';
+import { TransformComponent } from '../../game/components';
 import EntityKilledEvent from '../../game/events/EntityKilledEvent';
 import * as GameSystems from '../../game/systems';
 import Editor from '../Editor';

@@ -1,4 +1,5 @@
 import { Camera, System, getCameraBounds, worldBoundsOverlap } from 'ecslime-engine';
+
 import ParticleEmitComponent from '../components/ParticleEmitComponent';
 import TransformComponent from '../components/TransformComponent';
 

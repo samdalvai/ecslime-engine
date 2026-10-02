@@ -8,6 +8,7 @@ import {
     getSpriteBounds,
     worldBoundsOverlap,
 } from 'ecslime-engine';
+
 import Game from '../Game';
 import HighlightComponent from '../components/HighlightComponent';
 import ShadowComponent from '../components/ShadowComponent';

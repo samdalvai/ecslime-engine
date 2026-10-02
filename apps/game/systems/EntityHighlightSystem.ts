@@ -1,4 +1,5 @@
 import { Engine, System, getSpriteBounds } from 'ecslime-engine';
+
 import HighlightComponent from '../components/HighlightComponent';
 import SpriteComponent from '../components/SpriteComponent';
 import TransformComponent from '../components/TransformComponent';

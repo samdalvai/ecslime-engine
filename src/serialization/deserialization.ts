@@ -1,8 +1,8 @@
 import Component, { ComponentClass } from '../ecs/Component';
-import { ComponentCatalog } from './componentCatalog';
 import Entity from '../ecs/Entity';
 import Registry from '../ecs/Registry';
 import { EntityMap } from '../types/map';
+import { ComponentCatalog } from './componentCatalog';
 
 export const deserializeEntity = (
     entityMap: EntityMap,

@@ -8,6 +8,7 @@ import {
     computeDirectionVector,
     computeUnitVector,
 } from 'ecslime-engine';
+
 import AnimationComponent from '../components/AnimationComponent';
 import BoxColliderComponent from '../components/BoxColliderComponent';
 import EntityEffectComponent from '../components/EntityEffectComponent';
