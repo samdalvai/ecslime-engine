@@ -34,7 +34,7 @@ jobs:
         run: npm ci
 
       - name: Build with Parcel
-        run: npm run build:game
+        run: npm run build:rpg-game
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5

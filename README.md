@@ -22,17 +22,19 @@ npm install
 ## Run the demo apps
 
 ```sh
-npm start                 # Game
-npm run start:editor      # Editor
+npm run start:rpg-game      # RPG game
+npm run start:rpg-editor    # RPG editor
+npm run start:physics-game  # Physics game
 ```
 
-Both commands build the engine library in `lib/`, watch engine changes, and serve the selected app. The game runs at `http://localhost:1234` and the editor at `http://localhost:1235`, so you can run both commands in separate terminals.
+These commands build the engine library in `lib/`, watch engine and gravity.js changes, and serve the selected app. The RPG game runs at `http://localhost:1234`, the editor at `http://localhost:1235`, and the physics game at `http://localhost:1236`.
 
 To build production bundles:
 
 ```sh
-npm run build:game        # dist/index.html
-npm run build:editor      # dist/editor.html
+npm run build:rpg-game      # dist/index.html
+npm run build:rpg-editor    # dist/editor.html
+npm run build:physics-game  # dist/physics-game/index.html
 ```
 
 Use `npm run build:package` to compile just the reusable engine. Its JavaScript and TypeScript declarations are generated in `lib/`.
@@ -87,6 +89,7 @@ lib/                    -> Generated engine library (ignored by Git)
 apps/
     rpg-game/           -> Example game, HTML/CSS, components, events, and systems
     rpg-editor/         -> Editor HTML/CSS and source for the example game
+    physics-game/       -> Physics demo HTML/CSS and source
 __tests__/
     src/                -> Tests for the engine, mirroring src/
     apps/
