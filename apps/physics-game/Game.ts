@@ -26,7 +26,7 @@ export default class Game extends Engine {
         // this.registry.addSystem(Systems.MovementSystem);
 
         // Debug systems
-        // this.registry.addSystem(Systems.DebugColliderSystem);
+        this.registry.addSystem(Systems.DebugInfoSystem);
         if (this.canvas) {
             this.canvas.style.cursor = 'default';
         }

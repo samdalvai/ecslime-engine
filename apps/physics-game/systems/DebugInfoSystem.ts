@@ -18,6 +18,8 @@ export default class DebugInfoSystem extends System {
         const x = Engine.windowWidth - 375;
         const y = 50;
 
+        console.log("x: ", x);
+
         ctx.font = '18px Arial';
         ctx.fillStyle = 'red';
         ctx.fillText(`Current FPS: ${currentFPS.toFixed(2)} (${maxFPS.toFixed(2)} max)`, x, y);
