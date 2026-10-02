@@ -1,7 +1,7 @@
 import { Camera, Engine, PhysicsBridge, beginWorldRender, endWorldRender, screenToWorld } from 'ecslime-engine';
 
 import { gameComponentCatalog } from './catalog/gameComponentCatalog';
-import { TransformComponent } from './components';
+import { RigidBodyComponent, TransformComponent } from './components';
 import * as GameEvents from './events';
 import * as Systems from './systems';
 
@@ -41,9 +41,11 @@ export default class Game extends Engine {
 
         const entity1 = this.registry.createEntity();
         entity1.addComponent(TransformComponent, { x: 0, y: 0 });
+        entity1.addComponent(RigidBodyComponent, 1);
 
         const entity2 = this.registry.createEntity();
-        entity2.addComponent(TransformComponent, { x: 0, y: -50 });
+        entity2.addComponent(TransformComponent, { x: 0, y: -100 });
+        entity2.addComponent(RigidBodyComponent, 0);
     };
 
     processInput = () => {

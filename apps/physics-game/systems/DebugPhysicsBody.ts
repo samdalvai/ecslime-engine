@@ -2,11 +2,13 @@ import { Camera, PhysicsBridge, System, getCameraBounds, getColliderBounds, worl
 import { BoxShape, ShapeType } from 'gravity.js';
 
 import TransformComponent from '../components/TransformComponent';
+import { RigidBodyComponent } from '../components';
 
 export default class DebugPhysicsBody extends System {
     constructor() {
         super();
         this.requireComponent(TransformComponent);
+        this.requireComponent(RigidBodyComponent);
     }
 
     update(ctx: CanvasRenderingContext2D, camera: Camera, physicsBridge: PhysicsBridge) {
