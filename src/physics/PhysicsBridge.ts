@@ -1,7 +1,35 @@
-import { BoxShape, FIXED_DELTA_TIME, RigidBody, World } from 'gravity.js';
+import {
+    BodiesFactory,
+    BoxShape,
+    CapsuleShape,
+    CircleShape,
+    CollisionCategory,
+    FIXED_DELTA_TIME,
+    PolygonShape,
+    RigidBody,
+    SegmentShape,
+    Vec2,
+    World,
+} from 'gravity.js';
 
 import Entity from '../ecs/Entity';
 import { Vector } from '../types/utils';
+import { PhysicsBodyOptions, PhysicsShape } from './PhysicsBodyOptions';
+
+function createShape(shape: PhysicsShape) {
+    switch (shape.kind) {
+        case 'box':
+            return new BoxShape(shape.width, shape.height);
+        case 'circle':
+            return new CircleShape(shape.radius);
+        case 'capsule':
+            return new CapsuleShape(shape.halfHeight, shape.radius);
+        case 'polygon':
+            return new PolygonShape(shape.vertices.map(vertex => new Vec2(vertex.x, vertex.y)));
+        case 'segment':
+            return new SegmentShape(shape.length, shape.horizontal);
+    }
+}
 
 export default class PhysicsBridge {
     private accumulator = 0;
@@ -19,10 +47,38 @@ export default class PhysicsBridge {
         this._bodyToEntity = new Map();
     }
 
-    // TODO: should add parameters to define shape and material properties
-    addPhysicsBody(entity: Entity, position: Vector, mass: number) {
-        const shape = new BoxShape(20, 20);
-        const body = new RigidBody(shape, position.x, position.y, mass);
+    addPhysicsBody(entity: Entity, position: Vector, options: PhysicsBodyOptions) {
+        if (this.hasPhysicsBody(entity)) {
+            throw new Error('Entity with id ' + entity.getId() + ' already has a physics body');
+        }
+
+        const shape = createShape(options.shape);
+        const bodyOptions = {
+            x: position.x,
+            y: position.y,
+            rotation: options.rotation,
+            velocity: options.velocity ? new Vec2(options.velocity.x, options.velocity.y) : undefined,
+            angularVelocity: options.angularVelocity,
+            canRotate: options.canRotate,
+            isBullet: options.isBullet,
+            restitution: options.restitution,
+            friction: options.friction,
+            rollingResistance: options.rollingResistance,
+            surfaceSpeed: options.surfaceSpeed,
+            charge: options.charge,
+            temperature: options.temperature,
+            gravityScale: options.gravityScale,
+            collisionCategory: options.collisionCategory as CollisionCategory | undefined,
+            collisionMask: options.collisionMask as CollisionCategory | undefined,
+        };
+        let body: RigidBody;
+        if (options.mass !== undefined) {
+            body = BodiesFactory.fromShape(shape, { ...bodyOptions, mass: options.mass });
+        } else if (options.density !== undefined) {
+            body = BodiesFactory.fromShape(shape, { ...bodyOptions, density: options.density });
+        } else {
+            throw new Error('Physics body requires mass or density');
+        }
         this._world.addBody(body);
 
         this._entityToBody.set(entity, body);

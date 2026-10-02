@@ -20,7 +20,11 @@ export default class PhysicsSystem extends System {
                     throw new Error('Could not find component ....bla bla bla');
                 }
 
-                physicsBridge.addPhysicsBody(entity, transform.position, rigidBody.mass);
+                physicsBridge.addPhysicsBody(entity, transform.position, {
+                    ...rigidBody.options,
+                    // TODO: should we use the same unit measure?
+                    rotation: rigidBody.options.rotation ?? (transform.rotation * Math.PI) / 180,
+                });
             }
         }
 
@@ -38,8 +42,9 @@ export default class PhysicsSystem extends System {
             const body = physicsBridge.getPhysicsBodyByEntity(entity);
             transform.position.x = body.position.x;
             transform.position.y = body.position.y;
-            // TODO: are these both in degrees?
-            transform.rotation = body.rotation;
+
+            // TODO: should we use the same unit measure?
+            transform.rotation = (body.rotation * 180) / Math.PI;
         }
     }
 }
