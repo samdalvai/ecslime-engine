@@ -486,12 +486,11 @@ export default class Registry {
         return this._systems.get(SystemClass.getSystemId()) !== undefined;
     }
 
-    getSystem<T extends System>(SystemClass: SystemClass<T>): T | undefined {
+    getSystem<T extends System>(SystemClass: SystemClass<T>): T {
         const system = this._systems.get(SystemClass.getSystemId());
 
         if (system === undefined) {
             throw new Error(`System ${SystemClass} is not defined, is the system added to the registry?`);
-            return undefined;
         }
 
         return system as T;
