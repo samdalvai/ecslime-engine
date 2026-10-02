@@ -1,37 +1,41 @@
 import { BoxShape, RigidBody, World } from 'gravity.js';
 
+import Entity from '../ecs/Entity';
+
 export default class PhysicsBridge {
     private _world: World;
 
-    private _entityIdToBody: Map<number, RigidBody>;
-    private _bodyIdToEntityId: Map<number, number>;
+    private _entityToBody: Map<Entity, RigidBody>;
+    private _bodyToEntity: Map<RigidBody, Entity>;
 
     constructor(gravity = 9.8) {
         this._world = new World(gravity);
 
-        this._entityIdToBody = new Map();
-        this._bodyIdToEntityId = new Map();
+        this._entityToBody = new Map();
+        this._bodyToEntity = new Map();
     }
 
-    addBody(entityId: number) {
+    // TODO: should add parameters to define shape and material properties
+    addBody(entity: Entity) {
         const shape = new BoxShape(20, 20);
         const body = new RigidBody(shape, 0, 0, 1);
         this._world.addBody(body);
 
-        this._entityIdToBody.set(entityId, body);
-        this._bodyIdToEntityId.set(body.id, entityId);
+        this._entityToBody.set(entity, body);
+        this._bodyToEntity.set(body, entity);
     }
 
-    removeBody(entityId: number) {
-        const body = this._entityIdToBody.get(entityId);
+    removeBody(entity: Entity) {
+        const body = this._entityToBody.get(entity);
 
         if (!body) {
-            throw new Error('Could not find RigidBody assignet to entity with id ' + entityId);
+            throw new Error('Could not find RigidBody assignet to entity with id ' + entity.getId());
         }
 
-        // TODO: maybe a gravity method to remove body by id would be better, it would avoid storing the rigidbody here
+        // TODO: maybe a gravity.js method to remove body by id would be better, it would avoid storing the rigidbody here
         this._world.removeBody(body);
 
-        // TODO: remove entries from map
+        this._bodyToEntity.delete(body);
+        this._entityToBody.delete(entity);
     }
 }
