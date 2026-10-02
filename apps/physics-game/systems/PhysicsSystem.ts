@@ -25,5 +25,21 @@ export default class PhysicsSystem extends System {
         }
 
         physicsBridge.update(deltaTime);
+
+        // Synchronize ecs components with physics simulation
+        for (const entity of this.getSystemEntities()) {
+            const transform = entity.getComponent(TransformComponent);
+            const rigidBody = entity.getComponent(RigidBodyComponent);
+
+            if (!transform || !rigidBody) {
+                throw new Error('Could not find component ....bla bla bla');
+            }
+
+            const body = physicsBridge.getPhysicsBodyByEntity(entity);
+            transform.position.x = body.position.x;
+            transform.position.y = body.position.y;
+            // TODO: are these both in degrees?
+            transform.rotation = body.rotation;
+        }
     }
 }

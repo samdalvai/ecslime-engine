@@ -1,8 +1,8 @@
 import { Camera, PhysicsBridge, System, getCameraBounds, getColliderBounds, worldBoundsOverlap } from 'ecslime-engine';
 import { BoxShape, ShapeType } from 'gravity.js';
 
-import TransformComponent from '../components/TransformComponent';
 import { RigidBodyComponent } from '../components';
+import TransformComponent from '../components/TransformComponent';
 
 export default class DebugPhysicsBody extends System {
     constructor() {
@@ -26,6 +26,10 @@ export default class DebugPhysicsBody extends System {
             const position = physicsBody.position;
             const shape = physicsBody.shape;
 
+            ctx.save();
+            ctx.translate(position.x, position.y);
+            ctx.rotate(physicsBody.rotation);
+
             switch (shape.getType()) {
                 case ShapeType.CIRCLE:
                     // Not implemented
@@ -36,7 +40,7 @@ export default class DebugPhysicsBody extends System {
                 case ShapeType.BOX:
                     {
                         const box = shape as BoxShape;
-                        this.drawBox(ctx, position.x, position.y, box.width, box.height);
+                        this.drawBox(ctx, box.width, box.height);
                     }
                     break;
                 case ShapeType.CAPSULE:
@@ -46,29 +50,24 @@ export default class DebugPhysicsBody extends System {
                     // Not implemented
                     break;
             }
+
+            ctx.restore();
         }
     }
 
-    private drawBox(
-        ctx: CanvasRenderingContext2D,
-        x: number,
-        y: number,
-        width: number,
-        height: number,
-        color = 'white',
-    ) {
+    private drawBox(ctx: CanvasRenderingContext2D, width: number, height: number, color = 'white') {
         const halfWidth = width / 2;
         const halfHeight = height / 2;
 
         ctx.beginPath();
-        ctx.rect(x, y, halfWidth * 2, halfHeight * 2);
+        ctx.rect(-halfWidth, -halfWidth, halfWidth * 2, halfHeight * 2);
         ctx.strokeStyle = color;
         ctx.stroke();
 
         // draw the 1px center point like filledCircleColor(..., radius=1)
         ctx.fillStyle = color;
         ctx.beginPath();
-        ctx.arc(x, y, 1, 0, Math.PI * 2);
+        ctx.arc(0, 0, 1, 0, Math.PI * 2);
         ctx.fill();
     }
 }
