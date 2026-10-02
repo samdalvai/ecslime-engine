@@ -67,22 +67,6 @@ export default class Game extends Engine {
 
         await this.levelManager.addLevelToAssets('grass', 'assets/levels/grass.json');
         await this.levelManager.loadLevelFromAssets('grass');
-        // await this.assetStore.addTexture('player', 'assets/sprites/player_full.png');
-        // await this.assetStore.addTexture('cursor', 'assets/sprites/cursor.png');
-        // await this.assetStore.addTexture('destination_circle', 'assets/sprites/destination_circle.png');
-
-        // Engine.mapWidth = 1000;
-        // Engine.mapHeight = 2000;
-
-        // const player = this.registry.createEntity();
-        // player.addComponent(SpriteComponent, 'player', 32, 32, 0, 0, 0);
-        // player.addComponent(TransformComponent, { x: 100, y: 100 }, { x: 1, y: 1 });
-        // player.addComponent(RigidBodyComponent, { x: 0, y: 0 });
-        // player.addComponent(PlayerControlComponent, 100);
-        // player.addComponent(AnimationComponent, 4, 10);
-        // player.addComponent(SpriteStateComponent);
-        // player.addComponent(CameraFollowComponent);
-        // player.tag('player');
 
         Game.gameStatus = GameStatus.PLAYING;
     };
