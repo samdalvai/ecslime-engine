@@ -93,6 +93,9 @@ export default class RenderSystem extends System {
         const { sprite, transform, shadow, highlight } = entity;
         const width = sprite.width * transform.scale.x;
         const height = sprite.height * transform.scale.y;
+        const isVisile = sprite.isVisible;
+
+        if (!isVisile) return;
 
         if (shadow) {
             ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
