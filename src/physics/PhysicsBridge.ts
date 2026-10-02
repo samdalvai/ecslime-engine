@@ -16,7 +16,7 @@ export default class PhysicsBridge {
     }
 
     // TODO: should add parameters to define shape and material properties
-    addBody(entity: Entity) {
+    addPhysicsBody(entity: Entity) {
         const shape = new BoxShape(20, 20);
         const body = new RigidBody(shape, 0, 0, 1);
         this._world.addBody(body);
@@ -25,7 +25,7 @@ export default class PhysicsBridge {
         this._bodyToEntity.set(body, entity);
     }
 
-    removeBody(entity: Entity) {
+    removePhysicsBody(entity: Entity) {
         const body = this._entityToBody.get(entity);
 
         if (!body) {
@@ -37,5 +37,29 @@ export default class PhysicsBridge {
 
         this._bodyToEntity.delete(body);
         this._entityToBody.delete(entity);
+    }
+
+    getPhysicsBodyByEntity(entity: Entity) {
+        if (!this._entityToBody.has(entity)) {
+            throw new Error('No physics body associated with entity with id ' + entity.getId());
+        }
+
+        return this._entityToBody.get(entity)!;
+    }
+
+    getEntityByPhysicsBody(body: RigidBody) {
+        if (!this._bodyToEntity.has(body)) {
+            throw new Error('No entity associated with bodu with id ' + body.id);
+        }
+
+        return this._bodyToEntity.get(body)!;
+    }
+
+    step() {
+        this._world.update();
+    }
+
+    hasPhysicsBody(entity: Entity) {
+        return this._entityToBody.get(entity) !== undefined;
     }
 }

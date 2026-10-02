@@ -1,6 +1,7 @@
 import { Camera, Engine, PhysicsBridge, beginWorldRender, endWorldRender, screenToWorld } from 'ecslime-engine';
 
 import { gameComponentCatalog } from './catalog/gameComponentCatalog';
+import { TransformComponent } from './components';
 import * as GameEvents from './events';
 import * as Systems from './systems';
 
@@ -24,15 +25,22 @@ export default class Game extends Engine {
     setup = async () => {
         // Rendering systems
         this.registry.addSystem(Systems.RenderSystem);
+        this.registry.addSystem(Systems.PhysicsSystem);
 
         // Other entities related systems
         // this.registry.addSystem(Systems.MovementSystem);
 
         // Debug systems
         this.registry.addSystem(Systems.DebugInfoSystem);
+        this.registry.addSystem(Systems.DebugPhysicsBody);
         if (this.canvas) {
             this.canvas.style.cursor = 'default';
         }
+
+        this.isDebug = true;
+
+        const entity1 = this.registry.createEntity();
+        entity1.addComponent(TransformComponent, { x: 0, y: 0 });
     };
 
     processInput = () => {
@@ -106,7 +114,7 @@ export default class Game extends Engine {
         // this.registry.getSystem(Systems.MovementSystem)?.subscribeToEvents(this.eventBus);
 
         // Invoke all the systems that need to update
-        // this.registry.getSystem(Systems.PlayerDetectionSystem).update(this.registry);
+        this.registry.getSystem(Systems.PhysicsSystem).update(deltaTime, this.physicsBridge);
     };
 
     render = () => {
@@ -121,7 +129,7 @@ export default class Game extends Engine {
         this.registry.getSystem(Systems.RenderSystem).update(this.ctx, this.assetStore, this.camera);
 
         if (this.isDebug) {
-            // this.registry.getSystem(Systems.DebugColliderSystem).update(this.ctx, this.camera);
+            this.registry.getSystem(Systems.DebugPhysicsBody).update(this.ctx, this.camera, this.physicsBridge);
         }
         endWorldRender(this.ctx);
 
@@ -129,7 +137,6 @@ export default class Game extends Engine {
             this.registry
                 .getSystem(Systems.DebugInfoSystem)
                 .update(this.ctx, this.currentFPS, this.maxFPS, this.frameDuration, this.registry, this.camera);
-            // this.registry.getSystem(Systems.DebugCursorCoordinatesSystem).update(this.ctx);
         }
     };
 }

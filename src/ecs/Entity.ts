@@ -89,6 +89,9 @@ export default class Entity {
         return this._registry.hasComponent(this, ComponentClass);
     }
 
+    // TODO: instead of returning undefined, which needs a lot of checks for existing components
+    // why don't we throw an error if a user tries to access a component that is not available
+    // on this entity?
     getComponent<T extends ComponentClass>(ComponentClass: T): InstanceType<T> | undefined {
         return this._registry.getComponent(this, ComponentClass);
     }
