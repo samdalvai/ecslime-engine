@@ -1,7 +1,7 @@
 import { Camera, Engine, PhysicsBridge, beginWorldRender, endWorldRender, screenToWorld } from 'ecslime-engine';
 
 import { gameComponentCatalog } from './catalog/gameComponentCatalog';
-import { RigidBodyComponent, TransformComponent } from './components';
+import { RigidBodyComponent, SpriteComponent, TransformComponent } from './components';
 import * as GameEvents from './events';
 import * as Systems from './systems';
 
@@ -39,9 +39,12 @@ export default class Game extends Engine {
 
         this.isDebug = true;
 
+        this.assetStore.addTexture('crate', 'assets/sprites/crate.png');
+
         const entity1 = this.registry.createEntity();
+        entity1.addComponent(SpriteComponent, 'crate', 32, 32);
         entity1.addComponent(TransformComponent, { x: 15, y: 0 });
-        entity1.addComponent(RigidBodyComponent, { shape: { kind: 'box', width: 20, height: 20 }, mass: 1 });
+        entity1.addComponent(RigidBodyComponent, { shape: { kind: 'box', width: 32, height: 32 }, mass: 1 });
 
         const entity2 = this.registry.createEntity();
         entity2.addComponent(TransformComponent, { x: 0, y: -100 });
@@ -50,6 +53,9 @@ export default class Game extends Engine {
         const floor = this.registry.createEntity();
         floor.addComponent(TransformComponent, { x: 0, y: -175 });
         floor.addComponent(RigidBodyComponent, { shape: { kind: 'box', width: 500, height: 10 }, mass: 0 });
+
+        Game.mapHeight = 1080;
+        Game.mapWidth = 1920;
     };
 
     processInput = () => {
