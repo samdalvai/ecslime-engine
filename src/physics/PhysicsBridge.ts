@@ -4,7 +4,6 @@ import {
     CapsuleShape,
     CircleShape,
     CollisionCategory,
-    FIXED_DELTA_TIME,
     PolygonShape,
     RigidBody,
     SETTINGS,
@@ -19,7 +18,7 @@ import { PhysicsBodyOptions, PhysicsBodyState, PhysicsShape } from './PhysicsBod
 
 export default class PhysicsBridge {
     private accumulator = 0;
-    private readonly fixedDt = FIXED_DELTA_TIME;
+    private readonly fixedDt = SETTINGS.timeStep;
 
     private _world: World;
 

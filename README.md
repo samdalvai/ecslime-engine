@@ -27,7 +27,7 @@ npm run start:rpg-editor    # RPG editor
 npm run start:physics-game  # Physics game
 ```
 
-These commands build the engine library in `lib/`, watch engine and gravity.js changes, and serve the selected app. The RPG game runs at `http://localhost:1234`, the editor at `http://localhost:1235`, and the physics game at `http://localhost:1236`.
+These commands build the engine library in `lib/`, watch engine changes, and serve the selected app. Gravity.js is installed from its standalone GitHub repository. The RPG game runs at `http://localhost:1234`, the editor at `http://localhost:1235`, and the physics game at `http://localhost:1236`.
 
 To build production bundles:
 
