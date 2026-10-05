@@ -43,6 +43,9 @@ export default class RenderSystem extends System {
                 transform.scale,
             );
 
+            console.log("camera bounds: ", worldBoundsOverlap(spriteBounds, cameraBounds));
+            console.log("world bounds: ", worldBoundsOverlap(spriteBounds, mapBounds));
+
             // Fixed entities are screen-space and are rendered independently of world culling.
             if (
                 !transform.isFixed &&
