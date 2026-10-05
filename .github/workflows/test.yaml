@@ -28,5 +28,8 @@ jobs:
             - name: Install dependencies (including dev)
               run: npm install
 
+            - name: Check game import boundary
+              run: npm run lint:boundaries
+
             - name: Run unit tests with Jest
               run: npm test

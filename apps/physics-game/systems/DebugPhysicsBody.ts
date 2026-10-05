@@ -1,5 +1,4 @@
-import { Camera, PhysicsBridge, System, getCameraBounds, getColliderBounds, worldBoundsOverlap } from 'ecslime-engine';
-import { BoxShape, ShapeType } from 'gravity.js';
+import { Camera, PhysicsBridge, System, getCameraBounds } from 'ecslime-engine';
 
 import { RigidBodyComponent } from '../components';
 import TransformComponent from '../components/TransformComponent';
@@ -30,23 +29,22 @@ export default class DebugPhysicsBody extends System {
             ctx.translate(position.x, position.y);
             ctx.rotate(physicsBody.rotation);
 
-            switch (shape.getType()) {
-                case ShapeType.CIRCLE:
+            switch (shape.kind) {
+                case 'circle':
                     // Not implemented
                     break;
-                case ShapeType.POLYGON:
+                case 'polygon':
                     // Not implemented
                     break;
-                case ShapeType.BOX:
+                case 'box':
                     {
-                        const box = shape as BoxShape;
-                        this.drawBox(ctx, box.width, box.height);
+                        this.drawBox(ctx, shape.width, shape.height);
                     }
                     break;
-                case ShapeType.CAPSULE:
+                case 'capsule':
                     // Not implemented
                     break;
-                case ShapeType.SEGMENT:
+                case 'segment':
                     // Not implemented
                     break;
             }

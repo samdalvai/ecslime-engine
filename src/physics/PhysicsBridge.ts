@@ -14,7 +14,21 @@ import {
 
 import Entity from '../ecs/Entity';
 import { Vector } from '../types/utils';
-import { PhysicsBodyOptions, PhysicsShape } from './PhysicsBodyOptions';
+import { PhysicsBodyOptions, PhysicsBodyState, PhysicsShape } from './PhysicsBodyOptions';
+
+function describeShape(shape: RigidBody['shape']): PhysicsShape {
+    if (shape instanceof BoxShape) return { kind: 'box', width: shape.width, height: shape.height };
+    if (shape instanceof CircleShape) return { kind: 'circle', radius: shape.radius };
+    if (shape instanceof CapsuleShape) return { kind: 'capsule', halfHeight: shape.halfHeight, radius: shape.radius };
+    if (shape instanceof SegmentShape) {
+        const [a, b] = shape.localVertices;
+        return { kind: 'segment', length: Math.hypot(b.x - a.x, b.y - a.y), horizontal: a.y === b.y };
+    }
+    if (shape instanceof PolygonShape) {
+        return { kind: 'polygon', vertices: shape.localVertices.map(vertex => ({ x: vertex.x, y: vertex.y })) };
+    }
+    throw new Error('Unsupported physics shape');
+}
 
 function createShape(shape: PhysicsShape) {
     switch (shape.kind) {
@@ -99,17 +113,34 @@ export default class PhysicsBridge {
         this._entityToBody.delete(entity);
     }
 
-    getPhysicsBodyByEntity(entity: Entity) {
-        if (!this._entityToBody.has(entity)) {
+    getPhysicsBodyByEntity(entity: Entity): PhysicsBodyState {
+        const body = this._entityToBody.get(entity);
+        if (!body) {
             throw new Error('No physics body associated with entity with id ' + entity.getId());
         }
 
-        return this._entityToBody.get(entity)!;
+        return {
+            position: { x: body.position.x, y: body.position.y },
+            rotation: body.rotation,
+            velocity: { x: body.velocity.x, y: body.velocity.y },
+            angularVelocity: body.angularVelocity,
+            shape: describeShape(body.shape),
+            mass: body.mass,
+            density: body.density,
+            restitution: body.restitution,
+            friction: body.friction,
+            rollingResistance: body.rollingResistance,
+            canRotate: body.canRotate,
+            gravityScale: body.gravityScale,
+            isBullet: body.isBullet,
+            collisionCategory: body.collisionCategory,
+            collisionMask: body.collisionMask,
+        };
     }
 
     getEntityByPhysicsBody(body: RigidBody) {
         if (!this._bodyToEntity.has(body)) {
-            throw new Error('No entity associated with bodu with id ' + body.id);
+            throw new Error('No entity associated with body with id ' + body.id);
         }
 
         return this._bodyToEntity.get(body)!;

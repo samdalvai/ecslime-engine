@@ -29,3 +29,22 @@ export type PhysicsBodyOptions = BodyMass & {
     collisionCategory?: number;
     collisionMask?: number;
 };
+
+/** Simulation data exposed to games without gravity.js objects. */
+export type PhysicsBodyState = {
+    position: Vector;
+    rotation: number;
+    velocity: Vector;
+    angularVelocity: number;
+    shape: PhysicsShape;
+    mass: number;
+    density: number;
+    restitution: number;
+    friction: number;
+    rollingResistance: number;
+    canRotate: boolean;
+    gravityScale: number;
+    isBullet: boolean;
+    collisionCategory: number;
+    collisionMask: number;
+};
