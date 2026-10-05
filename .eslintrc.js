@@ -20,4 +20,12 @@ module.exports = {
         }],
         '@typescript-eslint/no-explicit-any': 'off'
     },
+    overrides: [{
+        files: ['apps/**/*.ts', 'apps/**/*.js'],
+        rules: {
+            'no-restricted-imports': ['error', {
+                patterns: [{ group: ['gravity.js', 'gravity.js/*', '**/gravity.js/**'], message: 'Import physics through ecslime-engine.' }]
+            }]
+        }
+    }],
 };
