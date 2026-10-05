@@ -5,8 +5,8 @@
     "scripts": {
         "prestart:rpg-game": "npm run build:package",
         "prestart:physics-game": "npm run build:package",
-        "start:rpg-game": "concurrently --kill-others-on-fail --names engine,game \"npm run watch:package\" \"npm run serve:rpg-game\"",
         "prestart:rpg-editor": "npm run build:package",
+        "start:rpg-game": "concurrently --kill-others-on-fail --names engine,game \"npm run watch:package\" \"npm run serve:rpg-game\"",
         "start:rpg-editor": "concurrently --kill-others-on-fail --names engine,editor \"npm run watch:package\" \"npm run serve:rpg-editor\"",
         "start:physics-game": "concurrently --kill-others-on-fail --names engine,physics \"npm run watch:package\" \"npm run serve:physics-game\"",
         "watch:package": "tsc --project tsconfig.build.json --watch --preserveWatchOutput",
@@ -21,10 +21,10 @@
         "lint:boundaries": "eslint apps --ext .js,.ts --quiet",
         "lint:fix": "eslint . --ext .js,.ts --fix",
         "prebuild:rpg-game": "npm run build:package",
-        "build:rpg-game": "parcel build apps/rpg-game/index.html --target game --no-optimize && mv dist/index.html dist/index.html",
         "prebuild:rpg-editor": "npm run build:package",
-        "build:rpg-editor": "parcel build apps/rpg-editor/index.html --target editor",
         "prebuild:physics-game": "npm run build:package",
+        "build:rpg-game": "parcel build apps/rpg-game/index.html --target game --no-optimize && mv dist/index.html dist/index.html",
+        "build:rpg-editor": "parcel build apps/rpg-editor/index.html --target editor",
         "build:physics-game": "parcel build apps/physics-game/index.html --target physics-game",
         "benchmark": "rm -rf .benchmark-dist && tsc --outDir .benchmark-dist --rootDir . --module commonjs --target es2020 benchmark/index.ts && node .benchmark-dist/benchmark/index.js"
     },
