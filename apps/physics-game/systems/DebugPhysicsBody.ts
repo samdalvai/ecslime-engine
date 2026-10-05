@@ -102,12 +102,7 @@ export default class DebugPhysicsBody extends System {
         this.drawCenter(ctx, color);
     }
 
-    private drawSegment(
-        ctx: CanvasRenderingContext2D,
-        length: number,
-        horizontal: boolean,
-        color = 'white',
-    ) {
+    private drawSegment(ctx: CanvasRenderingContext2D, length: number, horizontal: boolean, color = 'white') {
         const halfLength = length / 2;
         const startX = horizontal ? -halfLength : 0;
         const startY = horizontal ? 0 : -halfLength;

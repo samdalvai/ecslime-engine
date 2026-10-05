@@ -31,7 +31,7 @@
     "author": "Samuel Dalvai",
     "license": "MIT",
     "dependencies": {
-        "gravity.js": "git+https://github.com/samdalvai/gravity.js.git#90202e2ab4bf4d8fa21fd7c9bd9da13d61ca0511"
+        "gravity.js": "git+https://github.com/samdalvai/gravity.js.git#9fac46a44b9a86ca234a18de826c1fbad2aca612"
     },
     "jest": {
         "testMatch": [
