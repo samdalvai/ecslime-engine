@@ -7,6 +7,7 @@ import {
     FIXED_DELTA_TIME,
     PolygonShape,
     RigidBody,
+    SETTINGS,
     SegmentShape,
     Vec2,
     World,
@@ -15,35 +16,6 @@ import {
 import Entity from '../ecs/Entity';
 import { Vector } from '../types/utils';
 import { PhysicsBodyOptions, PhysicsBodyState, PhysicsShape } from './PhysicsBodyOptions';
-
-function describeShape(shape: RigidBody['shape']): PhysicsShape {
-    if (shape instanceof BoxShape) return { kind: 'box', width: shape.width, height: shape.height };
-    if (shape instanceof CircleShape) return { kind: 'circle', radius: shape.radius };
-    if (shape instanceof CapsuleShape) return { kind: 'capsule', halfHeight: shape.halfHeight, radius: shape.radius };
-    if (shape instanceof SegmentShape) {
-        const [a, b] = shape.localVertices;
-        return { kind: 'segment', length: Math.hypot(b.x - a.x, b.y - a.y), horizontal: a.y === b.y };
-    }
-    if (shape instanceof PolygonShape) {
-        return { kind: 'polygon', vertices: shape.localVertices.map(vertex => ({ x: vertex.x, y: vertex.y })) };
-    }
-    throw new Error('Unsupported physics shape');
-}
-
-function createShape(shape: PhysicsShape) {
-    switch (shape.kind) {
-        case 'box':
-            return new BoxShape(shape.width, shape.height);
-        case 'circle':
-            return new CircleShape(shape.radius);
-        case 'capsule':
-            return new CapsuleShape(shape.halfHeight, shape.radius);
-        case 'polygon':
-            return new PolygonShape(shape.vertices.map(vertex => new Vec2(vertex.x, vertex.y)));
-        case 'segment':
-            return new SegmentShape(shape.length, shape.horizontal);
-    }
-}
 
 export default class PhysicsBridge {
     private accumulator = 0;
@@ -54,8 +26,10 @@ export default class PhysicsBridge {
     private _entityToBody: Map<Entity, RigidBody>;
     private _bodyToEntity: Map<RigidBody, Entity>;
 
-    constructor(gravity = 9.8) {
+    constructor(gravity = 9.8, subSteps = 1) {
         this._world = new World(gravity);
+
+        SETTINGS.subSteps = subSteps;
 
         this._entityToBody = new Map();
         this._bodyToEntity = new Map();
@@ -160,5 +134,34 @@ export default class PhysicsBridge {
 
     hasPhysicsBody(entity: Entity) {
         return this._entityToBody.get(entity) !== undefined;
+    }
+}
+
+function describeShape(shape: RigidBody['shape']): PhysicsShape {
+    if (shape instanceof BoxShape) return { kind: 'box', width: shape.width, height: shape.height };
+    if (shape instanceof CircleShape) return { kind: 'circle', radius: shape.radius };
+    if (shape instanceof CapsuleShape) return { kind: 'capsule', halfHeight: shape.halfHeight, radius: shape.radius };
+    if (shape instanceof SegmentShape) {
+        const [a, b] = shape.localVertices;
+        return { kind: 'segment', length: Math.hypot(b.x - a.x, b.y - a.y), horizontal: a.y === b.y };
+    }
+    if (shape instanceof PolygonShape) {
+        return { kind: 'polygon', vertices: shape.localVertices.map(vertex => ({ x: vertex.x, y: vertex.y })) };
+    }
+    throw new Error('Unsupported physics shape');
+}
+
+function createShape(shape: PhysicsShape) {
+    switch (shape.kind) {
+        case 'box':
+            return new BoxShape(shape.width, shape.height);
+        case 'circle':
+            return new CircleShape(shape.radius);
+        case 'capsule':
+            return new CapsuleShape(shape.halfHeight, shape.radius);
+        case 'polygon':
+            return new PolygonShape(shape.vertices.map(vertex => new Vec2(vertex.x, vertex.y)));
+        case 'segment':
+            return new SegmentShape(shape.length, shape.horizontal);
     }
 }

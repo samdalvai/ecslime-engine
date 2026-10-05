@@ -1,7 +1,7 @@
 import { Camera, Engine, PhysicsBridge, beginWorldRender, endWorldRender, screenToWorld } from 'ecslime-engine';
 
 import { gameComponentCatalog } from './catalog/gameComponentCatalog';
-import { RigidBodyComponent, SpriteComponent, TransformComponent } from './components';
+import { CameraFollowComponent, RigidBodyComponent, SpriteComponent, TransformComponent } from './components';
 import * as GameEvents from './events';
 import * as Systems from './systems';
 
@@ -11,7 +11,7 @@ export default class Game extends Engine {
     constructor() {
         super();
         this.levelManager.setComponentCatalog(gameComponentCatalog);
-        this.physicsBridge = new PhysicsBridge();
+        this.physicsBridge = new PhysicsBridge(9.8, 2);
     }
 
     protected createCamera(): Camera {
@@ -26,6 +26,7 @@ export default class Game extends Engine {
         // Rendering systems
         this.registry.addSystem(Systems.RenderSystem);
         this.registry.addSystem(Systems.PhysicsSystem);
+        this.registry.addSystem(Systems.CameraMovementSystem);
 
         // Other entities related systems
         // this.registry.addSystem(Systems.MovementSystem);
@@ -43,19 +44,20 @@ export default class Game extends Engine {
 
         const entity1 = this.registry.createEntity();
         entity1.addComponent(SpriteComponent, 'crate', 32, 32);
-        entity1.addComponent(TransformComponent, { x: 15, y: 0 });
+        entity1.addComponent(TransformComponent, { x: 270, y: 300 });
         entity1.addComponent(RigidBodyComponent, { shape: { kind: 'box', width: 32, height: 32 }, mass: 1 });
+        entity1.addComponent(CameraFollowComponent);
 
         const entity2 = this.registry.createEntity();
-        entity2.addComponent(TransformComponent, { x: 0, y: -100 });
+        entity2.addComponent(TransformComponent, { x: 250, y: 100 });
         entity2.addComponent(RigidBodyComponent, { shape: { kind: 'box', width: 20, height: 20 }, mass: 0 });
 
         const floor = this.registry.createEntity();
-        floor.addComponent(TransformComponent, { x: 0, y: -175 });
+        floor.addComponent(TransformComponent, { x: 250, y: 10 });
         floor.addComponent(RigidBodyComponent, { shape: { kind: 'box', width: 500, height: 10 }, mass: 0 });
 
-        Game.mapHeight = 1080;
-        Game.mapWidth = 1920;
+        Engine.mapHeight = 1080;
+        Engine.mapWidth = 1920;
     };
 
     processInput = () => {
@@ -130,6 +132,7 @@ export default class Game extends Engine {
 
         // Invoke all the systems that need to update
         this.registry.getSystem(Systems.PhysicsSystem).update(deltaTime, this.physicsBridge);
+        this.registry.getSystem(Systems.CameraMovementSystem).update(this.camera);
     };
 
     render = () => {
