@@ -190,9 +190,9 @@ setup = async () => {
 ```ts
 update = (deltaTime: number) => {
     // ... other systems updates
-    this.registry.getSystem(Systems.MovementSystem)?.update(deltaTime);
-    this.registry.getSystem(Systems.AnimationSystem)?.update();
-    this.registry.getSystem(Systems.MyNewSystem)?.update();
+    this.registry.getSystem(Systems.MovementSystem).update(deltaTime);
+    this.registry.getSystem(Systems.AnimationSystem).update();
+    this.registry.getSystem(Systems.MyNewSystem).update();
 };
 ```
 
