@@ -20,7 +20,7 @@ describe('Testing Registry related functions', () => {
         const entity = registry.createEntity();
 
         expect(entity.getId()).toBe(0);
-        expect(entity.getRegistry()).toEqual(registry);
+        expect(entity.registry).toEqual(registry);
         expect(registry.getEntityById(entity.getId())).toBe(entity);
     });
 
@@ -42,7 +42,7 @@ describe('Testing Registry related functions', () => {
         const entity = registry.createEntity();
 
         expect(entity.getId()).toBe(recycledEntity.getId());
-        expect(entity.getRegistry()).toEqual(registry);
+        expect(entity.registry).toEqual(registry);
         expect(registry.getEntityById(entity.getId())).toBe(entity);
         expect(registry.getReusableEntityIdCount()).toBe(0);
     });

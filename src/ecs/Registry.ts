@@ -157,7 +157,7 @@ export default class Registry {
 
     update<T extends Component>() {
         for (const [entity, changes] of this._pendingComponentChange) {
-            if (entity.isPendingKill()) {
+            if (entity.toBeKilled) {
                 continue;
             }
 
@@ -215,7 +215,7 @@ export default class Registry {
     }
 
     killEntity(entity: Entity) {
-        if (entity.isPendingKill()) {
+        if (entity.toBeKilled) {
             console.log(`Entity ${entity.getId()} already scheduled for killing, skipping`);
             return;
         }
