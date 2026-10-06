@@ -4,6 +4,7 @@ import {
     Entity,
     EntityMap,
     MouseButton,
+    PhysicsBridge,
     Vector,
     beginWorldRender,
     endWorldRender,
@@ -62,6 +63,9 @@ export default class Editor extends Engine {
     static alertShown = false;
     static loadingLevel = false;
 
+    // Engine related objects
+    private physicsBridge: PhysicsBridge;
+
     static editorSettings: EditorSettings = {
         activeSystems: {} as Record<keyof typeof GameSystems, boolean>,
         snapToGrid: false,
@@ -94,6 +98,8 @@ export default class Editor extends Engine {
         this.shouldSidebarUpdate = true;
 
         this.isDebug = true;
+
+        this.physicsBridge = new PhysicsBridge(9.8, 2);
     }
 
     protected createCamera(): Camera {
@@ -206,9 +212,11 @@ export default class Editor extends Engine {
 
         // Other entities related systems
         this.registry.addSystem(GameSystems.CameraMovementSystem);
+        this.registry.addSystem(GameSystems.PhysicsSystem);
 
         // Debug systems
         this.registry.addSystem(GameSystems.DebugInfoSystem);
+        this.registry.addSystem(GameSystems.DebugPhysicsBody);
 
         // Editor related systems
         this.registry.addSystem(EditorSystems.RenderSpriteBoxSystem);
@@ -555,6 +563,8 @@ export default class Editor extends Engine {
         // Invoke all the systems that need to update
         this.isSystemActive('CameraMovementSystem') &&
             this.registry.getSystem(GameSystems.CameraMovementSystem).update(this.camera);
+        this.isSystemActive('PhysicsSystem') &&
+            this.registry.getSystem(GameSystems.PhysicsSystem).update(deltaTime, this.physicsBridge);
     };
 
     render = () => {
@@ -590,12 +600,13 @@ export default class Editor extends Engine {
             this.registry.getSystem(EditorSystems.RenderSpriteBoxSystem).update(this.ctx, this.camera, this.zoom);
         !this.testMode && this.registry.getSystem(EditorSystems.RenderGameBorderSystem).update(this.ctx, this.zoom);
 
+        // if (this.isDebug) {
+        //     this.registry.getSystem(GameSystems.DebugPhysicsBody).update(this.ctx, this.camera, this.physicsBridge);
+        // }
+
         endWorldRender(this.ctx);
 
         // Render screen-space systems
-        // this.isSystemActive('RenderLightingSystem') &&
-        //     this.registry.getSystem(GameSystems.RenderLightingSystem).update(this.ctx, this.camera, true);
-
         this.isSystemActive('DebugInfoSystem') &&
             this.registry
                 .getSystem(GameSystems.DebugInfoSystem)
