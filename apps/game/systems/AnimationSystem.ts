@@ -16,10 +16,6 @@ export default class AnimationSystem extends System {
             const animation = entity.getComponent(AnimationComponent);
             const sprite = entity.getComponent(SpriteComponent);
 
-            if (!animation || !sprite) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-            }
-
             if (!animation.isLoop && animation.currentFrame === animation.numFrames - 1) {
                 continue;
             }
@@ -28,10 +24,6 @@ export default class AnimationSystem extends System {
 
             if (entity.hasComponent(EntityEffectComponent)) {
                 const entityEffect = entity.getComponent(EntityEffectComponent);
-
-                if (!entityEffect) {
-                    throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-                }
 
                 if (entityEffect.slowed) {
                     slowedPercentage = entityEffect.slowedPercentage;

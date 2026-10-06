@@ -21,12 +21,7 @@ export default class EntityEffectSystem extends System {
 
         for (const entity of this.getSystemEntities()) {
             const transform = entity.getComponent(TransformComponent);
-            const sprite = entity.getComponent(SpriteComponent);
             const entityEffect = entity.getComponent(EntityEffectComponent);
-
-            if (!transform || !sprite || !entityEffect) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-            }
 
             const entityX = transform.position.x;
             const entityY = transform.position.y;
@@ -54,9 +49,6 @@ export default class EntityEffectSystem extends System {
 
                 if (entity.hasComponent(EntityFollowComponent)) {
                     const entityFollow = entity.getComponent(EntityFollowComponent);
-                    if (!entityFollow) {
-                        throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-                    }
 
                     if (isFriendlySlowTime) {
                         const player = entity.registry.getEntityByTag('player');
@@ -98,9 +90,6 @@ export default class EntityEffectSystem extends System {
 
                 if (entity.hasComponent(EntityFollowComponent)) {
                     const entityFollow = entity.getComponent(EntityFollowComponent);
-                    if (!entityFollow) {
-                        throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-                    }
 
                     if (isFriendlyDamageRadius) {
                         const player = entity.registry.getEntityByTag('player');
@@ -134,11 +123,6 @@ export default class EntityEffectSystem extends System {
         for (const entity of slowTimeEntities) {
             const slowTime = entity.getComponent(SlowTimeComponent);
             const transform = entity.getComponent(TransformComponent);
-            const sprite = entity.getComponent(SpriteComponent);
-
-            if (!slowTime || !transform || !sprite) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-            }
 
             const circleX = transform.position.x;
             const circleY = transform.position.y;
@@ -168,11 +152,6 @@ export default class EntityEffectSystem extends System {
         for (const entity of damageRadiusEntities) {
             const damageRadius = entity.getComponent(DamageRadiusComponent);
             const transform = entity.getComponent(TransformComponent);
-            const sprite = entity.getComponent(SpriteComponent);
-
-            if (!damageRadius || !transform || !sprite) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-            }
 
             const circleX = transform.position.x;
             const circleY = transform.position.y;

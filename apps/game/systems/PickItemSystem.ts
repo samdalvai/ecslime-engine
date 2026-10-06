@@ -29,20 +29,10 @@ export default class PickItemSystem extends System {
     handlePickItem = (entityPickingItem: Entity, pickedItem: Entity) => {
         const pickableItem = pickedItem.getComponent(PickableItemComponent);
 
-        if (!pickableItem) {
-            throw new Error('Could not find pickable item component of entity with id ' + pickedItem.getId());
-        }
-
         switch (pickableItem.effectOnPickup) {
             case PickupEffect.HEALTH:
                 if (entityPickingItem.hasComponent(HealthComponent)) {
                     const health = entityPickingItem.getComponent(HealthComponent);
-
-                    if (!health) {
-                        throw new Error(
-                            'Could not find health component component of entity with id ' + entityPickingItem.getId(),
-                        );
-                    }
 
                     health.healthPercentage = Math.min(health.healthPercentage + pickableItem.effectValue, 100);
                     health.lastDamageTime = performance.now();

@@ -21,10 +21,6 @@ export default class EntityHighlightSystem extends System {
             const transform = entity.getComponent(TransformComponent);
             const sprite = entity.getComponent(SpriteComponent);
 
-            if (!highlight || !transform || !transform || !sprite) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-            }
-
             const bounds = getSpriteBounds(
                 transform.position,
                 { width: sprite.width, height: sprite.height },

@@ -17,10 +17,6 @@ export default class DebugColliderSystem extends System {
             const transform = entity.getComponent(TransformComponent);
             const collider = entity.getComponent(BoxColliderComponent);
 
-            if (!collider || !transform) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-            }
-
             const colliderBounds = getColliderBounds(
                 transform.position,
                 { width: collider.width, height: collider.height },

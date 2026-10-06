@@ -21,7 +21,7 @@ describe('Testing game component catalog', () => {
         originalTransform!.position.x = 200;
         originalTransform!.position.y = 200;
 
-        expect(entityCopy.getComponent(TransformComponent)!.position.x).toEqual(100);
-        expect(entityCopy.getComponent(TransformComponent)!.position.y).toEqual(100);
+        expect(entityCopy.getComponent(TransformComponent).position.x).toEqual(100);
+        expect(entityCopy.getComponent(TransformComponent).position.y).toEqual(100);
     });
 });

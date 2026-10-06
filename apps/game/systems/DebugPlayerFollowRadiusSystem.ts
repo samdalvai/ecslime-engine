@@ -20,10 +20,6 @@ export default class DebugPlayerFollowRadiusSystem extends System {
             const entityFollow = entity.getComponent(EntityFollowComponent);
             const sprite = entity.getComponent(SpriteComponent);
 
-            if (!entityFollow || !transform || !sprite) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-            }
-
             if (
                 !worldBoundsOverlap(
                     getSpriteBounds(

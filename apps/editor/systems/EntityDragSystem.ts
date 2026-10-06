@@ -70,15 +70,8 @@ export default class EntityDragSystem extends System {
         for (const entity of this.getSystemEntities()) {
             const transform = entity.getComponent(TransformComponent);
 
-            if (!transform) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-            }
-
             if (entity.hasComponent(SpriteComponent)) {
                 const sprite = entity.getComponent(SpriteComponent);
-                if (!sprite) {
-                    throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-                }
 
                 renderableEntities.push({ entity, sprite, transform });
                 continue;
@@ -176,18 +169,12 @@ export default class EntityDragSystem extends System {
             for (const entity of this.getSystemEntities()) {
                 const transform = entity.getComponent(TransformComponent);
 
-                if (!transform) {
-                    throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-                }
-
                 let spriteWidth = 32;
                 let spriteHeight = 32;
 
                 if (entity.hasComponent(SpriteComponent)) {
                     const sprite = entity.getComponent(SpriteComponent);
-                    if (!sprite) {
-                        throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-                    }
+
                     spriteWidth = sprite.width;
                     spriteHeight = sprite.height;
                 }
@@ -243,18 +230,12 @@ export default class EntityDragSystem extends System {
 
             for (const entity of Editor.selectedEntities) {
                 const transform = entity.getComponent(TransformComponent);
-                if (!transform) {
-                    throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-                }
 
                 let spriteWidth = 32;
                 let spriteHeight = 32;
 
                 if (entity.hasComponent(SpriteComponent)) {
                     const sprite = entity.getComponent(SpriteComponent);
-                    if (!sprite) {
-                        throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-                    }
 
                     spriteWidth = sprite.width;
                     spriteHeight = sprite.height;
@@ -286,9 +267,6 @@ export default class EntityDragSystem extends System {
 
             for (const entity of Editor.selectedEntities) {
                 const transform = entity.getComponent(TransformComponent);
-                if (!transform) {
-                    throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-                }
 
                 this.updateEntityPosition(
                     entity,
@@ -307,9 +285,6 @@ export default class EntityDragSystem extends System {
 
         for (const entity of Editor.selectedEntities) {
             const transform = entity.getComponent(TransformComponent);
-            if (!transform) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-            }
 
             const newPositionX = transform.position.x + diffX;
             const newPositionY = transform.position.y + diffY;

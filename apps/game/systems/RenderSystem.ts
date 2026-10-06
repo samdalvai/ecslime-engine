@@ -37,10 +37,6 @@ export default class RenderSystem extends System {
             const sprite = entity.getComponent(SpriteComponent);
             const transform = entity.getComponent(TransformComponent);
 
-            if (!sprite || !transform) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-            }
-
             const spriteBounds = getSpriteBounds(
                 transform.position,
                 { width: sprite.width, height: sprite.height },

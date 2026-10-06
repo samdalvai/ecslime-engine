@@ -83,14 +83,6 @@ export default class MovementSystem extends System {
             const obstacleTransform = obstacle.getComponent(TransformComponent);
             const obstacleCollider = obstacle.getComponent(BoxColliderComponent);
 
-            if (!entityRigidBody || !entityTransform || !entityCollider) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-            }
-
-            if (!obstacleTransform || !obstacleCollider) {
-                throw new Error('Could not find some component(s) of entity with id ' + obstacle.getId());
-            }
-
             const obstacleBounds = getColliderBounds(
                 obstacleTransform.position,
                 { width: obstacleCollider.width, height: obstacleCollider.height },
@@ -130,19 +122,10 @@ export default class MovementSystem extends System {
             const transform = entity.getComponent(TransformComponent);
             const rigidBody = entity.getComponent(RigidBodyComponent);
 
-            if (!rigidBody || !transform) {
-                console.error('Could not find some component(s) of entity: ', entity);
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-            }
-
             let slowedPercentage = 1;
 
             if (entity.hasComponent(EntityEffectComponent)) {
                 const entityEffect = entity.getComponent(EntityEffectComponent);
-
-                if (!entityEffect) {
-                    throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-                }
 
                 if (entityEffect.slowed) {
                     slowedPercentage = entityEffect.slowedPercentage;
@@ -155,9 +138,6 @@ export default class MovementSystem extends System {
             const getEntityBounds = (): WorldBounds => {
                 if (entity.hasComponent(SpriteComponent)) {
                     const sprite = entity.getComponent(SpriteComponent);
-                    if (!sprite) {
-                        throw new Error('Could not find sprite component of entity with id ' + entity.getId());
-                    }
 
                     return getSpriteBounds(
                         transform.position,

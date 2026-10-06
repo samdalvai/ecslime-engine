@@ -81,7 +81,7 @@ export default class Entity {
         return this._registry.hasComponent(this, ComponentClass);
     }
 
-    getComponent<T extends ComponentClass>(ComponentClass: T): InstanceType<T> | undefined {
+    getComponent<T extends ComponentClass>(ComponentClass: T): InstanceType<T> {
         return this._registry.getComponent(this, ComponentClass);
     }
 

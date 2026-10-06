@@ -19,11 +19,6 @@ export default class AnimationOnHitSystem extends System {
         const entity = event.entity;
 
         if (entity.hasComponent(TransformComponent) && entity.hasComponent(SpriteComponent)) {
-            const transform = entity.getComponent(TransformComponent);
-
-            if (!transform) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-            }
 
             const { x, y } = event.hitPosition;
             const explosionAnimation = entity.registry.createEntity();

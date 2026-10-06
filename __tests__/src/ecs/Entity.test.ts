@@ -26,6 +26,15 @@ describe('Testing Entity related functions', () => {
         ISystem.resetIds();
     });
 
+    test('Should throw when getting a missing component', () => {
+        const registry = new Registry();
+        const entity = registry.createEntity();
+
+        expect(() => entity.getComponent(TestTransformComponent)).toThrow(
+            `TestTransformComponent is missing from entity ${entity.getId()}`,
+        );
+    });
+
     test('Should return all entity components', () => {
         const registry = new Registry();
 
@@ -103,8 +112,8 @@ describe('Testing Entity related functions', () => {
         originalTransform!.position.y = 200;
 
         const components = entityCopy.getComponents();
-        expect(100).toEqual(entityCopy.getComponent(TestTransformComponent)!.position.x);
-        expect(100).toEqual(entityCopy.getComponent(TestTransformComponent)!.position.y);
+        expect(100).toEqual(entityCopy.getComponent(TestTransformComponent).position.x);
+        expect(100).toEqual(entityCopy.getComponent(TestTransformComponent).position.y);
         expect(components.length).toBe(1);
     });
 
@@ -139,8 +148,8 @@ describe('Testing Entity related functions', () => {
         registry.update();
         const components = entityCopy2.getComponents();
 
-        expect(entityCopy2.getComponent(TestTransformComponent)!.position.x).toEqual(200);
-        expect(entityCopy2.getComponent(TestTransformComponent)!.position.y).toEqual(200);
+        expect(entityCopy2.getComponent(TestTransformComponent).position.x).toEqual(200);
+        expect(entityCopy2.getComponent(TestTransformComponent).position.y).toEqual(200);
         expect(components.length).toBe(1);
     });
 });

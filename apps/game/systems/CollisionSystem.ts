@@ -20,10 +20,6 @@ export default class CollisionSystem extends System {
             const aTransform = a.getComponent(TransformComponent);
             const aCollider = a.getComponent(BoxColliderComponent);
 
-            if (!aTransform || !aCollider) {
-                throw new Error('Could not find some component(s) of entity with id ' + a.getId());
-            }
-
             const aBounds = this.getBounds(aTransform, aCollider);
 
             for (let j = i + 1; j < entities.length; j++) {
@@ -34,9 +30,6 @@ export default class CollisionSystem extends System {
 
                 const bTransform = b.getComponent(TransformComponent);
                 const bCollider = b.getComponent(BoxColliderComponent);
-                if (!bTransform || !bCollider) {
-                    throw new Error('Could not find some component(s) of entity with id ' + b.getId());
-                }
 
                 const bBounds = this.getBounds(bTransform, bCollider);
                 if (!worldBoundsOverlap(aBounds, bBounds)) {

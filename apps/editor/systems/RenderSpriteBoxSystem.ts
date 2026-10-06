@@ -45,16 +45,10 @@ export default class RenderSpriteBoxSystem extends System {
 
         for (const entity of this.getSystemEntities()) {
             const transform = entity.getComponent(TransformComponent);
-            if (!transform) {
-                throw new Error('Could not find transform component of entity with id ' + entity.getId());
-            }
 
             const sprite = entity.hasComponent(SpriteComponent)
                 ? entity.getComponent(SpriteComponent)
                 : new SpriteComponent(DEFAULT_SPRITE, 32, 32, 0);
-            if (!sprite) {
-                throw new Error('Could not find sprite component of entity with id ' + entity.getId());
-            }
 
             renderableEntities.push({ entityId: entity.getId(), sprite, transform });
         }

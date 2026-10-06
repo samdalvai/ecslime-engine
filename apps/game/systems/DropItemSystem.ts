@@ -27,22 +27,12 @@ export default class DropItemSystem extends System {
         if (event.entity.hasComponent(DropItemOnDeathComponent)) {
             const dropItemOnDeath = event.entity.getComponent(DropItemOnDeathComponent);
 
-            if (!dropItemOnDeath) {
-                throw new Error('Could not find DropItemOnDeathComponent of entity with id ' + event.entity.getId());
-            }
-
             const randomValue = Math.random() * 100;
 
             if (randomValue < dropItemOnDeath.dropPercentage) {
                 switch (dropItemOnDeath.droppedItem) {
                     case PickupEffect.HEALTH: {
                         const transform = event.entity.getComponent(TransformComponent);
-
-                        if (!transform) {
-                            throw new Error(
-                                'Could not find TransformComponent of entity with id ' + event.entity.getId(),
-                            );
-                        }
 
                         const healthGlobe = event.entity.registry.createEntity();
                         healthGlobe.addComponent(TransformComponent, {

@@ -48,10 +48,6 @@ export default class RangedAttackEmitSystem extends System {
         const transform = player.getComponent(TransformComponent);
         const projectileEmitter = player.getComponent(RangedAttackEmitterComponent);
 
-        if (!projectileEmitter || !transform) {
-            throw new Error('Could not find some component(s) of entity with id ' + player.getId());
-        }
-
         const directionVector = computeDirectionVector(
             transform.position.x,
             transform.position.y,
@@ -73,24 +69,13 @@ export default class RangedAttackEmitSystem extends System {
             const transform = entity.getComponent(TransformComponent);
             const projectileEmitter = entity.getComponent(RangedAttackEmitterComponent);
 
-            if (!projectileEmitter || !transform) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-            }
-
             if (entity.hasComponent(EntityFollowComponent)) {
                 const entityFollow = entity.getComponent(EntityFollowComponent);
-
-                if (!entityFollow) {
-                    throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-                }
 
                 const followedEntity = entityFollow.followedEntity;
 
                 if (followedEntity) {
                     const followedEntityTransform = followedEntity.getComponent(TransformComponent);
-                    if (!followedEntityTransform) {
-                        throw new Error('Could not find player transform and/or sprite component');
-                    }
 
                     const directionVector = computeDirectionVector(
                         transform.position.x,
@@ -117,10 +102,6 @@ export default class RangedAttackEmitSystem extends System {
         if (performance.now() - rangedAttackEmitter.lastEmissionTime > rangedAttackEmitter.repeatFrequency) {
             if (entity.hasComponent(RigidBodyComponent)) {
                 const rigidBody = entity.getComponent(RigidBodyComponent);
-
-                if (!rigidBody) {
-                    throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-                }
 
                 rigidBody.direction = computeUnitVector(projectileDirection.x, projectileDirection.y);
             }

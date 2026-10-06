@@ -18,10 +18,6 @@ export default class RenderCursorSystem extends System {
 
         const playerControl = player.getComponent(PlayerControlComponent);
 
-        if (!playerControl) {
-            throw new Error('Could not find some component(s) of entity with id ' + player.getId());
-        }
-
         if (playerControl.keysPressed.includes('ShiftLeft')) {
             this.renderAttackCursor(ctx, assetStore);
             return;
@@ -32,10 +28,6 @@ export default class RenderCursorSystem extends System {
         for (const enemy of registry.getEntitiesByGroup('enemies')) {
             if (enemy.hasComponent(HighlightComponent)) {
                 const highlight = enemy.getComponent(HighlightComponent);
-
-                if (!highlight) {
-                    throw new Error('Could not find some component(s) of entity with id ' + enemy.getId());
-                }
 
                 if (highlight.isHighlighted) {
                     enemyHighlighted = true;

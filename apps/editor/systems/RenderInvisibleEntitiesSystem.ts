@@ -19,9 +19,6 @@ export default class RenderInvisibleEntitiesSystem extends System {
             }
 
             const transform = entity.getComponent(TransformComponent);
-            if (!transform) {
-                throw new Error('Could not find transform component of entity with id ' + entity.getId());
-            }
 
             const mockSprite = new SpriteComponent(DEFAULT_SPRITE, 32, 32, 0);
             const bounds = getSpriteBounds(

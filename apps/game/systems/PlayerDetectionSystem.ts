@@ -33,10 +33,6 @@ export default class PlayerDetectionSystem extends System {
 
             const entityFollow = entity.getComponent(EntityFollowComponent);
 
-            if (!entityFollow) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-            }
-
             entityFollow.followedEntity = player;
             entityFollow.startFollowTime = performance.now();
         }
@@ -50,19 +46,10 @@ export default class PlayerDetectionSystem extends System {
         }
 
         const playerTransform = player.getComponent(TransformComponent);
-        if (!playerTransform) {
-            throw new Error('Could not find player transform and/or sprite component');
-        }
 
         for (const entity of this.getSystemEntities()) {
             const transform = entity.getComponent(TransformComponent);
-            const rigidBody = entity.getComponent(RigidBodyComponent);
             const entityFollow = entity.getComponent(EntityFollowComponent);
-            const sprite = entity.getComponent(SpriteComponent);
-
-            if (!rigidBody || !transform || !entityFollow || !sprite) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-            }
 
             const entityX = transform.position.x;
             const entityY = transform.position.y;

@@ -20,10 +20,6 @@ export default class DebugSlowTimeRadiusSystem extends System {
             const slowtime = entity.getComponent(SlowTimeComponent);
             const sprite = entity.getComponent(SpriteComponent);
 
-            if (!slowtime || !transform || !sprite) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-            }
-
             if (
                 !worldBoundsOverlap(
                     getSpriteBounds(
