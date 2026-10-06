@@ -21,15 +21,7 @@ export default class Entity {
         return this._registry;
     }
 
-    getRegistry() {
-        return this._registry;
-    }
-
     get toBeKilled() {
-        return this._toBeKilled;
-    }
-
-    isPendingKill() {
         return this._toBeKilled;
     }
 
