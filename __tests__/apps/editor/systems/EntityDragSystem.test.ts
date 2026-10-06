@@ -47,11 +47,11 @@ describe('EntityDragSystem grid snapping', () => {
 
         const system = new EntityDragSystem();
         system.onMouseMove({} as EntityEditor);
-        expect(entity.getComponent(TransformComponent)?.position).toEqual({ x: 64, y: 96 });
+        expect(entity.getComponent(TransformComponent).position).toEqual({ x: 64, y: 96 });
 
         Engine.mousePositionWorld = { x: 96, y: 128 };
         system.onMouseMove({} as EntityEditor);
-        expect(entity.getComponent(TransformComponent)?.position).toEqual({ x: 96, y: 128 });
+        expect(entity.getComponent(TransformComponent).position).toEqual({ x: 96, y: 128 });
     });
 
     test('keeps the grabbed point and relative entity positions when dragging a group', () => {
@@ -72,13 +72,13 @@ describe('EntityDragSystem grid snapping', () => {
         const system = new EntityDragSystem();
         system.onMouseMove({} as EntityEditor);
 
-        expect(firstEntity.getComponent(TransformComponent)?.position).toEqual({ x: 48, y: 64 });
-        expect(grabbedEntity.getComponent(TransformComponent)?.position).toEqual({ x: 120, y: 96 });
+        expect(firstEntity.getComponent(TransformComponent).position).toEqual({ x: 48, y: 64 });
+        expect(grabbedEntity.getComponent(TransformComponent).position).toEqual({ x: 120, y: 96 });
 
         Engine.mousePositionWorld = { x: 152, y: 128 };
         system.onMouseMove({} as EntityEditor);
 
-        expect(firstEntity.getComponent(TransformComponent)?.position).toEqual({ x: 80, y: 96 });
-        expect(grabbedEntity.getComponent(TransformComponent)?.position).toEqual({ x: 152, y: 128 });
+        expect(firstEntity.getComponent(TransformComponent).position).toEqual({ x: 80, y: 96 });
+        expect(grabbedEntity.getComponent(TransformComponent).position).toEqual({ x: 152, y: 128 });
     });
 });

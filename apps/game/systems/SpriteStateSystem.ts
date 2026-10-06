@@ -18,18 +18,10 @@ export default class SpriteStateSystem extends System {
             const sprite = entity.getComponent(SpriteComponent);
             const rigidBody = entity.getComponent(RigidBodyComponent);
 
-            if (!sprite || !rigidBody) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-            }
-
             let isHurt = false;
 
             if (entity.hasComponent(HealthComponent)) {
                 const health = entity.getComponent(HealthComponent);
-
-                if (!health) {
-                    throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-                }
 
                 if (health.lastDamageTime !== 0 && performance.now() - health.lastDamageTime <= 500) {
                     isHurt = true;

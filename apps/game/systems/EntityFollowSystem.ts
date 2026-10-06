@@ -30,10 +30,6 @@ export default class EntityFollowSystem extends System {
         for (const entity of this.getSystemEntities()) {
             const entityFollow = entity.getComponent(EntityFollowComponent);
 
-            if (!entityFollow) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-            }
-
             if (entityFollow.followedEntity?.getId() === event.entity.getId()) {
                 entityFollow.followedEntity = null;
             }
@@ -45,11 +41,6 @@ export default class EntityFollowSystem extends System {
             const transform = entity.getComponent(TransformComponent);
             const rigidBody = entity.getComponent(RigidBodyComponent);
             const entityFollow = entity.getComponent(EntityFollowComponent);
-            const sprite = entity.getComponent(SpriteComponent);
-
-            if (!rigidBody || !transform || !entityFollow || !sprite) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-            }
 
             const followedEntity = entityFollow.followedEntity;
 
@@ -61,11 +52,6 @@ export default class EntityFollowSystem extends System {
             }
 
             const followedEntityTransform = followedEntity.getComponent(TransformComponent);
-            const followedEntitySprite = followedEntity.getComponent(SpriteComponent);
-
-            if (!followedEntityTransform || !followedEntitySprite) {
-                throw new Error('Could not find player transform and/or sprite component');
-            }
 
             const entityX = transform.position.x;
             const entityY = transform.position.y;

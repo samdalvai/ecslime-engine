@@ -20,10 +20,6 @@ export default class RenderParticleSystem extends System {
             const transform = entity.getComponent(TransformComponent);
             const particle = entity.getComponent(ParticleComponent);
 
-            if (!particle || !transform) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-            }
-
             const bounds = getSpriteBounds(
                 transform.position,
                 { width: particle.dimension, height: particle.dimension },

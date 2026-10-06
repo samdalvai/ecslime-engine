@@ -17,10 +17,6 @@ export default class DebugParticleSourceSystem extends System {
             const transform = entity.getComponent(TransformComponent);
             const particleEmit = entity.getComponent(ParticleEmitComponent);
 
-            if (!transform || !particleEmit) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-            }
-
             const source = {
                 x: transform.position.x + particleEmit.offsetX,
                 y: transform.position.y + particleEmit.offsetY,

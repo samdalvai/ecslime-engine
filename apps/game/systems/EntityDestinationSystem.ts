@@ -18,10 +18,6 @@ export default class EntityDestinationSystem extends System {
             const rigidBody = entity.getComponent(RigidBodyComponent);
             const entityDestination = entity.getComponent(EntityDestinationComponent);
 
-            if (!transform || !rigidBody || !entityDestination) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-            }
-
             if (
                 Math.abs(entityDestination.destinationX - transform.position.x) <= 5 &&
                 Math.abs(entityDestination.destinationY - transform.position.y) <= 5

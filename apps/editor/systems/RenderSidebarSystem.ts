@@ -143,10 +143,6 @@ export default class RenderSidebarSystem extends System {
 
             const copiedTransform = copiedEntity.getComponent(TransformComponent);
 
-            if (!copiedTransform) {
-                throw new Error('Could not get transform component of entity ' + copiedEntity.getId());
-            }
-
             if (minTransformPositionX > copiedTransform.position.x) {
                 minTransformPositionX = copiedTransform.position.x;
             }

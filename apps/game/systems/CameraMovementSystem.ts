@@ -14,10 +14,6 @@ export default class CameraMovementSystem extends System {
         for (const entity of this.getSystemEntities()) {
             const transform = entity.getComponent(TransformComponent);
 
-            if (!transform) {
-                throw new Error('Could not find transform component of entity with id ' + entity.getId());
-            }
-
             // Transform positions are entity centres in standard world space.
             camera.center = clampCameraCenter(
                 {

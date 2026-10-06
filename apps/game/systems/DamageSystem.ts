@@ -56,9 +56,6 @@ export default class DamageSystem extends System {
 
     onProjectileHitsEntity = (projectile: Entity, entity: Entity) => {
         const projectileComponent = projectile.getComponent(ProjectileComponent);
-        if (!projectileComponent) {
-            throw new Error('Could not find some component(s) of entity with id ' + projectile.getId());
-        }
 
         if (entity.hasTag('player') && projectileComponent.isFriendly) {
             return;
@@ -69,9 +66,6 @@ export default class DamageSystem extends System {
         }
 
         const health = entity.getComponent(HealthComponent);
-        if (!health) {
-            throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-        }
 
         health.healthPercentage -= projectileComponent.hitPercentDamage;
         health.lastDamageTime = performance.now();
@@ -81,20 +75,11 @@ export default class DamageSystem extends System {
         if (entity.hasComponent(CameraShakeComponent)) {
             const cameraShake = entity.getComponent(CameraShakeComponent);
 
-            if (!cameraShake) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-            }
-
             this.eventBus.emitEvent(CameraShakeEvent, cameraShake.shakeDuration);
         }
 
         if (projectile.hasComponent(TransformComponent) && projectile.hasComponent(SpriteComponent)) {
             const transform = projectile.getComponent(TransformComponent);
-            const sprite = projectile.getComponent(SpriteComponent);
-
-            if (!transform || !sprite) {
-                throw new Error('Could not find some component(s) of entity with id ' + projectile.getId());
-            }
 
             this.eventBus.emitEvent(EntityHitEvent, entity, { ...transform.position });
 
@@ -106,19 +91,11 @@ export default class DamageSystem extends System {
         if (meleeAttack.hasComponent(MeleeAttackComponent)) {
             const meleeAttackComp = meleeAttack.getComponent(MeleeAttackComponent);
 
-            if (!meleeAttackComp) {
-                throw new Error('Could not find some component(s) of entity with id ' + meleeAttack.getId());
-            }
-
             if (entity.hasTag('player') && meleeAttackComp.isFriendly) {
                 return;
             }
 
             const health = entity.getComponent(HealthComponent);
-
-            if (!health) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-            }
 
             health.healthPercentage -= meleeAttackComp.hitPercentDamage;
             health.lastDamageTime = performance.now();
@@ -131,10 +108,6 @@ export default class DamageSystem extends System {
         for (const entity of this.getSystemEntities()) {
             const health = entity.getComponent(HealthComponent);
 
-            if (!health) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-            }
-
             if (health.healthPercentage <= 0) {
                 this.eventBus.emitEvent(EntityKilledEvent, entity);
                 entity.kill();
@@ -142,10 +115,6 @@ export default class DamageSystem extends System {
 
             if (entity.hasComponent(EntityEffectComponent)) {
                 const entityEffect = entity.getComponent(EntityEffectComponent);
-
-                if (!entityEffect) {
-                    throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-                }
 
                 if (!entityEffect.hasDamageOverTime) {
                     continue;

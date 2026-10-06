@@ -101,8 +101,8 @@ describe('Testing Movement system related functions', () => {
 
         registry.update();
 
-        expect(entity.getComponent(TransformComponent)).toBe(undefined);
-        expect(entity.getComponent(RigidBodyComponent)).toBe(undefined);
+        expect(() => entity.getComponent(TransformComponent)).toThrow();
+        expect(() => entity.getComponent(RigidBodyComponent)).toThrow();
         expect(registry.getSystem(MovementSystem)?.getSystemEntities().length).toBe(0);
     });
 
@@ -117,6 +117,6 @@ describe('Testing Movement system related functions', () => {
 
         registry.getSystem(MovementSystem)?.update(1);
 
-        expect(entity.getComponent(TransformComponent)?.position).toEqual({ x: 10, y: 990 });
+        expect(entity.getComponent(TransformComponent).position).toEqual({ x: 10, y: 990 });
     });
 });

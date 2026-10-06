@@ -66,11 +66,6 @@ export default class PlayerControlSystem extends System {
         const playerControl = player.getComponent(PlayerControlComponent);
         const rigidBody = player.getComponent(RigidBodyComponent);
         const transform = player.getComponent(TransformComponent);
-        const sprite = player.getComponent(SpriteComponent);
-
-        if (!playerControl || !rigidBody || !transform || !sprite) {
-            throw new Error('Could not find some component(s) of entity with id ' + player.getId());
-        }
 
         if (player.hasComponent(EntityDestinationComponent)) {
             player.removeComponent(EntityDestinationComponent);
@@ -81,10 +76,6 @@ export default class PlayerControlSystem extends System {
         for (const enemy of player.registry.getEntitiesByGroup('enemies')) {
             if (enemy.hasComponent(HighlightComponent)) {
                 const highlight = enemy.getComponent(HighlightComponent);
-
-                if (!highlight) {
-                    throw new Error('Could not find some component(s) of entity with id ' + enemy.getId());
-                }
 
                 if (highlight.isHighlighted) {
                     enemyHighlighted = true;
@@ -195,10 +186,6 @@ export default class PlayerControlSystem extends System {
 
         const playerControl = player.getComponent(PlayerControlComponent);
 
-        if (!playerControl) {
-            throw new Error('Could not find some component(s) of entity with id ' + player.getId());
-        }
-
         switch (event.keyCode) {
             case 'ShiftLeft':
                 playerControl.keysPressed.push(event.keyCode);
@@ -224,10 +211,6 @@ export default class PlayerControlSystem extends System {
         }
 
         const playerControl = player.getComponent(PlayerControlComponent);
-
-        if (!playerControl) {
-            throw new Error('Could not find some component(s) of entity with id ' + player.getId());
-        }
 
         playerControl.keysPressed = playerControl.keysPressed.filter(key => key !== event.keyCode);
     };
@@ -278,10 +261,6 @@ export default class PlayerControlSystem extends System {
 
         const playerTeleport = player.getComponent(TeleportComponent);
 
-        if (!playerTeleport) {
-            throw new Error('Could not find some component(s) of entity with id ' + player.getId());
-        }
-
         if (playerTeleport.isTeleporting) {
             return;
         }
@@ -291,10 +270,6 @@ export default class PlayerControlSystem extends System {
         const playerTransform = player.getComponent(TransformComponent);
         const playerSprite = player.getComponent(SpriteComponent);
         const playerRigidBody = player.getComponent(RigidBodyComponent);
-
-        if (!playerTransform || !playerSprite || !playerRigidBody) {
-            throw new Error('Could not find some component(s) of entity with id ' + player.getId());
-        }
 
         playerSprite.isVisible = false;
 

@@ -15,10 +15,6 @@ export default class ScriptingSystem extends System {
             const script = entity.getComponent(ScriptComponent);
             const rigidBody = entity.getComponent(RigidBodyComponent);
 
-            if (!script || !rigidBody) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-            }
-
             const currentAction = script.scripts[script.currentActionIndex];
 
             if (performance.now() - script.actionStart > currentAction.duration) {

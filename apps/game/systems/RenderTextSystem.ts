@@ -15,10 +15,6 @@ export default class RenderTextSystem extends System {
             const textlabel = entity.getComponent(TextLabelComponent);
             const transform = entity.getComponent(TransformComponent);
 
-            if (!textlabel || !transform) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-            }
-
             ctx.save();
             if (transform.isFixed) {
                 ctx.setTransform(1, 0, 0, 1, 0, 0);

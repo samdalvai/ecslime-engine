@@ -14,10 +14,6 @@ export default class DebugEntityDestinationSystem extends System {
         for (const entity of this.getSystemEntities()) {
             const destination = entity.getComponent(EntityDestinationComponent);
 
-            if (!destination) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-            }
-
             const bounds = {
                 left: destination.destinationX - 20,
                 right: destination.destinationX + 20,

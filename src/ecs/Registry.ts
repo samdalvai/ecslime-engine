@@ -450,8 +450,16 @@ export default class Registry {
         return this._entityComponentSignatures[entity.getId()].test(ComponentClass.getComponentId());
     }
 
-    getComponent<T extends ComponentClass>(entity: Entity, ComponentClass: T): InstanceType<T> | undefined {
-        return (this._componentPools[ComponentClass.getComponentId()] as Pool<InstanceType<T>>)?.get(entity.getId());
+    getComponent<T extends ComponentClass>(entity: Entity, ComponentClass: T): InstanceType<T> {
+        const component = (this._componentPools[ComponentClass.getComponentId()] as Pool<InstanceType<T>>)?.get(
+            entity.getId(),
+        );
+
+        if (component === undefined) {
+            throw new Error(`${ComponentClass.name} is missing from entity ${entity.getId()}`);
+        }
+        
+        return component;
     }
 
     getAllEntityComponents<T extends Component>(entity: Entity): T[] {

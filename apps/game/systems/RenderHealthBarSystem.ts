@@ -20,10 +20,6 @@ export default class RenderHealthBarSystem extends System {
             const sprite = entity.getComponent(SpriteComponent);
             const health = entity.getComponent(HealthComponent);
 
-            if (!sprite || !transform || !health) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-            }
-
             const spriteBounds = getSpriteBounds(
                 transform.position,
                 { width: sprite.width, height: sprite.height },

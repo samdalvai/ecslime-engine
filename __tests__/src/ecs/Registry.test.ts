@@ -326,7 +326,7 @@ describe('Testing Registry related functions', () => {
         expect(entity.getComponent(MyComponent2)).toEqual(new MyComponent2());
     });
 
-    test('Should get an undefined component if entity does not have it', () => {
+    test('Should throw when entity does not have a component whose pool does not exist', () => {
         const registry = new Registry();
         const entity = registry.createEntity();
 
@@ -337,7 +337,21 @@ describe('Testing Registry related functions', () => {
 
         registry.update();
 
-        expect(entity.getComponent(MyComponent2)).toEqual(undefined);
+        expect(() => entity.getComponent(MyComponent2)).toThrow('MyComponent2 is missing from entity ' + entity.getId());
+        expect(() => registry.getComponent(entity, MyComponent2)).toThrow('MyComponent2 is missing from entity ' + entity.getId());
+    });
+
+    test('Should throw when another entity has the requested component', () => {
+        const registry = new Registry();
+        const entity = registry.createEntity();
+        const otherEntity = registry.createEntity();
+        class MyComponent extends Component {}
+
+        otherEntity.addComponent(MyComponent);
+        registry.update();
+
+        expect(() => entity.getComponent(MyComponent)).toThrow('MyComponent is missing from entity ' + entity.getId());
+        expect(() => registry.getComponent(entity, MyComponent)).toThrow('MyComponent is missing from entity ' + entity.getId());
     });
 
     ////////////////////////////////////////////////////////////////////////////////

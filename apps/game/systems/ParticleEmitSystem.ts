@@ -18,10 +18,6 @@ export default class ParticleEmitSystem extends System {
             const particleEmit = entity.getComponent(ParticleEmitComponent);
             const transform = entity.getComponent(TransformComponent);
 
-            if (!particleEmit || !transform) {
-                throw new Error('Could not find some component(s) of entity with id ' + entity.getId());
-            }
-
             const particlePosition = this.getRandomPointInCircle(
                 transform.position.x + particleEmit.offsetX,
                 transform.position.y + particleEmit.offsetY,
