@@ -26,7 +26,7 @@ describe('CameraMovementSystem', () => {
             viewportHeight: 100,
         };
 
-        registry.getSystem(CameraMovementSystem)?.update(camera);
+        registry.getSystem(CameraMovementSystem).update(camera);
 
         expect(camera.center).toEqual({ x: 900, y: 750 });
         expect(Engine.mousePositionWorld).toEqual({ x: 850, y: 750 });

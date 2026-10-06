@@ -25,7 +25,7 @@ describe('Testing Movement system related functions', () => {
 
         const deltaTime = 1;
 
-        registry.getSystem(MovementSystem)?.update(deltaTime);
+        registry.getSystem(MovementSystem).update(deltaTime);
 
         const transform = entity.getComponent(TransformComponent);
 
@@ -47,7 +47,7 @@ describe('Testing Movement system related functions', () => {
 
         const deltaTime = 1;
 
-        registry.getSystem(MovementSystem)?.update(deltaTime);
+        registry.getSystem(MovementSystem).update(deltaTime);
 
         const transform = entity.getComponent(TransformComponent);
 
@@ -69,7 +69,7 @@ describe('Testing Movement system related functions', () => {
 
         const deltaTime = 1;
 
-        registry.getSystem(MovementSystem)?.update(deltaTime);
+        registry.getSystem(MovementSystem).update(deltaTime);
 
         const transform = entity.getComponent(TransformComponent);
 
@@ -91,7 +91,7 @@ describe('Testing Movement system related functions', () => {
 
         const deltaTime = 1;
 
-        registry.getSystem(MovementSystem)?.update(deltaTime);
+        registry.getSystem(MovementSystem).update(deltaTime);
 
         const transform = entity.getComponent(TransformComponent);
 
@@ -103,7 +103,7 @@ describe('Testing Movement system related functions', () => {
 
         expect(() => entity.getComponent(TransformComponent)).toThrow();
         expect(() => entity.getComponent(RigidBodyComponent)).toThrow();
-        expect(registry.getSystem(MovementSystem)?.getSystemEntities().length).toBe(0);
+        expect(registry.getSystem(MovementSystem).getSystemEntities().length).toBe(0);
     });
 
     test('Player map padding uses bottom and top bounds in a Y-up world', () => {
@@ -115,7 +115,7 @@ describe('Testing Movement system related functions', () => {
         registry.addSystem(MovementSystem);
         registry.update();
 
-        registry.getSystem(MovementSystem)?.update(1);
+        registry.getSystem(MovementSystem).update(1);
 
         expect(entity.getComponent(TransformComponent).position).toEqual({ x: 10, y: 990 });
     });

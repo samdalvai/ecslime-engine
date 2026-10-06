@@ -389,7 +389,7 @@ describe('Testing Registry related functions', () => {
         registry.addSystem(MySystem);
         registry.removeSystem(MySystem);
 
-        expect(registry.getSystem(MySystem)).toBe(undefined);
+        expect(() => registry.getSystem(MySystem)).toThrow('MySystem is not registered');
     });
 
     test('Should remove system from registry with multiple systems existing', () => {
@@ -402,7 +402,8 @@ describe('Testing Registry related functions', () => {
         registry.addSystem(MySystem2);
         registry.removeSystem(MySystem1);
 
-        expect(registry.getSystem(MySystem1)).toBe(undefined);
+        expect(() => registry.getSystem(MySystem1)).toThrow('MySystem1 is not registered');
+        expect(registry.getSystem(MySystem2)).toBeInstanceOf(MySystem2);
     });
 
     test('Should return true when checking if system exists in registry', () => {
@@ -460,7 +461,16 @@ describe('Testing Registry related functions', () => {
         expect(registry.getSystem(MySystem1)).toBeInstanceOf(MySystem1);
     });
 
-    test('Should return undefined if system does not exist', () => {
+    test('Should throw if no systems are registered', () => {
+        const registry = new Registry();
+        class MySystem extends System {}
+
+        expect(() => registry.getSystem(MySystem)).toThrow('MySystem is not registered');
+        expect(registry.hasSystem(MySystem)).toBe(false);
+        expect(registry.getSystemEntities(MySystem)).toEqual([]);
+    });
+
+    test('Should throw if system does not exist', () => {
         const registry = new Registry();
 
         class MySystem1 extends System {}
@@ -468,7 +478,7 @@ describe('Testing Registry related functions', () => {
 
         registry.addSystem(MySystem1);
 
-        expect(registry.getSystem(MySystem2)).toBe(undefined);
+        expect(() => registry.getSystem(MySystem2)).toThrow('MySystem2 is not registered');
     });
 
     test('Should add entity to system, when entity has component to which system is interested to', () => {
@@ -491,7 +501,7 @@ describe('Testing Registry related functions', () => {
 
         const system = registry.getSystem(MySystem);
 
-        expect(system?.getSystemEntities()[0]).toEqual(entity);
+        expect(system.getSystemEntities()[0]).toEqual(entity);
     });
 
     test('Should add entity to mutliple systems, when entity has component to which systems are interested to', () => {
@@ -523,8 +533,8 @@ describe('Testing Registry related functions', () => {
         const system1 = registry.getSystem(MySystem1);
         const system2 = registry.getSystem(MySystem2);
 
-        expect(system1?.getSystemEntities()[0]).toEqual(entity);
-        expect(system2?.getSystemEntities()[0]).toEqual(entity);
+        expect(system1.getSystemEntities()[0]).toEqual(entity);
+        expect(system2.getSystemEntities()[0]).toEqual(entity);
     });
 
     test('Should add multiple entities to system, when entities have component to which system is interested to', () => {
@@ -549,8 +559,8 @@ describe('Testing Registry related functions', () => {
 
         const system = registry.getSystem(MySystem);
 
-        expect(system?.getSystemEntities()[0]).toEqual(entity1);
-        expect(system?.getSystemEntities()[1]).toEqual(entity2);
+        expect(system.getSystemEntities()[0]).toEqual(entity1);
+        expect(system.getSystemEntities()[1]).toEqual(entity2);
     });
 
     test('Should add entity to system, when entity has multiple components to which system is interested to', () => {
@@ -576,7 +586,7 @@ describe('Testing Registry related functions', () => {
 
         const system = registry.getSystem(MySystem);
 
-        expect(system?.getSystemEntities()[0]).toEqual(entity);
+        expect(system.getSystemEntities()[0]).toEqual(entity);
     });
 
     test('Should not add entity to system, when entity has only some of the components the entity is interested to', () => {
@@ -601,7 +611,7 @@ describe('Testing Registry related functions', () => {
 
         const system = registry.getSystem(MySystem);
 
-        expect(system?.getSystemEntities().length).toBe(0);
+        expect(system.getSystemEntities().length).toBe(0);
     });
 
     test('Should remove entity from system', () => {
@@ -627,7 +637,7 @@ describe('Testing Registry related functions', () => {
 
         const system = registry.getSystem(MySystem);
 
-        expect(system?.getSystemEntities().length).toEqual(0);
+        expect(system.getSystemEntities().length).toEqual(0);
     });
 
     test('Should remove entities from system with multiple entities', () => {
@@ -655,8 +665,8 @@ describe('Testing Registry related functions', () => {
 
         const system = registry.getSystem(MySystem);
 
-        expect(system?.getSystemEntities().length).toEqual(1);
-        expect(system?.getSystemEntities()[0]).toEqual(entity2);
+        expect(system.getSystemEntities().length).toEqual(1);
+        expect(system.getSystemEntities()[0]).toEqual(entity2);
     });
 
     test('Should remove entities from system', () => {
@@ -685,7 +695,7 @@ describe('Testing Registry related functions', () => {
 
         const system = registry.getSystem(MySystem);
 
-        expect(system?.getSystemEntities().length).toEqual(0);
+        expect(system.getSystemEntities().length).toEqual(0);
     });
 
     test('Should remove entity from multiple systems', () => {
@@ -720,8 +730,8 @@ describe('Testing Registry related functions', () => {
         const system1 = registry.getSystem(MySystem1);
         const system2 = registry.getSystem(MySystem2);
 
-        expect(system1?.getSystemEntities().length).toEqual(0);
-        expect(system2?.getSystemEntities().length).toEqual(0);
+        expect(system1.getSystemEntities().length).toEqual(0);
+        expect(system2.getSystemEntities().length).toEqual(0);
     });
 
     test('Should add entity to system, when entity has component to which system is interested to, when updating registry', () => {
@@ -745,7 +755,7 @@ describe('Testing Registry related functions', () => {
 
         const system = registry.getSystem(MySystem);
 
-        expect(system?.getSystemEntities()[0]).toEqual(entity);
+        expect(system.getSystemEntities()[0]).toEqual(entity);
     });
 
     test('Should add entity to mutliple systems, when entity has component to which systems are interested to, when updating registry', () => {
@@ -778,8 +788,8 @@ describe('Testing Registry related functions', () => {
         const system1 = registry.getSystem(MySystem1);
         const system2 = registry.getSystem(MySystem2);
 
-        expect(system1?.getSystemEntities()[0]).toEqual(entity);
-        expect(system2?.getSystemEntities()[0]).toEqual(entity);
+        expect(system1.getSystemEntities()[0]).toEqual(entity);
+        expect(system2.getSystemEntities()[0]).toEqual(entity);
     });
 
     test('Should add multiple entities to system, when entities have component to which system is interested to, when updating registry', () => {
@@ -805,8 +815,8 @@ describe('Testing Registry related functions', () => {
 
         const system = registry.getSystem(MySystem);
 
-        expect(system?.getSystemEntities()[0]).toEqual(entity1);
-        expect(system?.getSystemEntities()[1]).toEqual(entity2);
+        expect(system.getSystemEntities()[0]).toEqual(entity1);
+        expect(system.getSystemEntities()[1]).toEqual(entity2);
     });
 
     test('Should add entity to system, when entity has multiple components to which system is interested to, when updating registry', () => {
@@ -833,7 +843,7 @@ describe('Testing Registry related functions', () => {
 
         const system = registry.getSystem(MySystem);
 
-        expect(system?.getSystemEntities()[0]).toEqual(entity);
+        expect(system.getSystemEntities()[0]).toEqual(entity);
     });
 
     test('Should not add entity to system, when entity has only some of the components the entity is interested to, when updating registry', () => {
@@ -859,7 +869,7 @@ describe('Testing Registry related functions', () => {
 
         const system = registry.getSystem(MySystem);
 
-        expect(system?.getSystemEntities().length).toBe(0);
+        expect(system.getSystemEntities().length).toBe(0);
     });
 
     test('Should remove entity from system, when updating registry', () => {
@@ -885,7 +895,7 @@ describe('Testing Registry related functions', () => {
 
         const system = registry.getSystem(MySystem);
 
-        expect(system?.getSystemEntities().length).toEqual(0);
+        expect(system.getSystemEntities().length).toEqual(0);
     });
 
     test('Entity should not be added twice to entitiedToBeKilled in registry', () => {
@@ -923,8 +933,8 @@ describe('Testing Registry related functions', () => {
 
         const system = registry.getSystem(MySystem);
 
-        expect(system?.getSystemEntities().length).toEqual(1);
-        expect(system?.getSystemEntities()[0]).toEqual(entity2);
+        expect(system.getSystemEntities().length).toEqual(1);
+        expect(system.getSystemEntities()[0]).toEqual(entity2);
     });
 
     test('Should remove entities from system with multiple entities, when updating registry and entity removed is the last one', () => {
@@ -952,8 +962,8 @@ describe('Testing Registry related functions', () => {
 
         const system = registry.getSystem(MySystem);
 
-        expect(system?.getSystemEntities().length).toEqual(1);
-        expect(system?.getSystemEntities()[0]).toEqual(entity1);
+        expect(system.getSystemEntities().length).toEqual(1);
+        expect(system.getSystemEntities()[0]).toEqual(entity1);
     });
 
     test('Should remove entities from system, when updating registry', () => {
@@ -982,7 +992,7 @@ describe('Testing Registry related functions', () => {
 
         const system = registry.getSystem(MySystem);
 
-        expect(system?.getSystemEntities().length).toEqual(0);
+        expect(system.getSystemEntities().length).toEqual(0);
     });
 
     test('Should remove entity from multiple systems, when updating registry', () => {
@@ -1017,8 +1027,8 @@ describe('Testing Registry related functions', () => {
         const system1 = registry.getSystem(MySystem1);
         const system2 = registry.getSystem(MySystem2);
 
-        expect(system1?.getSystemEntities().length).toEqual(0);
-        expect(system2?.getSystemEntities().length).toEqual(0);
+        expect(system1.getSystemEntities().length).toEqual(0);
+        expect(system2.getSystemEntities().length).toEqual(0);
     });
 
     test('Should remove entity from system and leave the other systems entities intact if entity does not appear there', () => {
@@ -1057,8 +1067,8 @@ describe('Testing Registry related functions', () => {
         const system1 = registry.getSystem(MySystem1);
         const system2 = registry.getSystem(MySystem2);
 
-        expect(system1?.getSystemEntities().length).toEqual(0);
-        expect(system2?.getSystemEntities().length).toEqual(1);
+        expect(system1.getSystemEntities().length).toEqual(0);
+        expect(system2.getSystemEntities().length).toEqual(1);
     });
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -1250,8 +1260,8 @@ describe('Testing Registry related functions', () => {
 
         expect(registry.getReusableEntityIdCount()).toBe(0);
 
-        expect(system1?.getSystemEntities().length).toEqual(1);
-        expect(system2?.getSystemEntities().length).toEqual(1);
+        expect(system1.getSystemEntities().length).toEqual(1);
+        expect(system2.getSystemEntities().length).toEqual(1);
 
         registry.clear();
 
@@ -1267,8 +1277,8 @@ describe('Testing Registry related functions', () => {
 
         expect(registry.getReusableEntityIdCount()).toBe(0);
 
-        expect(system1?.getSystemEntities().length).toEqual(0);
-        expect(system2?.getSystemEntities().length).toEqual(0);
+        expect(system1.getSystemEntities().length).toEqual(0);
+        expect(system2.getSystemEntities().length).toEqual(0);
     });
 
     test('Adding a component to an entity should add it to the pending component change queue', () => {

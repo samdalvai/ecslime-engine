@@ -136,7 +136,7 @@ export default class Registry {
     }
 
     getSystemEntities<T extends System>(SystemClass: SystemClass<T>): readonly Entity[] {
-        return this.getSystem(SystemClass)?.getSystemEntities() ?? [];
+        return this.hasSystem(SystemClass) ? this.getSystem(SystemClass).getSystemEntities() : [];
     }
 
     getTagCount() {
@@ -494,11 +494,11 @@ export default class Registry {
         return this._systems.get(SystemClass.getSystemId()) !== undefined;
     }
 
-    getSystem<T extends System>(SystemClass: SystemClass<T>): T | undefined {
+    getSystem<T extends System>(SystemClass: SystemClass<T>): T {
         const system = this._systems.get(SystemClass.getSystemId());
 
         if (system === undefined) {
-            return undefined;
+            throw new Error(`${SystemClass.name} is not registered`);
         }
 
         return system as T;

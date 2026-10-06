@@ -43,8 +43,8 @@ describe('Testing System related functions', () => {
         registry.update();
 
         const system = registry.getSystem(MySystem);
-        expect(system?.getSystemEntities().length).toBe(1);
-        expect(system?.getSystemEntities()[0]).toEqual(entity);
+        expect(system.getSystemEntities().length).toBe(1);
+        expect(system.getSystemEntities()[0]).toEqual(entity);
     });
 
     test('A system requiring a component should add multiple entities to his system entitites', () => {
@@ -67,9 +67,9 @@ describe('Testing System related functions', () => {
         registry.update();
 
         const system = registry.getSystem(MySystem);
-        expect(system?.getSystemEntities().length).toBe(2);
-        expect(system?.getSystemEntities()[0]).toEqual(entity1);
-        expect(system?.getSystemEntities()[1]).toEqual(entity2);
+        expect(system.getSystemEntities().length).toBe(2);
+        expect(system.getSystemEntities()[0]).toEqual(entity1);
+        expect(system.getSystemEntities()[1]).toEqual(entity2);
     });
 
     test('A system with no required component should not add any entity to his system entitites', () => {
@@ -89,7 +89,7 @@ describe('Testing System related functions', () => {
         registry.update();
 
         const system = registry.getSystem(MySystem);
-        expect(system?.getSystemEntities().length).toBe(0);
+        expect(system.getSystemEntities().length).toBe(0);
     });
 
     test('Adding a component to an entity after the entity has been initialized and updated should add the entity to the related system', () => {
@@ -109,12 +109,12 @@ describe('Testing System related functions', () => {
 
         const system = registry.getSystem(MySystem);
         entity.addComponent(MyComponent);
-        expect(system?.getSystemEntities().length).toBe(0);
+        expect(system.getSystemEntities().length).toBe(0);
 
         registry.update();
 
-        expect(system?.getSystemEntities().length).toBe(1);
-        expect(system?.getSystemEntities()[0]).toEqual(entity);
+        expect(system.getSystemEntities().length).toBe(1);
+        expect(system.getSystemEntities()[0]).toEqual(entity);
     });
 
     test('Removing a component from an entity after the entity has been initialized and updated should remove the entity from the related system', () => {
@@ -135,11 +135,11 @@ describe('Testing System related functions', () => {
 
         const system = registry.getSystem(MySystem);
         entity.removeComponent(MyComponent);
-        expect(system?.getSystemEntities().length).toBe(1);
+        expect(system.getSystemEntities().length).toBe(1);
 
         registry.update();
 
-        expect(system?.getSystemEntities().length).toBe(0);
+        expect(system.getSystemEntities().length).toBe(0);
     });
 
     test('Reconciles membership once from the final component signature', () => {
@@ -160,20 +160,20 @@ describe('Testing System related functions', () => {
 
         entity.addComponent(FirstComponent);
         registry.update();
-        expect(system?.hasEntity(entity)).toBe(false);
+        expect(system.hasEntity(entity)).toBe(false);
 
         entity.addComponent(SecondComponent);
         registry.update();
-        expect(system?.hasEntity(entity)).toBe(true);
+        expect(system.hasEntity(entity)).toBe(true);
 
         entity.removeComponent(FirstComponent);
         entity.addComponent(FirstComponent);
         registry.update();
-        expect(system?.getSystemEntities()).toEqual([entity]);
+        expect(system.getSystemEntities()).toEqual([entity]);
 
         entity.removeComponent(SecondComponent);
         registry.update();
-        expect(system?.hasEntity(entity)).toBe(false);
+        expect(system.hasEntity(entity)).toBe(false);
     });
 
     test('Does not add an entity scheduled for deletion from pending component changes', () => {
@@ -193,6 +193,6 @@ describe('Testing System related functions', () => {
 
         registry.update();
 
-        expect(registry.getSystem(MySystem)?.hasEntity(entity)).toBe(false);
+        expect(registry.getSystem(MySystem).hasEntity(entity)).toBe(false);
     });
 });
