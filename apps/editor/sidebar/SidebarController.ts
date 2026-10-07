@@ -21,6 +21,7 @@ import EntityDuplicateEvent from '../events/EntityDuplicateEvent';
 import EntityPasteEvent from '../events/EntityPasteEvent';
 import EntitySelectEvent from '../events/EntitySelectEvent';
 import EntityUpdateEvent from '../events/EntityUpdateEvent';
+import { getLevelName, resolveLevelName } from '../persistence/levelNames';
 import { createInput, createListItem, showAlert } from '../gui';
 import {
     loadLevelFromLocalStorage,
@@ -382,6 +383,7 @@ export default class SidebarController {
     ) {
         const localStorageLevelsSelect = document.querySelector('#local-storage-levels') as HTMLSelectElement;
         const newLevelButton = document.querySelector('#new-level') as HTMLButtonElement;
+        const levelNameInput = rightSidebar.querySelector('#level-name') as HTMLInputElement;
         const deleteLevelButton = document.querySelector('#delete-level') as HTMLButtonElement;
         const exportToJsonButton = rightSidebar.querySelector('#export-to-json') as HTMLButtonElement;
         const loadFromJsonButton = rightSidebar.querySelector('#load-from-json') as HTMLButtonElement;
@@ -389,6 +391,7 @@ export default class SidebarController {
         if (
             !localStorageLevelsSelect ||
             !newLevelButton ||
+            !levelNameInput ||
             !deleteLevelButton ||
             !exportToJsonButton ||
             !loadFromJsonButton
@@ -399,7 +402,9 @@ export default class SidebarController {
         const levelKeys = getAllLevelKeysFromLocalStorage();
         const options: { value: string; text: string }[] = [];
         for (const key of levelKeys) {
-            options.push({ value: key, text: key });
+            const level = loadLevelFromLocalStorage(key);
+            if (!level) throw new Error('Could not read level from local storage');
+            options.push({ value: key, text: getLevelName(key, level) });
         }
 
         localStorageLevelsSelect.replaceChildren();
@@ -412,6 +417,27 @@ export default class SidebarController {
         });
 
         localStorageLevelsSelect.value = Editor.editorSettings.selectedLevel ?? options[0].value;
+        const selectedId = localStorageLevelsSelect.value;
+        const selectedLevel = loadLevelFromLocalStorage(selectedId);
+        if (selectedLevel) levelNameInput.value = getLevelName(selectedId, selectedLevel);
+
+        levelNameInput.onchange = () => {
+            const levelId = Editor.editorSettings.selectedLevel;
+            if (!levelId) return;
+            this.entityEditor.flushSave();
+            const level = loadLevelFromLocalStorage(levelId);
+            if (!level) throw new Error('Could not read level from local storage');
+            const name = resolveLevelName(levelId, levelNameInput.value, levelId);
+            if (!name) {
+                levelNameInput.value = getLevelName(levelId, level);
+                showAlert('A level with this name already exists. Choose another name.');
+                return;
+            }
+            saveLevelToLocalStorage(levelId, { ...level, name });
+            levelNameInput.value = name;
+            const option = document.getElementById(levelId) as HTMLOptionElement | null;
+            if (option) option.textContent = name;
+        };
 
         localStorageLevelsSelect.onchange = async (event: Event): Promise<void> => {
             const target = event.target as HTMLSelectElement;
@@ -423,8 +449,16 @@ export default class SidebarController {
         newLevelButton.onclick = async () => {
             const levelKeys = getAllLevelKeysFromLocalStorage();
             const nextLevelId = getNextLevelId(levelKeys);
+            const requestedName = window.prompt('Level name (optional)', '');
+            if (requestedName === null) return;
+            const name = resolveLevelName(nextLevelId, requestedName);
+            if (!name) {
+                showAlert('A level with this name already exists. Choose another name.');
+                return;
+            }
 
             const newLevelMap: LevelMap = {
+                name,
                 textures: [],
                 sounds: [],
                 mapWidth: 64 * 10,
@@ -436,7 +470,7 @@ export default class SidebarController {
             const option = document.createElement('option');
             option.value = nextLevelId;
             option.id = nextLevelId;
-            option.textContent = nextLevelId;
+            option.textContent = name;
             localStorageLevelsSelect.appendChild(option);
 
             await this.handleLevelSelect(nextLevelId, levelManager, leftSidebar, rightSidebar);
@@ -447,7 +481,9 @@ export default class SidebarController {
                 throw new Error('No level selected');
             }
 
-            if (!window.confirm(`Delete level ${Editor.editorSettings.selectedLevel}? This cannot be undone.`)) return;
+            const selectedLevel = loadLevelFromLocalStorage(Editor.editorSettings.selectedLevel);
+            if (!selectedLevel) throw new Error('Could not read level from local storage');
+            if (!window.confirm(`Delete level ${getLevelName(Editor.editorSettings.selectedLevel, selectedLevel)}? This cannot be undone.`)) return;
             this.entityEditor.flushSave();
             deleteLevelFromLocalStorage(Editor.editorSettings.selectedLevel);
             const optionToDelete = document.getElementById(Editor.editorSettings.selectedLevel) as HTMLOptionElement;
@@ -465,6 +501,7 @@ export default class SidebarController {
             } else {
                 console.log('No level available, loading default empty level');
                 const { levelId, levelMap } = levelManager.getDefaultLevel('level-0');
+                levelMap.name = levelId;
                 saveLevelToLocalStorage(levelId, levelMap);
                 const option = document.createElement('option');
                 option.value = levelId;
@@ -476,7 +513,12 @@ export default class SidebarController {
             }
         };
 
-        exportToJsonButton.onclick = () => saveLevelToJson(registry, assetStore);
+        exportToJsonButton.onclick = () => {
+            const levelId = Editor.editorSettings.selectedLevel;
+            if (!levelId) throw new Error('No level selected');
+            this.entityEditor.flushSave();
+            saveLevelToJson(levelId, registry, assetStore);
+        };
         loadFromJsonButton.onclick = () => {
             const input = document.createElement('input');
             input.type = 'file';
@@ -499,13 +541,18 @@ export default class SidebarController {
                             if (!isValidLevelMap(levelMap)) {
                                 throw new Error('Loaded json is not a valid levelmap: ' + levelMap);
                             }
+                            const name = resolveLevelName(nextLevelId, levelMap.name);
+                            if (!name) {
+                                showAlert('A level with this name already exists. Choose another name before importing.');
+                                return;
+                            }
 
-                            saveLevelToLocalStorage(nextLevelId, levelMap);
+                            saveLevelToLocalStorage(nextLevelId, { ...levelMap, name });
 
                             const option = document.createElement('option');
                             option.value = nextLevelId;
                             option.id = nextLevelId;
-                            option.textContent = nextLevelId;
+                            option.textContent = name;
                             localStorageLevelsSelect.appendChild(option);
 
                             await this.handleLevelSelect(nextLevelId, levelManager, leftSidebar, rightSidebar);
@@ -546,14 +593,16 @@ export default class SidebarController {
         const gameWidthInput = rightSidebar.querySelector('#map-width') as HTMLInputElement;
         const gameHeightInput = rightSidebar.querySelector('#map-height') as HTMLInputElement;
         const levelSelect = document.querySelector('#local-storage-levels') as HTMLSelectElement;
+        const levelNameInput = rightSidebar.querySelector('#level-name') as HTMLInputElement;
 
-        if (!gameWidthInput || !gameHeightInput || !levelSelect) {
+        if (!gameWidthInput || !gameHeightInput || !levelSelect || !levelNameInput) {
             throw new Error('Could not identify sidebar element(s)');
         }
 
         gameWidthInput.value = level.mapWidth.toString();
         gameHeightInput.value = level.mapHeight.toString();
         levelSelect.value = levelId;
+        levelNameInput.value = getLevelName(levelId, level);
         Editor.editorSettings.selectedLevel = levelId;
 
         saveEditorSettingsToLocalStorage();
