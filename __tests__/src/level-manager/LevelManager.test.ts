@@ -4,8 +4,10 @@ import AssetStore from '../../../src/asset-store/AssetStore';
 import Registry from '../../../src/ecs/Registry';
 import LevelManager from '../../../src/level-manager/LevelManager';
 import { createComponentCatalog } from '../../../src/serialization/componentCatalog';
+import { serializeLevel } from '../../../src/serialization/serialization';
 import { LevelMap } from '../../../src/types/map';
 import { DEFAULT_SPRITE } from '../../../src/utils/constants';
+import { MockTransformComponent } from '../mocks/components';
 
 describe('Testing LevelManager', () => {
     test('Should load level textures and sounds in parallel after the default texture', async () => {
@@ -54,5 +56,31 @@ describe('Testing LevelManager', () => {
         }
 
         await expect(levelLoadPromise).resolves.toBe(level);
+    });
+    test('Loaded entities are immediately safe to serialize with their components', async () => {
+        const registry = new Registry();
+        const assetStore = new AssetStore();
+        const levelManager = new LevelManager(
+            registry,
+            assetStore,
+            createComponentCatalog([{ name: 'MockTransformComponent', constructor: MockTransformComponent }]),
+        );
+        const level: LevelMap = {
+            textures: [],
+            sounds: [],
+            mapWidth: 64,
+            mapHeight: 64,
+            entities: [{
+                group: 'obstacles',
+                components: [{
+                    name: 'MockTransformComponent',
+                    properties: { position: { x: 12, y: 34 }, scale: { x: 1, y: 1 }, rotation: 0, isFixed: false },
+                }],
+            }],
+        };
+
+        await levelManager.loadLevelFromLevelMap(level);
+
+        expect(serializeLevel(registry, assetStore).entities[0].components).toEqual(level.entities[0].components);
     });
 });

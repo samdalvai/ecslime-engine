@@ -1,6 +1,7 @@
 import { AssetStore, Entity, LevelMap, Registry, serializeEntities, serializeLevel } from 'ecslime-engine';
 
 export const saveLevelToJson = (registry: Registry, assetStore: AssetStore): void => {
+    registry.update();
     const jsonString = JSON.stringify(serializeLevel(registry, assetStore), null, 2);
     const blob = new Blob([jsonString], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -16,6 +17,7 @@ export const saveLevelToJson = (registry: Registry, assetStore: AssetStore): voi
 };
 
 export const saveEntitiesToJson = (entities: Entity[]): void => {
+    entities[0]?.registry.update();
     const jsonString = JSON.stringify(serializeEntities(entities), null, 2);
     const blob = new Blob([jsonString], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -35,6 +37,7 @@ export const saveCurrentLevelToLocalStorage = (levelId: string | null, registry:
         throw new Error('Could not determine currently selected level');
     }
 
+    registry.update();
     const currentLevelMap = serializeLevel(registry, assetStore);
     const jsonString = JSON.stringify(currentLevelMap, null, 2);
     localStorage.setItem(levelId, jsonString);
