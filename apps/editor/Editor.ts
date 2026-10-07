@@ -265,6 +265,7 @@ export default class Editor extends Engine {
         } else {
             console.log('No level available, loading default empty level');
             const { levelId, levelMap } = this.levelManager.getDefaultLevel('level-0');
+            levelMap.name = levelId;
             saveLevelToLocalStorage(levelId, levelMap);
             await this.levelManager.loadLevelFromLevelMap(levelMap);
             Editor.editorSettings.selectedLevel = levelId;
