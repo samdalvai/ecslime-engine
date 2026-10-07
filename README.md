@@ -106,6 +106,8 @@ import { Engine, RAFLoopStrategy, Component } from 'ecslime-engine';
 
 Engine unit tests import `src/` directly. App tests import `ecslime-engine`, so they use the same engine instance as the apps. The test command builds the package first.
 
+For editor navigation, `tsconfig.json` resolves `ecslime-engine` to `src/index.ts`. This lets TypeScript find app references from engine methods in `src/`. Parcel's `alias` in `package.json` resolves the same imports to `lib/index.js` for the running demos, so build the package before starting an app.
+
 `src` should not import from `apps/game` or `apps/editor`. App-specific components are provided to engine serialization and duplication through the game component catalog.
 
 # Game Component Catalog

@@ -8,7 +8,7 @@
     "skipLibCheck": true,
     "paths": {
       "ecslime-engine": [
-        "./lib/index.d.ts"
+        "./src/index.ts"
       ]
     }
   },

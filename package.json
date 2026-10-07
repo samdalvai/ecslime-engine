@@ -81,6 +81,9 @@
     "files": [
         "lib"
     ],
+    "alias": {
+        "ecslime-engine": "./lib/index.js"
+    },
     "targets": {
         "game": {
             "distDir": "dist",
