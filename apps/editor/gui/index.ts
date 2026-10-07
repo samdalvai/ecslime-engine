@@ -1,5 +1,7 @@
 import Editor from '../Editor';
 
+let focusBeforeAlert: HTMLElement | null = null;
+
 export const showAlert = (message: string) => {
     const customAlert = document.getElementById('custom-alert');
     const customAlertMessage = document.getElementById('custom-alert-message');
@@ -9,7 +11,9 @@ export const showAlert = (message: string) => {
     }
 
     customAlertMessage.textContent = message;
+    focusBeforeAlert = document.activeElement as HTMLElement | null;
     customAlert.classList.remove('hidden');
+    (document.getElementById('close-alert') as HTMLButtonElement | null)?.focus();
 
     Editor.alertShown = true;
 };
@@ -24,6 +28,8 @@ export const closeAlert = () => {
     customAlert.classList.add('hidden');
 
     Editor.alertShown = false;
+    focusBeforeAlert?.focus();
+    focusBeforeAlert = null;
 };
 
 export const scrollToListElement = (listElementId: string, elementId: string) => {
@@ -45,15 +51,15 @@ export const scrollToListElement = (listElementId: string, elementId: string) =>
     });
 };
 
-export const createListItem = (label: string, input: HTMLElement): HTMLLIElement => {
-    const li = document.createElement('li');
-    li.className = 'd-flex space-between align-center';
+export const createListItem = (label: string, input: HTMLElement): HTMLDivElement => {
+    const li = document.createElement('div');
+    li.className = 'field-row';
 
-    const span = document.createElement('span');
-    span.innerText = label;
-    span.className = 'label-text flex-1';
+    const fieldLabel = document.createElement('label');
+    fieldLabel.textContent = label;
+    fieldLabel.htmlFor = input.id;
 
-    li.append(span);
+    li.append(fieldLabel);
     li.append(input);
     return li;
 };

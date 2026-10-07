@@ -3,118 +3,88 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>ECSlime Engine</title>
+        <title>ECSlime Editor</title>
         <link rel="stylesheet" href="editor.css" />
         <link rel="icon" type="image/png" href="./dist/assets/icons/favicon.png" />
     </head>
     <body>
         <div id="editor">
-            <div id="leftSidebar">
-                <div>
-                    <div class="d-flex space-between align-center pt-2">
-                        <h2>Entities</h2>
-                        <button id="add-entity">ADD ENTITY</button>
-                    </div>
-                    <div class="d-flex space-between align-center pt-2">
-                        <button id="import-entities">IMPORT ENTITIES</button>
-                        <button id="export-entities">EXPORT ENTITIES</button>
-                    </div>
-                    <ul id="entity-list"></ul>
-                </div>
-            </div>
-            <div>
-                <canvas id="game-canvas"></canvas>
-                <div id="bottomBar" class="d-flex align-center space-between">
-                    <div class="d-flex align-center pe-2">
-                        <img src="spritesheets/skills_menu/mouse_icon_left.png" />
-                        <span>: Select entity</span>
-                    </div>
-                    <div class="d-flex align-center pe-2">
-                        <div class="pe-2">Shift +</div>
-                        <img src="spritesheets/skills_menu/mouse_icon_left.png" />
-                        <div>: Select multiple</div>
-                    </div>
-                    <div class="d-flex align-center">
-                        <img src="spritesheets/skills_menu/mouse_icon_left.png" class="pe-2" />
-                        <span>+ Drag: Move entity</span>
-                    </div>
-                    <div class="d-flex align-center">
-                        <img src="spritesheets/skills_menu/mouse_icon_middle.png" />
-                        <span>: Zoom +/-</span>
-                    </div>
-                    <div class="d-flex align-center">
-                        <div class="pe-2">Cmd +</div>
-                        <img src="spritesheets/skills_menu/mouse_icon_move.png" />
-                        <div>: Pan</div>
-                    </div>
-                    <div>Cmd + C: Copy entity</div>
-                    <div>Cmd + V: Paste entity</div>
-                    <div>Delete: Delete entity</div>
-                    <div>F2: Toggle testmode</div>
-                </div>
-            </div>
-            <div id="rightSidebar">
-                <div>
-                    <h2>Active Game Systems</h2>
-                    <ul id="active-systems"></ul>
-                </div>
-                <div>
-                    <h2>Level settings</h2>
-                    <div id="level-settings">
-                        <div id="map-dimensions">
-                            <div class="pt-2">
-                                <h4>Map dimensions (width, height)</h4>
-                                <div class="d-flex space-between pt-2">
-                                    <div class="pe-2">
-                                        <input type="number" id="map-width" />
-                                    </div>
-                                    <div class="ps-2">
-                                        <input type="number" id="map-height" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="d-flex space-between align-center pt-2">
-                                <h4>Snap to grid</h4>
-                                <input type="checkbox" id="snap-grid" />
-                            </div>
-                            <div class="d-flex space-between align-center pt-2">
-                                <h4>Show grid</h4>
-                                <input type="checkbox" id="show-grid" />
-                            </div>
-                            <div class="d-flex space-between align-center pt-2">
-                                <h4>Grid square side</h4>
-                                <input type="number" id="grid-side" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="d-flex align-center space-between" id="level-management">
-                    <span>Selected level</span>
+            <header id="toolbar" class="toolbar">
+                <div class="toolbar-group brand"><strong>ECSlime</strong><span>Editor</span></div>
+                <div class="toolbar-group level-tools">
+                    <label for="local-storage-levels">Level</label>
                     <select id="local-storage-levels"></select>
+                    <button id="new-level" type="button" title="Create level">New</button>
+                    <button id="delete-level" type="button" class="danger-quiet" title="Delete selected level">Delete</button>
                 </div>
-                <div class="d-flex align-center space-between">
-                    <div class="pe-2 flex-1">
-                        <button id="new-level">NEW LEVEL +</button>
-                    </div>
-                    <div class="ps-2 flex-1">
-                        <button id="delete-level">DELETE LEVEL</button>
-                    </div>
+                <div class="toolbar-group edit-tools">
+                    <button id="undo-change" type="button" title="Undo">Undo</button>
+                    <button id="redo-change" type="button" title="Redo">Redo</button>
+                    <label class="toggle"><input type="checkbox" id="show-grid" /> Grid</label>
+                    <label class="toggle"><input type="checkbox" id="snap-grid" /> Snap</label>
                 </div>
-                <div class="d-flex align-center space-between" id="json-buttons">
-                    <div class="pe-2 flex-1">
-                        <button id="export-to-json">Export to json</button>
-                    </div>
-                    <div class="ps-2 flex-1">
-                        <button id="load-from-json">Load from json</button>
-                    </div>
+                <div class="toolbar-group toolbar-end">
+                    <button id="toggle-left-panel" type="button" title="Toggle entity list" aria-controls="leftSidebar" aria-expanded="true">Entities</button>
+                    <button id="toggle-right-panel" type="button" title="Toggle inspector" aria-controls="rightSidebar" aria-expanded="true">Inspector</button>
+                    <button id="toggle-test-mode" type="button" class="primary">Play</button>
                 </div>
+            </header>
+            <div id="workspace">
+                <aside id="leftSidebar" class="panel" aria-label="Entities">
+                    <div class="panel-heading"><div><span class="eyebrow">SCENE</span><h2>Entities</h2></div><button id="add-entity" class="primary" type="button">+ Add</button></div>
+                    <label class="search-field" for="entity-search">Search entities</label>
+                    <input id="entity-search" type="search" placeholder="Name, group, or ID" autocomplete="off" />
+                    <div class="panel-actions"><button id="import-entities" type="button">Import</button><button id="export-entities" type="button">Export selected</button></div>
+                    <ul id="entity-list" aria-label="Entity list"></ul>
+                    <p id="entity-count" class="panel-footnote"></p>
+                </aside>
+                <main id="canvas-area" aria-label="Level canvas">
+                    <canvas id="game-canvas"></canvas>
+                    <footer id="bottomBar" class="status-bar">
+                        <span id="selection-status">No selection</span>
+                        <span id="zoom-status">100%</span>
+                        <span id="save-status" role="status">Saved locally</span>
+                        <button id="show-shortcuts" type="button">Shortcuts</button>
+                    </footer>
+                </main>
+                <aside id="rightSidebar" class="panel" aria-label="Inspector and settings">
+                    <section class="inspector-section">
+                        <div class="panel-heading"><div><span class="eyebrow">SELECTION</span><h2>Inspector</h2></div></div>
+                        <ul id="inspector-list" aria-label="Selected entity properties"></ul>
+                    </section>
+                    <details class="settings-section" open>
+                        <summary>Level settings</summary>
+                        <div id="level-settings">
+                            <div class="form-row"><label for="map-width">Width</label><input type="number" id="map-width" min="1" /></div>
+                            <div class="form-row"><label for="map-height">Height</label><input type="number" id="map-height" min="1" /></div>
+                            <div class="form-row"><label for="show-grid-setting">Show grid</label><input type="checkbox" id="show-grid-setting" /></div>
+                            <div class="form-row"><label for="snap-grid-setting">Snap to grid</label><input type="checkbox" id="snap-grid-setting" /></div>
+                            <div class="form-row"><label for="grid-side">Grid size</label><input type="number" id="grid-side" min="1" /></div>
+                        </div>
+                        <div class="panel-actions"><button id="export-to-json" type="button">Export level</button><button id="load-from-json" type="button">Import level</button></div>
+                    </details>
+                    <details class="settings-section">
+                        <summary>Game systems</summary>
+                        <ul id="active-systems"></ul>
+                    </details>
+                </aside>
             </div>
         </div>
-        <div id="custom-alert" class="custom-alert hidden">
-            <div class="custom-alert-box">
-                <p id="custom-alert-message"></p>
-                <button onclick="closeAlert()">OK</button>
+        <dialog id="shortcuts-dialog">
+            <div class="dialog-heading"><h2>Keyboard shortcuts</h2><button type="button" id="close-shortcuts">Close</button></div>
+            <div class="shortcut-grid">
+                <span>Select / move</span><kbd>Click / drag</kbd>
+                <span>Select multiple</span><kbd>Shift + drag</kbd>
+                <span>Pan</span><kbd>Middle drag or Mod + drag</kbd>
+                <span>Zoom</span><kbd>Mouse wheel</kbd>
+                <span>Copy / paste</span><kbd>Mod + C / V</kbd>
+                <span>Undo / redo</span><kbd>Mod + Z / Shift + Mod + Z</kbd>
+                <span>Test mode</span><kbd>F2</kbd>
             </div>
+            <p>Mod means <span id="modifier-name">Ctrl</span> on this device.</p>
+        </dialog>
+        <div id="custom-alert" class="custom-alert hidden" role="alertdialog" aria-modal="true" aria-labelledby="custom-alert-message">
+            <div class="custom-alert-box"><p id="custom-alert-message"></p><button id="close-alert" type="button">OK</button></div>
         </div>
         <script type="module" src="./apps/editor/main.ts"></script>
     </body>

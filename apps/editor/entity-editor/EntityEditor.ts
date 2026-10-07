@@ -53,24 +53,26 @@ export default class EntityEditor {
     ////////////////////////////////////////////////////////////////////////////////
 
     public saveLevel = () => {
-        if (this.saveDebounceTimer) {
-            clearTimeout(this.saveDebounceTimer);
-        }
+        const status = document.getElementById('save-status');
+        if (status) status.textContent = 'Saving…';
+        if (this.saveDebounceTimer) clearTimeout(this.saveDebounceTimer);
+        this.saveDebounceTimer = setTimeout(() => this.flushSave(), 300);
+    };
 
-        this.saveDebounceTimer = setTimeout(() => {
-            const levelMap = saveCurrentLevelToLocalStorage(
-                Editor.editorSettings.selectedLevel,
-                this.registry,
-                this.assetStore,
-            );
-
-            if (Editor.editorSettings.selectedLevel) {
-                this.versionManager.addLevelVersion(Editor.editorSettings.selectedLevel, levelMap);
-            }
-        }, 300);
+    public flushSave = () => {
+        if (!this.saveDebounceTimer) return;
+        clearTimeout(this.saveDebounceTimer);
+        this.saveDebounceTimer = null;
+        const levelId = Editor.editorSettings.selectedLevel;
+        if (!levelId) return;
+        const levelMap = saveCurrentLevelToLocalStorage(levelId, this.registry, this.assetStore);
+        this.versionManager.addLevelVersion(levelId, levelMap);
+        const status = document.getElementById('save-status');
+        if (status) status.textContent = 'Saved locally';
     };
 
     public undoLevelChange = async () => {
+        this.flushSave();
         if (this.levelChangeLock) {
             return;
         }
@@ -91,6 +93,7 @@ export default class EntityEditor {
     };
 
     public redoLevelChange = async () => {
+        this.flushSave();
         if (this.levelChangeLock) {
             return;
         }
@@ -129,12 +132,11 @@ export default class EntityEditor {
     // Entity management
     ////////////////////////////////////////////////////////////////////////////////
 
-    addEntity = (entityList: HTMLLIElement) => {
-        console.log('Adding entity');
+    addEntity = () => {
         const entity = this.registry.createEntity();
-        entityList.appendChild(this.getEntityListElement(entity));
         entity.addComponent(GameComponents.TransformComponent);
 
+        Editor.selectedEntities = [entity];
         this.eventBus.emitEvent(EntitySelectEvent, [entity]);
         this.saveLevel();
     };
@@ -203,9 +205,10 @@ export default class EntityEditor {
         } else {
             const component = entity.addComponent(ComponentClass);
             const componentContainer = this.getComponentContainer(component, entity);
+            componentContainer.open = true;
             componentList.appendChild(componentContainer);
 
-            scrollToListElement('#entity-list', `#${component.constructor.name}-${entity.getId()}`);
+            scrollToListElement('#inspector-list', `#${component.constructor.name}-${entity.getId()}`);
         }
 
         this.saveLevel();
@@ -231,23 +234,23 @@ export default class EntityEditor {
 
         const componentList = document.createElement('li');
         componentList.id = `entity-${entity.getId()}`;
-        componentList.style.border = 'solid 1px white';
-        componentList.onclick = () => (Editor.selectedEntities = [entity]);
+        componentList.className = 'inspector-entity';
 
         const header = document.createElement('div');
-        header.className = 'd-flex align-center space-between';
+        header.className = 'inspector-entity-header';
 
         const title = document.createElement('h3');
-        title.textContent = `Entity id: ${entity.getId()}`;
+        title.textContent = entity.getTag() || `Entity #${entity.getId()}`;
 
         const duplicateButton = document.createElement('button');
-        duplicateButton.innerText = 'DUPLICATE';
+        duplicateButton.innerText = 'Duplicate';
         duplicateButton.onclick = () => {
             this.eventBus.emitEvent(EntityDuplicateEvent, entity);
         };
 
         const deleteButton = document.createElement('button');
-        deleteButton.innerText = 'DELETE';
+        deleteButton.innerText = 'Delete';
+        deleteButton.className = 'danger-quiet';
         deleteButton.onclick = () => this.eventBus.emitEvent(EntityDeleteEvent, entity);
 
         header.append(title);
@@ -257,14 +260,21 @@ export default class EntityEditor {
 
         const entityTagInput = createInput('text', entity.getId() + '-tag', entity.getTag() ?? '');
         entityTagInput.addEventListener('input', e => {
-            const value = (e.target as HTMLInputElement).value;
+            const input = e.target as HTMLInputElement;
+            const value = input.value.trim();
+            const previousTag = entity.getTag();
             entity.removeTag();
-
-            if (value !== '') {
-                entity.tag(value);
+            try {
+                if (value) entity.tag(value);
+            } catch {
+                if (previousTag) entity.tag(previousTag);
+                input.value = previousTag ?? '';
+                showAlert('This tag is already used by another entity.');
+                return;
             }
-
             this.saveLevel();
+            title.textContent = value || `Entity #${entity.getId()}`;
+            document.dispatchEvent(new Event('editor:entity-changed'));
         });
         const entityTagListItem = createListItem('Entity tag', entityTagInput);
 
@@ -278,6 +288,7 @@ export default class EntityEditor {
             }
 
             this.saveLevel();
+            document.dispatchEvent(new Event('editor:entity-changed'));
         });
         const entityGroupListItem = createListItem('Entity group', entityGroupInput);
 
@@ -290,10 +301,10 @@ export default class EntityEditor {
         // componentList.append(exportToJsonButton);
 
         const componentSelector = document.createElement('div');
-        componentSelector.className = 'd-flex align-center space-between pt-2';
+        componentSelector.className = 'component-picker';
 
         const addComponentButton = document.createElement('button');
-        addComponentButton.innerText = 'ADD COMPONENT';
+        addComponentButton.innerText = '+ Add component';
         addComponentButton.onclick = () => this.addComponent(entity, componentList);
 
         const select = document.createElement('select');
@@ -318,8 +329,23 @@ export default class EntityEditor {
             select.appendChild(option);
         });
 
-        componentSelector.appendChild(addComponentButton);
-        componentSelector.appendChild(select);
+        const componentSearchLabel = document.createElement('label');
+        componentSearchLabel.textContent = 'Add component';
+        componentSearchLabel.htmlFor = `component-search-${entity.getId()}`;
+        const componentSearch = document.createElement('input');
+        componentSearch.id = `component-search-${entity.getId()}`;
+        componentSearch.type = 'search';
+        componentSearch.placeholder = 'Find a component';
+        componentSearch.setAttribute('aria-label', 'Find a component');
+        componentSearch.addEventListener('input', () => {
+            const query = componentSearch.value.trim().toLowerCase();
+            const first = Array.from(select.options).find(option => option.textContent?.toLowerCase().includes(query));
+            for (const option of Array.from(select.options)) option.hidden = !option.textContent?.toLowerCase().includes(query);
+            if (first) select.value = first.value;
+            addComponentButton.disabled = !first;
+        });
+        select.setAttribute('aria-label', 'Component to add');
+        componentSelector.append(componentSearchLabel, componentSearch, select, addComponentButton);
         componentList.appendChild(componentSelector);
 
         const forms = this.getComponentsForms(entityComponents, entity);
@@ -354,48 +380,37 @@ export default class EntityEditor {
     };
 
     private getComponentContainer = (component: Component, entity: Entity) => {
-        const componentContainer = document.createElement('div');
-        componentContainer.className = 'pb-2';
+        const componentContainer = document.createElement('details');
+        componentContainer.className = 'component-card';
         componentContainer.id = component.constructor.name + '-' + entity.getId();
-
-        const componentHeader = document.createElement('div');
-        componentHeader.className = 'd-flex space-between align-center';
-
-        const title = document.createElement('span');
-        const componentName = component.constructor.name;
-        title.innerText = '* ' + componentName;
-        title.style.textDecoration = 'underline';
-        componentHeader.append(title);
-
+        componentContainer.open = component.constructor.name === 'TransformComponent' || component.constructor.name === 'SpriteComponent';
+        const summary = document.createElement('summary');
+        summary.textContent = component.constructor.name.replace(/Component$/, '').replace(/([a-z])([A-Z])/g, '$1 $2');
+        componentContainer.append(summary);
         if (component.constructor.name !== 'TransformComponent') {
+            const actions = document.createElement('div');
+            actions.className = 'component-actions';
             const removeButton = document.createElement('button');
-            removeButton.innerText = 'REMOVE';
+            removeButton.type = 'button';
+            removeButton.innerText = 'Remove component';
             removeButton.onclick = () => {
                 this.removeComponent(component, entity, componentContainer.id);
                 this.saveLevel();
             };
-            componentHeader.append(removeButton);
+            actions.append(removeButton);
+            componentContainer.append(actions);
         }
-
-        componentContainer.append(componentHeader);
-
         const properties = Object.keys(component);
-
         for (const key of properties) {
             const form = this.getPropertyInput(key, (component as any)[key], component, entity.getId());
-
-            if (form) {
-                componentContainer.append(form);
-            }
+            if (form) componentContainer.append(form);
         }
-
-        if (properties.length === 0) {
-            const li = document.createElement('li');
-            li.className = 'd-flex align-center';
-            li.innerText = 'No property for this component...';
-            componentContainer.append(li);
+        if (!properties.length) {
+            const empty = document.createElement('p');
+            empty.className = 'empty-state';
+            empty.textContent = 'No editable properties.';
+            componentContainer.append(empty);
         }
-
         return componentContainer;
     };
 
