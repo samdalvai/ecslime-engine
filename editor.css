@@ -45,7 +45,6 @@ h2, h3, h4, p { margin: 0; }
 .toolbar-end { margin-left: auto; }
 .panel-toggle[aria-expanded='true'] { background: #20496a; border-color: #438fca; color: #f2f8ff; }
 .panel-toggle[aria-expanded='true']:hover { background: #285b83; }
-.toggle { display: inline-flex; align-items: center; gap: 6px; padding: 5px 7px; white-space: nowrap; cursor: pointer; }
 #workspace { --left-size: 270px; --right-size: 340px; display: grid; grid-template-columns: var(--left-size) minmax(0, 1fr) var(--right-size); flex: 1; min-height: 0; min-width: 0; }
 #workspace.left-collapsed { --left-size: 0px; }
 #workspace.right-collapsed { --right-size: 0px; }

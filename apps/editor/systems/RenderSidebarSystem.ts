@@ -247,20 +247,18 @@ export default class RenderSidebarSystem extends System {
     private renderLevelSettings = (rightSidebar: HTMLElement) => {
         const gameWidthInput = rightSidebar.querySelector('#map-width') as HTMLInputElement;
         const gameHeightInput = rightSidebar.querySelector('#map-height') as HTMLInputElement;
-        const snapGridInput = document.querySelector('#snap-grid') as HTMLInputElement;
-        const showGridInput = document.querySelector('#show-grid') as HTMLInputElement;
+        const snapGridInput = rightSidebar.querySelector('#snap-grid') as HTMLInputElement;
+        const showGridInput = rightSidebar.querySelector('#show-grid') as HTMLInputElement;
         const gridSideInput = rightSidebar.querySelector('#grid-side') as HTMLInputElement;
-        const snapGridSetting = rightSidebar.querySelector('#snap-grid-setting') as HTMLInputElement;
-        const showGridSetting = rightSidebar.querySelector('#show-grid-setting') as HTMLInputElement;
 
-        if (!gameWidthInput || !gameHeightInput || !snapGridInput || !showGridInput || !gridSideInput || !snapGridSetting || !showGridSetting) {
+        if (!gameWidthInput || !gameHeightInput || !snapGridInput || !showGridInput || !gridSideInput) {
             throw new Error('Could not retrieve level settings element(s)');
         }
 
         gameWidthInput.value = Engine.mapWidth.toString();
         gameHeightInput.value = Engine.mapHeight.toString();
-        snapGridInput.checked = snapGridSetting.checked = Editor.editorSettings.snapToGrid;
-        showGridInput.checked = showGridSetting.checked = Editor.editorSettings.showGrid;
+        snapGridInput.checked = Editor.editorSettings.snapToGrid;
+        showGridInput.checked = Editor.editorSettings.showGrid;
         gridSideInput.value = Editor.editorSettings.gridSquareSide.toString();
 
         gameWidthInput.onchange = event => {
@@ -285,20 +283,14 @@ export default class RenderSidebarSystem extends System {
             this.entityEditor.saveLevel();
         };
 
-        const setSnap = (checked: boolean) => {
-            Editor.editorSettings.snapToGrid = checked;
-            snapGridInput.checked = snapGridSetting.checked = checked;
+        snapGridInput.onchange = () => {
+            Editor.editorSettings.snapToGrid = snapGridInput.checked;
             saveEditorSettingsToLocalStorage();
         };
-        const setGrid = (checked: boolean) => {
-            Editor.editorSettings.showGrid = checked;
-            showGridInput.checked = showGridSetting.checked = checked;
+        showGridInput.onchange = () => {
+            Editor.editorSettings.showGrid = showGridInput.checked;
             saveEditorSettingsToLocalStorage();
         };
-        snapGridInput.onchange = () => setSnap(snapGridInput.checked);
-        snapGridSetting.onchange = () => setSnap(snapGridSetting.checked);
-        showGridInput.onchange = () => setGrid(showGridInput.checked);
-        showGridSetting.onchange = () => setGrid(showGridSetting.checked);
 
         gridSideInput.onchange = event => {
             const target = event.target as HTMLInputElement;
