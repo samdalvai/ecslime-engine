@@ -29,12 +29,6 @@ import * as EditorSystems from './systems';
 import { EditorSettings } from './types';
 import VersionManager from './version-manager/VersionManager';
 
-declare global {
-    interface Window {
-        closeAlert: () => void;
-    }
-}
-
 export default class Editor extends Engine {
     // Object for Editor
     private versionManager: VersionManager;
@@ -107,20 +101,18 @@ export default class Editor extends Engine {
     resize = (
         canvas: HTMLCanvasElement,
         camera: Camera,
-        leftSidebar: HTMLElement,
-        rightSidebar: HTMLElement,
         bottomBar: HTMLElement,
     ) => {
-        canvas.width =
-            window.innerWidth - leftSidebar.getBoundingClientRect().width - rightSidebar.getBoundingClientRect().width;
-        canvas.height = window.innerHeight - bottomBar.getBoundingClientRect().height;
+        const canvasArea = canvas.parentElement;
+        if (!canvasArea) throw new Error('Canvas area not found');
+        canvas.width = Math.max(1, canvasArea.clientWidth);
+        canvas.height = Math.max(1, canvasArea.clientHeight - bottomBar.getBoundingClientRect().height);
 
         camera.viewportWidth = canvas.width / this.zoom;
         camera.viewportHeight = canvas.height / this.zoom;
 
-        Engine.windowWidth =
-            window.innerWidth - leftSidebar.getBoundingClientRect().width - rightSidebar.getBoundingClientRect().width;
-        Engine.windowHeight = window.innerHeight - bottomBar.getBoundingClientRect().height;
+        Engine.windowWidth = canvas.width;
+        Engine.windowHeight = canvas.height;
 
         const ctx = canvas.getContext('2d');
 
@@ -166,7 +158,7 @@ export default class Editor extends Engine {
         this.rightSidebar = rightSidebar;
         this.bottomBar = bottomBar;
 
-        this.resize(canvas, this.camera, this.leftSidebar, this.rightSidebar, this.bottomBar);
+        this.resize(canvas, this.camera, this.bottomBar);
         // Start with the world origin at the bottom-left of the editor viewport.
         this.camera.center = {
             x: this.camera.viewportWidth / 2,
@@ -176,13 +168,14 @@ export default class Editor extends Engine {
 
         this.isRunning = true;
 
-        window.addEventListener('resize', () => {
-            if (this.canvas && this.camera && this.leftSidebar && this.rightSidebar && this.bottomBar) {
-                this.resize(this.canvas, this.camera, this.leftSidebar, this.rightSidebar, this.bottomBar);
+        const resizeCanvas = () => {
+            if (this.canvas && this.bottomBar) {
+                this.resize(this.canvas, this.camera, this.bottomBar);
             }
-        });
-
-        window.closeAlert = closeAlert;
+        };
+        new ResizeObserver(resizeCanvas).observe(canvas.parentElement as HTMLElement);
+        window.addEventListener('resize', resizeCanvas);
+        this.setupWorkspaceControls();
 
         for (const systemKey in GameSystems) {
             Editor.editorSettings.activeSystems[systemKey as keyof typeof GameSystems] = false;
@@ -269,6 +262,8 @@ export default class Editor extends Engine {
                 }
 
                 await this.levelManager.loadLevelFromLevelMap(level);
+                Editor.editorSettings.selectedLevel = levelKeys[0];
+                saveEditorSettingsToLocalStorage();
                 this.versionManager.addLevelVersion(levelKeys[0], level);
             }
         } else {
@@ -306,35 +301,19 @@ export default class Editor extends Engine {
 
             switch (inputEvent.type) {
                 case 'keydown':
-                    if (inputEvent.code === 'MetaLeft') {
+                    if (inputEvent.code === 'MetaLeft' || inputEvent.code === 'ControlLeft' || inputEvent.code === 'ControlRight' || inputEvent.code === 'MetaRight') {
                         this.commandPressed = true;
                     }
 
-                    if (inputEvent.code === 'ShiftLeft') {
+                    if (inputEvent.code === 'ShiftLeft' || inputEvent.code === 'ShiftRight') {
                         this.shiftPressed = true;
                     }
 
-                    if (inputEvent.code === 'F2') {
-                        if (!this.leftSidebar || !this.rightSidebar || !this.bottomBar || !this.canvas) {
-                            throw new Error('Failed to get sidebar element(s)');
-                        }
-
-                        this.leftSidebar.style.display = this.testMode ? 'flex' : 'none';
-                        this.rightSidebar.style.display = this.testMode ? 'flex' : 'none';
-                        this.bottomBar.style.display = this.testMode ? 'flex' : 'none';
-
-                        if (this.testMode) {
-                            this.entityEditor.resetLevelChanges();
-                        }
-
-                        this.resize(this.canvas, this.camera, this.leftSidebar, this.rightSidebar, this.bottomBar);
-
-                        this.testMode = !this.testMode;
-                        this.zoom = 1;
-                    }
+                    if (inputEvent.code === 'F2') this.toggleTestMode();
+                    if (document.activeElement?.matches('input, select, textarea')) break;
 
                     if (inputEvent.code === 'Delete' && Editor.selectedEntities.length > 0) {
-                        if (this.leftSidebar && Editor.mousePositionScreen.x > 0) {
+                        if (this.leftSidebar) {
                             for (const entity of Editor.selectedEntities) {
                                 this.eventBus.emitEvent(EntityDeleteEvent, entity);
                             }
@@ -346,7 +325,6 @@ export default class Editor extends Engine {
                     if (this.commandPressed) {
                         switch (inputEvent.code) {
                             case 'KeyZ':
-                                // TODO: provide compatibility for non MacOS keyboards
                                 if (this.shiftPressed) {
                                     this.entityEditor.redoLevelChange();
                                 } else {
@@ -390,11 +368,11 @@ export default class Editor extends Engine {
                     this.eventBus.emitEvent(GameEvents.KeyPressedEvent, inputEvent.code);
                     break;
                 case 'keyup':
-                    if (inputEvent.code === 'MetaLeft') {
+                    if (inputEvent.code === 'MetaLeft' || inputEvent.code === 'ControlLeft' || inputEvent.code === 'ControlRight' || inputEvent.code === 'MetaRight') {
                         this.commandPressed = false;
                     }
 
-                    if (inputEvent.code === 'ShiftLeft') {
+                    if (inputEvent.code === 'ShiftLeft' || inputEvent.code === 'ShiftRight') {
                         this.shiftPressed = false;
                     }
 
@@ -415,9 +393,11 @@ export default class Editor extends Engine {
                 throw new Error('Failed to get leftSidebar element.');
             }
 
+            const canvasBounds = this.canvas?.getBoundingClientRect();
+            if (!canvasBounds) throw new Error('Canvas bounds not available');
             const screenPosition = {
-                x: inputEvent.x - this.leftSidebar.getBoundingClientRect().width,
-                y: inputEvent.y,
+                x: inputEvent.x - canvasBounds.left,
+                y: inputEvent.y - canvasBounds.top,
             };
 
             switch (inputEvent.type) {
@@ -535,7 +515,8 @@ export default class Editor extends Engine {
                 this.eventBus.emitEvent(ScrollEvent, 'down');
             }
 
-            this.zoom = Math.max(0.05, this.zoom);
+            this.zoom = Math.max(0.05, Math.min(8, this.zoom));
+            this.updateZoomStatus();
 
             this.camera.viewportWidth = this.canvas.width / this.zoom;
             this.camera.viewportHeight = this.canvas.height / this.zoom;
@@ -719,6 +700,54 @@ export default class Editor extends Engine {
                 .update(this.leftSidebar, this.rightSidebar, this.registry, this.assetStore, this.levelManager);
 
             this.shouldSidebarUpdate = false;
+        }
+    };
+
+
+    private updateZoomStatus = () => {
+        const status = document.getElementById('zoom-status');
+        if (status) status.textContent = `${Math.round(this.zoom * 100)}%`;
+    };
+
+    private toggleTestMode = () => {
+        if (!this.canvas || !this.leftSidebar || !this.rightSidebar || !this.bottomBar) return;
+        if (this.testMode) {
+            void this.entityEditor.resetLevelChanges().then(() => { this.shouldSidebarUpdate = true; });
+        } else this.entityEditor.flushSave();
+        this.testMode = !this.testMode;
+        this.zoom = 1;
+        document.body.classList.toggle('test-mode', this.testMode);
+        const button = document.getElementById('toggle-test-mode');
+        if (button) button.textContent = this.testMode ? 'Exit test' : 'Play';
+        this.resize(this.canvas, this.camera, this.bottomBar);
+        this.updateZoomStatus();
+    };
+
+    private setupWorkspaceControls = () => {
+        const workspace = document.getElementById('workspace');
+        const togglePanel = (side: 'left' | 'right') => {
+            const panel = side === 'left' ? this.leftSidebar : this.rightSidebar;
+            const button = document.getElementById(`toggle-${side}-panel`);
+            if (!panel || !workspace || !button) return;
+            panel.hidden = !panel.hidden;
+            workspace.classList.toggle(`${side}-collapsed`, panel.hidden);
+            button.setAttribute('aria-expanded', String(!panel.hidden));
+        };
+        document.getElementById('toggle-left-panel')?.addEventListener('click', () => togglePanel('left'));
+        document.getElementById('toggle-right-panel')?.addEventListener('click', () => togglePanel('right'));
+        document.getElementById('toggle-test-mode')?.addEventListener('click', this.toggleTestMode);
+        document.getElementById('undo-change')?.addEventListener('click', () => void this.entityEditor.undoLevelChange());
+        document.getElementById('redo-change')?.addEventListener('click', () => void this.entityEditor.redoLevelChange());
+        const dialog = document.getElementById('shortcuts-dialog') as HTMLDialogElement | null;
+        document.getElementById('show-shortcuts')?.addEventListener('click', () => dialog?.showModal());
+        document.getElementById('close-shortcuts')?.addEventListener('click', () => dialog?.close());
+        document.getElementById('close-alert')?.addEventListener('click', closeAlert);
+        const modifier = document.getElementById('modifier-name');
+        if (modifier) modifier.textContent = /Mac|iPhone|iPad/.test(navigator.userAgent) ? 'Command' : 'Ctrl';
+        if (window.innerWidth < 850 && this.rightSidebar && workspace) {
+            this.rightSidebar.hidden = true;
+            workspace.classList.add('right-collapsed');
+            document.getElementById('toggle-right-panel')?.setAttribute('aria-expanded', 'false');
         }
     };
 
