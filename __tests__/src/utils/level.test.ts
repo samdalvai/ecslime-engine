@@ -16,6 +16,13 @@ describe('Testing level utils related functions', () => {
         expect(isValidLevelMap(levelMap)).toBe(true);
     });
 
+    test('accepts legacy levels without names and rejects non-string names', () => {
+        const level = { textures: [], sounds: [], mapWidth: 640, mapHeight: 640, entities: [] };
+        expect(isValidLevelMap(level)).toBe(true);
+        expect(isValidLevelMap({ ...level, name: 'Forest' })).toBe(true);
+        expect(isValidLevelMap({ ...level, name: 42 })).toBe(false);
+    });
+
     test('Should return false if object is missing some property from LevelMap', () => {
         const levelMap = {
             textures: [],
