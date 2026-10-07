@@ -37,6 +37,8 @@ export default class LevelManager {
         await this.loadAssets(level);
         this.loadEntities(level);
         this.setMapBoundaries(level);
+        // Component additions are queued by Registry; finish them before callers can save the loaded level.
+        this.registry.update();
 
         return level;
     }
