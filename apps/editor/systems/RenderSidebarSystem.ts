@@ -56,8 +56,12 @@ export default class RenderSidebarSystem extends System {
     subscribeToEvents(eventBus: EventBus, registry: Registry, leftSidebar: HTMLElement) {
         eventBus.subscribeToEvent(EntitySelectEvent, this, event => this.onEntitySelect(event, leftSidebar));
         eventBus.subscribeToEvent(EntityDeleteEvent, this, event => this.onEntityDelete(event, leftSidebar));
-        eventBus.subscribeToEvent(EntityDuplicateEvent, this, event => this.onEntityDuplicate(event, leftSidebar, eventBus));
-        eventBus.subscribeToEvent(EntityPasteEvent, this, event => this.onEntityPaste(event, leftSidebar, eventBus, registry));
+        eventBus.subscribeToEvent(EntityDuplicateEvent, this, event =>
+            this.onEntityDuplicate(event, leftSidebar, eventBus),
+        );
+        eventBus.subscribeToEvent(EntityPasteEvent, this, event =>
+            this.onEntityPaste(event, leftSidebar, eventBus, registry),
+        );
         eventBus.subscribeToEvent(EntityKilledEvent, this, () => this.onEntityKilled());
         eventBus.subscribeToEvent(EntityUpdateEvent, this, () => {
             Editor.selectedEntities = [];
@@ -119,7 +123,13 @@ export default class RenderSidebarSystem extends System {
         this.entityEditor.saveLevel();
     };
 
-    update(leftSidebar: HTMLElement, rightSidebar: HTMLElement, registry: Registry, assetStore: AssetStore, levelManager: LevelManager) {
+    update(
+        leftSidebar: HTMLElement,
+        rightSidebar: HTMLElement,
+        registry: Registry,
+        assetStore: AssetStore,
+        levelManager: LevelManager,
+    ) {
         this.registry = registry;
         this.leftSidebar = leftSidebar;
         this.renderEntityList(leftSidebar);
@@ -179,7 +189,9 @@ export default class RenderSidebarSystem extends System {
         const entities = Array.from(this.registry.getAllEntities()).filter(entity => !entity.toBeKilled);
         entities.sort((a, b) => a.getId() - b.getId());
         const query = search.value.trim().toLowerCase();
-        const filtered = entities.filter(entity => `${entity.getTag() ?? ''} ${entity.getGroup() ?? ''} ${entity.getId()}`.toLowerCase().includes(query));
+        const filtered = entities.filter(entity =>
+            `${entity.getTag() ?? ''} ${entity.getGroup() ?? ''} ${entity.getId()}`.toLowerCase().includes(query),
+        );
         this.cancelEntityListRender();
         list.replaceChildren();
         count.textContent = `${filtered.length} of ${entities.length} entities`;
@@ -255,7 +267,8 @@ export default class RenderSidebarSystem extends System {
             if (renderToken !== this.selectionRenderToken) return;
             const fragment = document.createDocumentFragment();
             const batchEnd = Math.min(entityIndex + this.selectionBatchSize, selected.length);
-            while (entityIndex < batchEnd) fragment.append(this.entityEditor.getEntityListElement(selected[entityIndex++]));
+            while (entityIndex < batchEnd)
+                fragment.append(this.entityEditor.getEntityListElement(selected[entityIndex++]));
             list.append(fragment);
             if (entityIndex < selected.length) this.selectionRenderFrame = requestAnimationFrame(renderNextBatch);
             else this.selectionRenderFrame = null;
@@ -269,7 +282,10 @@ export default class RenderSidebarSystem extends System {
         list.replaceChildren();
         const groups = [
             { name: 'Rendering', keys: Object.keys(GameSystems).filter(key => key.startsWith('Render')) },
-            { name: 'Gameplay', keys: Object.keys(GameSystems).filter(key => !key.startsWith('Render') && !key.startsWith('Debug')) },
+            {
+                name: 'Gameplay',
+                keys: Object.keys(GameSystems).filter(key => !key.startsWith('Render') && !key.startsWith('Debug')),
+            },
             { name: 'Debug', keys: Object.keys(GameSystems).filter(key => key.startsWith('Debug')) },
         ];
         for (const group of groups) {
@@ -280,7 +296,11 @@ export default class RenderSidebarSystem extends System {
             const controls = document.createElement('div');
             controls.className = 'system-group';
             for (const key of group.keys.sort()) {
-                const checkbox = createInput('checkbox', key, Editor.editorSettings.activeSystems[key as keyof typeof GameSystems]);
+                const checkbox = createInput(
+                    'checkbox',
+                    key,
+                    Editor.editorSettings.activeSystems[key as keyof typeof GameSystems],
+                );
                 checkbox.addEventListener('change', () => {
                     Editor.editorSettings.activeSystems[key as keyof typeof GameSystems] = checkbox.checked;
                     saveEditorSettingsToLocalStorage();

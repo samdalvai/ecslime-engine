@@ -458,7 +458,7 @@ export default class Registry {
         if (component === undefined) {
             throw new Error(`${ComponentClass.name} is missing from entity ${entity.getId()}`);
         }
-        
+
         return component;
     }
 

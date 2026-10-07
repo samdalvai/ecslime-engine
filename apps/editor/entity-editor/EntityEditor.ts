@@ -340,7 +340,8 @@ export default class EntityEditor {
         componentSearch.addEventListener('input', () => {
             const query = componentSearch.value.trim().toLowerCase();
             const first = Array.from(select.options).find(option => option.textContent?.toLowerCase().includes(query));
-            for (const option of Array.from(select.options)) option.hidden = !option.textContent?.toLowerCase().includes(query);
+            for (const option of Array.from(select.options))
+                option.hidden = !option.textContent?.toLowerCase().includes(query);
             if (first) select.value = first.value;
             addComponentButton.disabled = !first;
         });
@@ -383,7 +384,8 @@ export default class EntityEditor {
         const componentContainer = document.createElement('details');
         componentContainer.className = 'component-card';
         componentContainer.id = component.constructor.name + '-' + entity.getId();
-        componentContainer.open = component.constructor.name === 'TransformComponent' || component.constructor.name === 'SpriteComponent';
+        componentContainer.open =
+            component.constructor.name === 'TransformComponent' || component.constructor.name === 'SpriteComponent';
         const summary = document.createElement('summary');
         summary.textContent = component.constructor.name.replace(/Component$/, '').replace(/([a-z])([A-Z])/g, '$1 $2');
         componentContainer.append(summary);
