@@ -98,11 +98,7 @@ export default class Editor extends Engine {
         };
     }
 
-    resize = (
-        canvas: HTMLCanvasElement,
-        camera: Camera,
-        bottomBar: HTMLElement,
-    ) => {
+    resize = (canvas: HTMLCanvasElement, camera: Camera, bottomBar: HTMLElement) => {
         const canvasArea = canvas.parentElement;
         if (!canvasArea) throw new Error('Canvas area not found');
         canvas.width = Math.max(1, canvasArea.clientWidth);
@@ -301,7 +297,12 @@ export default class Editor extends Engine {
 
             switch (inputEvent.type) {
                 case 'keydown':
-                    if (inputEvent.code === 'MetaLeft' || inputEvent.code === 'ControlLeft' || inputEvent.code === 'ControlRight' || inputEvent.code === 'MetaRight') {
+                    if (
+                        inputEvent.code === 'MetaLeft' ||
+                        inputEvent.code === 'ControlLeft' ||
+                        inputEvent.code === 'ControlRight' ||
+                        inputEvent.code === 'MetaRight'
+                    ) {
                         this.commandPressed = true;
                     }
 
@@ -368,7 +369,12 @@ export default class Editor extends Engine {
                     this.eventBus.emitEvent(GameEvents.KeyPressedEvent, inputEvent.code);
                     break;
                 case 'keyup':
-                    if (inputEvent.code === 'MetaLeft' || inputEvent.code === 'ControlLeft' || inputEvent.code === 'ControlRight' || inputEvent.code === 'MetaRight') {
+                    if (
+                        inputEvent.code === 'MetaLeft' ||
+                        inputEvent.code === 'ControlLeft' ||
+                        inputEvent.code === 'ControlRight' ||
+                        inputEvent.code === 'MetaRight'
+                    ) {
                         this.commandPressed = false;
                     }
 
@@ -661,8 +667,7 @@ export default class Editor extends Engine {
         this.isSystemActive('DebugSlowTimeRadiusSystem') &&
             this.registry.getSystem(GameSystems.DebugSlowTimeRadiusSystem).update(this.ctx, this.camera);
 
-        !this.testMode &&
-            this.registry.getSystem(EditorSystems.RenderMultipleSelectSystem).update(this.ctx, this.zoom);
+        !this.testMode && this.registry.getSystem(EditorSystems.RenderMultipleSelectSystem).update(this.ctx, this.zoom);
         !this.testMode &&
             this.registry.getSystem(EditorSystems.RenderSpriteBoxSystem).update(this.ctx, this.camera, this.zoom);
         !this.testMode && this.registry.getSystem(EditorSystems.RenderGameBorderSystem).update(this.ctx, this.zoom);
@@ -703,7 +708,6 @@ export default class Editor extends Engine {
         }
     };
 
-
     private updateZoomStatus = () => {
         const status = document.getElementById('zoom-status');
         if (status) status.textContent = `${Math.round(this.zoom * 100)}%`;
@@ -712,7 +716,9 @@ export default class Editor extends Engine {
     private toggleTestMode = () => {
         if (!this.canvas || !this.leftSidebar || !this.rightSidebar || !this.bottomBar) return;
         if (this.testMode) {
-            void this.entityEditor.resetLevelChanges().then(() => { this.shouldSidebarUpdate = true; });
+            void this.entityEditor.resetLevelChanges().then(() => {
+                this.shouldSidebarUpdate = true;
+            });
         } else this.entityEditor.flushSave();
         this.testMode = !this.testMode;
         this.zoom = 1;
@@ -737,8 +743,12 @@ export default class Editor extends Engine {
         document.getElementById('toggle-left-panel')?.addEventListener('click', () => togglePanel('left'));
         document.getElementById('toggle-right-panel')?.addEventListener('click', () => togglePanel('right'));
         document.getElementById('toggle-test-mode')?.addEventListener('click', this.toggleTestMode);
-        document.getElementById('undo-change')?.addEventListener('click', () => void this.entityEditor.undoLevelChange());
-        document.getElementById('redo-change')?.addEventListener('click', () => void this.entityEditor.redoLevelChange());
+        document
+            .getElementById('undo-change')
+            ?.addEventListener('click', () => void this.entityEditor.undoLevelChange());
+        document
+            .getElementById('redo-change')
+            ?.addEventListener('click', () => void this.entityEditor.redoLevelChange());
         const dialog = document.getElementById('shortcuts-dialog') as HTMLDialogElement | null;
         document.getElementById('show-shortcuts')?.addEventListener('click', () => dialog?.showModal());
         document.getElementById('close-shortcuts')?.addEventListener('click', () => dialog?.close());
