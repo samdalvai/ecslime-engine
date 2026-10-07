@@ -26,7 +26,7 @@ npm start                 # Game
 npm run start:editor      # Editor
 ```
 
-Both commands build the engine library in `lib/`, watch engine changes, and serve the selected app. The game runs at `http://localhost:1234` and the editor at `http://localhost:1235`, so you can run both commands in separate terminals.
+Both commands build the engine library in `lib/`, watch engine changes, and serve the selected app.
 
 To build production bundles:
 
@@ -85,8 +85,8 @@ A demonstration RPG-style 2D game built with this engine, where the player can c
 src/                    -> Reusable engine source and public API (index.ts)
 lib/                    -> Generated engine library (ignored by Git)
 apps/
-    game/               -> Example game, components, events, and systems
-    editor/             -> Editor for the example game
+    game/               -> Example game, page, styles, components, events, and systems
+    editor/             -> Editor page, styles, and source
 __tests__/
     src/                -> Tests for the engine, mirroring src/
     apps/
