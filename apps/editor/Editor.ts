@@ -732,6 +732,7 @@ export default class Editor extends Engine {
             panel.hidden = !panel.hidden;
             workspace.classList.toggle(`${side}-collapsed`, panel.hidden);
             button.setAttribute('aria-expanded', String(!panel.hidden));
+            button.title = `${panel.hidden ? 'Show' : 'Hide'} ${side === 'left' ? 'entities' : 'inspector'}`;
         };
         document.getElementById('toggle-left-panel')?.addEventListener('click', () => togglePanel('left'));
         document.getElementById('toggle-right-panel')?.addEventListener('click', () => togglePanel('right'));
@@ -747,7 +748,9 @@ export default class Editor extends Engine {
         if (window.innerWidth < 850 && this.rightSidebar && workspace) {
             this.rightSidebar.hidden = true;
             workspace.classList.add('right-collapsed');
-            document.getElementById('toggle-right-panel')?.setAttribute('aria-expanded', 'false');
+            const inspectorToggle = document.getElementById('toggle-right-panel');
+            inspectorToggle?.setAttribute('aria-expanded', 'false');
+            if (inspectorToggle) inspectorToggle.title = 'Show inspector';
         }
     };
 
