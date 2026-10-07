@@ -278,7 +278,7 @@ p {
     min-height: 0;
     display: flex;
     flex-direction: column;
-    background: #0c1117;
+    background: #293541;
 }
 #game-canvas {
     display: block;
