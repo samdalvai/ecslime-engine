@@ -6,7 +6,6 @@ import {
     LevelManager,
     LevelMap,
     Registry,
-    System,
     deserializeEntity,
     isValidLevelMap,
 } from 'ecslime-engine';
@@ -36,7 +35,7 @@ import {
     saveEditorSettingsToLocalStorage,
 } from '../persistence/persistence';
 
-export default class RenderSidebarSystem extends System {
+export default class SidebarController {
     private readonly entityListBatchSize = 60;
     private readonly selectionBatchSize = 20;
     private entityListRenderFrame: number | null = null;
@@ -49,7 +48,6 @@ export default class RenderSidebarSystem extends System {
     private entityChangedListenerBound = false;
 
     constructor(entityEditor: EntityEditor) {
-        super();
         this.entityEditor = entityEditor;
     }
 
@@ -123,7 +121,7 @@ export default class RenderSidebarSystem extends System {
         this.entityEditor.saveLevel();
     };
 
-    update(
+    refresh(
         leftSidebar: HTMLElement,
         rightSidebar: HTMLElement,
         registry: Registry,

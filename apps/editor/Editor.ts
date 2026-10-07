@@ -14,6 +14,7 @@ import {
 import { gameComponentCatalog } from '../game/catalog/gameComponentCatalog';
 import * as GameEvents from '../game/events';
 import * as GameSystems from '../game/systems';
+import { drawGameBorder, drawGrid, drawMultipleSelection } from './canvas/drawEditorOverlays';
 import EntityEditor from './entity-editor/EntityEditor';
 import EntityDeleteEvent from './events/EntityDeleteEvent';
 import EntityPasteEvent from './events/EntityPasteEvent';
@@ -25,6 +26,7 @@ import {
     loadEditorSettingsFromLocalStorage,
     saveEditorSettingsToLocalStorage,
 } from './persistence/persistence';
+import SidebarController from './sidebar/SidebarController';
 import * as EditorSystems from './systems';
 import { EditorSettings } from './types';
 import VersionManager from './version-manager/VersionManager';
@@ -33,6 +35,7 @@ export default class Editor extends Engine {
     // Object for Editor
     private versionManager: VersionManager;
     private entityEditor: EntityEditor;
+    private sidebarController: SidebarController;
 
     // Objects for rendering
     private leftSidebar: HTMLElement | null;
@@ -76,6 +79,7 @@ export default class Editor extends Engine {
             this.levelManager,
             this.versionManager,
         );
+        this.sidebarController = new SidebarController(this.entityEditor);
 
         this.leftSidebar = null;
         this.rightSidebar = null;
@@ -233,11 +237,7 @@ export default class Editor extends Engine {
 
         // Editor related systems
         this.registry.addSystem(EditorSystems.RenderSpriteBoxSystem);
-        this.registry.addSystem(EditorSystems.RenderGameBorderSystem);
-        this.registry.addSystem(EditorSystems.RenderSidebarSystem, this.entityEditor);
         this.registry.addSystem(EditorSystems.EntityDragSystem);
-        this.registry.addSystem(EditorSystems.RenderGridSystem);
-        this.registry.addSystem(EditorSystems.RenderMultipleSelectSystem);
         this.registry.addSystem(EditorSystems.RenderInvisibleEntitiesSystem);
 
         const levelKeys = getAllLevelKeysFromLocalStorage();
@@ -588,10 +588,7 @@ export default class Editor extends Engine {
                 );
         }
 
-        !this.testMode &&
-            this.registry
-                .getSystem(EditorSystems.RenderSidebarSystem)
-                .subscribeToEvents(this.eventBus, this.registry, this.leftSidebar);
+        !this.testMode && this.sidebarController.subscribeToEvents(this.eventBus, this.registry, this.leftSidebar);
 
         // Invoke all the systems that need to update
         this.isSystemActive('MovementSystem') && this.registry.getSystem(GameSystems.MovementSystem).update(deltaTime);
@@ -637,8 +634,15 @@ export default class Editor extends Engine {
         beginWorldRender(this.ctx, this.camera, this.zoom);
 
         // Render editor-world systems
-        !this.testMode &&
-            this.registry.getSystem(EditorSystems.RenderGridSystem).update(this.ctx, this.camera, this.zoom);
+        if (!this.testMode) {
+            drawGrid(
+                this.ctx,
+                this.camera,
+                this.zoom,
+                Editor.editorSettings.showGrid,
+                Editor.editorSettings.gridSquareSide,
+            );
+        }
 
         // Render game-world systems
         this.isSystemActive('RenderSystem') &&
@@ -667,10 +671,14 @@ export default class Editor extends Engine {
         this.isSystemActive('DebugSlowTimeRadiusSystem') &&
             this.registry.getSystem(GameSystems.DebugSlowTimeRadiusSystem).update(this.ctx, this.camera);
 
-        !this.testMode && this.registry.getSystem(EditorSystems.RenderMultipleSelectSystem).update(this.ctx, this.zoom);
+        if (!this.testMode) {
+            drawMultipleSelection(this.ctx, this.zoom, Editor.multipleSelectStart, Editor.mousePositionWorld);
+        }
         !this.testMode &&
             this.registry.getSystem(EditorSystems.RenderSpriteBoxSystem).update(this.ctx, this.camera, this.zoom);
-        !this.testMode && this.registry.getSystem(EditorSystems.RenderGameBorderSystem).update(this.ctx, this.zoom);
+        if (!this.testMode) {
+            drawGameBorder(this.ctx, this.zoom, Engine.mapWidth, Engine.mapHeight);
+        }
 
         endWorldRender(this.ctx);
 
@@ -700,9 +708,13 @@ export default class Editor extends Engine {
             this.registry.getSystem(GameSystems.DebugCursorCoordinatesSystem).update(this.ctx);
 
         if (this.shouldSidebarUpdate && !this.testMode) {
-            this.registry
-                .getSystem(EditorSystems.RenderSidebarSystem)
-                .update(this.leftSidebar, this.rightSidebar, this.registry, this.assetStore, this.levelManager);
+            this.sidebarController.refresh(
+                this.leftSidebar,
+                this.rightSidebar,
+                this.registry,
+                this.assetStore,
+                this.levelManager,
+            );
 
             this.shouldSidebarUpdate = false;
         }
