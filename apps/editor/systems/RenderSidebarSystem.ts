@@ -234,7 +234,9 @@ export default class RenderSidebarSystem extends System {
                     Editor.editorSettings.activeSystems[key as keyof typeof GameSystems] = checkbox.checked;
                     saveEditorSettingsToLocalStorage();
                 });
-                controls.append(createListItem(key, checkbox));
+                const row = createListItem(key, checkbox);
+                row.querySelector('label')?.setAttribute('title', key);
+                controls.append(row);
             }
             details.append(summary, controls);
             item.append(details);
