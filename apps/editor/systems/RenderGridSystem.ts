@@ -16,7 +16,7 @@ export default class RenderGridSystem extends System {
         const endY = Math.ceil(bounds.top / gridSize) * gridSize;
 
         ctx.save();
-        ctx.strokeStyle = 'lightgray';
+        ctx.strokeStyle = 'rgba(218, 230, 240, 0.16)';
         ctx.lineWidth = 1 / zoom;
 
         for (let y = startY; y <= endY; y += gridSize) {
