@@ -37,6 +37,12 @@ import {
 } from '../persistence/persistence';
 
 export default class RenderSidebarSystem extends System {
+    private readonly entityListBatchSize = 60;
+    private readonly selectionBatchSize = 20;
+    private entityListRenderFrame: number | null = null;
+    private entityListRenderToken = 0;
+    private selectionRenderFrame: number | null = null;
+    private selectionRenderToken = 0;
     private entityEditor: EntityEditor;
     private registry: Registry | null = null;
     private leftSidebar: HTMLElement | null = null;
@@ -62,7 +68,7 @@ export default class RenderSidebarSystem extends System {
 
     onEntitySelect = (event: EntitySelectEvent, leftSidebar: HTMLElement) => {
         Editor.selectedEntities = event.entities;
-        this.renderEntityList(leftSidebar);
+        this.updateEntitySelectionInList(leftSidebar);
         this.renderSelection();
         leftSidebar.querySelector('.entity-row[aria-pressed="true"]')?.scrollIntoView({ block: 'nearest' });
     };
@@ -129,6 +135,27 @@ export default class RenderSidebarSystem extends System {
         }
     }
 
+    private cancelEntityListRender = () => {
+        this.entityListRenderToken++;
+        if (this.entityListRenderFrame !== null) cancelAnimationFrame(this.entityListRenderFrame);
+        this.entityListRenderFrame = null;
+    };
+
+    private cancelSelectionRender = () => {
+        this.selectionRenderToken++;
+        if (this.selectionRenderFrame !== null) cancelAnimationFrame(this.selectionRenderFrame);
+        this.selectionRenderFrame = null;
+    };
+
+    private updateEntitySelectionInList = (leftSidebar: HTMLElement) => {
+        const selectedIds = new Set(Editor.selectedEntities.map(entity => entity.getId()));
+        for (const row of leftSidebar.querySelectorAll<HTMLButtonElement>('.entity-row')) {
+            row.setAttribute('aria-pressed', String(selectedIds.has(Number(row.dataset.entityId))));
+        }
+        const exportButton = leftSidebar.querySelector('#export-entities') as HTMLButtonElement | null;
+        if (exportButton) exportButton.disabled = selectedIds.size === 0;
+    };
+
     private renderEntityList = (leftSidebar: HTMLElement) => {
         if (!this.registry) return;
         const list = leftSidebar.querySelector('#entity-list') as HTMLUListElement;
@@ -153,47 +180,61 @@ export default class RenderSidebarSystem extends System {
         entities.sort((a, b) => a.getId() - b.getId());
         const query = search.value.trim().toLowerCase();
         const filtered = entities.filter(entity => `${entity.getTag() ?? ''} ${entity.getGroup() ?? ''} ${entity.getId()}`.toLowerCase().includes(query));
+        this.cancelEntityListRender();
         list.replaceChildren();
-        const fragment = document.createDocumentFragment();
-        for (const entity of filtered) {
-            const item = document.createElement('li');
-            const button = document.createElement('button');
-            button.type = 'button';
-            button.className = 'entity-row';
-            button.dataset.entityId = String(entity.getId());
-            button.setAttribute('aria-pressed', String(Editor.selectedEntities.some(selected => selected.getId() === entity.getId())));
-            const name = document.createElement('span');
-            name.className = 'entity-name';
-            name.textContent = entity.getTag() || entity.getGroup() || 'Untitled entity';
-            const id = document.createElement('span');
-            id.className = 'entity-id';
-            id.textContent = `#${entity.getId()}`;
-            button.append(name, id);
-            button.onclick = event => {
-                const selected = event.shiftKey ? [...Editor.selectedEntities] : [];
-                const index = selected.findIndex(item => item.getId() === entity.getId());
-                if (index >= 0) selected.splice(index, 1);
-                else selected.push(entity);
-                Editor.selectedEntities = selected;
-                this.renderEntityList(leftSidebar);
-                this.renderSelection();
-                leftSidebar.querySelector<HTMLButtonElement>(`.entity-row[data-entity-id="${entity.getId()}"]`)?.focus();
-            };
-            item.append(button);
-            fragment.append(item);
-        }
+        count.textContent = `${filtered.length} of ${entities.length} entities`;
+        exportButton.disabled = Editor.selectedEntities.length === 0;
         if (!filtered.length) {
             const empty = document.createElement('li');
             empty.className = 'empty-state';
             empty.textContent = query ? 'No entities match your search.' : 'No entities yet. Add one to start.';
-            fragment.append(empty);
+            list.append(empty);
+            return;
         }
-        list.append(fragment);
-        count.textContent = `${filtered.length} of ${entities.length} entities`;
-        exportButton.disabled = Editor.selectedEntities.length === 0;
+
+        let entityIndex = 0;
+        const renderToken = this.entityListRenderToken;
+        const renderNextBatch = () => {
+            if (renderToken !== this.entityListRenderToken) return;
+            const selectedIds = new Set(Editor.selectedEntities.map(entity => entity.getId()));
+            const fragment = document.createDocumentFragment();
+            const batchEnd = Math.min(entityIndex + this.entityListBatchSize, filtered.length);
+            while (entityIndex < batchEnd) {
+                const entity = filtered[entityIndex++];
+                const item = document.createElement('li');
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'entity-row';
+                button.dataset.entityId = String(entity.getId());
+                button.setAttribute('aria-pressed', String(selectedIds.has(entity.getId())));
+                const name = document.createElement('span');
+                name.className = 'entity-name';
+                name.textContent = entity.getTag() || entity.getGroup() || 'Untitled entity';
+                const id = document.createElement('span');
+                id.className = 'entity-id';
+                id.textContent = `#${entity.getId()}`;
+                button.append(name, id);
+                button.onclick = event => {
+                    const selected = event.shiftKey ? [...Editor.selectedEntities] : [];
+                    const index = selected.findIndex(item => item.getId() === entity.getId());
+                    if (index >= 0) selected.splice(index, 1);
+                    else selected.push(entity);
+                    Editor.selectedEntities = selected;
+                    this.updateEntitySelectionInList(leftSidebar);
+                    this.renderSelection();
+                };
+                item.append(button);
+                fragment.append(item);
+            }
+            list.append(fragment);
+            if (entityIndex < filtered.length) this.entityListRenderFrame = requestAnimationFrame(renderNextBatch);
+            else this.entityListRenderFrame = null;
+        };
+        renderNextBatch();
     };
 
     private renderSelection = () => {
+        this.cancelSelectionRender();
         const list = document.getElementById('inspector-list') as HTMLUListElement | null;
         const status = document.getElementById('selection-status');
         if (!list) return;
@@ -207,9 +248,19 @@ export default class RenderSidebarSystem extends System {
             list.append(empty);
             return;
         }
-        const fragment = document.createDocumentFragment();
-        for (const entity of selected) fragment.append(this.entityEditor.getEntityListElement(entity));
-        list.append(fragment);
+
+        let entityIndex = 0;
+        const renderToken = this.selectionRenderToken;
+        const renderNextBatch = () => {
+            if (renderToken !== this.selectionRenderToken) return;
+            const fragment = document.createDocumentFragment();
+            const batchEnd = Math.min(entityIndex + this.selectionBatchSize, selected.length);
+            while (entityIndex < batchEnd) fragment.append(this.entityEditor.getEntityListElement(selected[entityIndex++]));
+            list.append(fragment);
+            if (entityIndex < selected.length) this.selectionRenderFrame = requestAnimationFrame(renderNextBatch);
+            else this.selectionRenderFrame = null;
+        };
+        renderNextBatch();
     };
 
     private renderActiveSystems = (rightSidebar: HTMLElement) => {
