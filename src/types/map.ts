@@ -1,4 +1,5 @@
 export type LevelMap = {
+    name?: string;
     textures: Asset[];
     sounds: Asset[];
     mapWidth: number;

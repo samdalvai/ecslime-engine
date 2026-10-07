@@ -1,8 +1,16 @@
 import { AssetStore, Entity, LevelMap, Registry, serializeEntities, serializeLevel } from 'ecslime-engine';
 
-export const saveLevelToJson = (registry: Registry, assetStore: AssetStore): void => {
+import { getLevelName } from './levelNames';
+
+export const serializeNamedLevel = (levelId: string, registry: Registry, assetStore: AssetStore): LevelMap => {
     registry.update();
-    const jsonString = JSON.stringify(serializeLevel(registry, assetStore), null, 2);
+    const storedLevel = loadLevelFromLocalStorage(levelId);
+    if (!storedLevel) throw new Error('Could not read level from local storage');
+    return { ...serializeLevel(registry, assetStore), name: getLevelName(levelId, storedLevel) };
+};
+
+export const saveLevelToJson = (levelId: string, registry: Registry, assetStore: AssetStore): void => {
+    const jsonString = JSON.stringify(serializeNamedLevel(levelId, registry, assetStore), null, 2);
     const blob = new Blob([jsonString], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
 
@@ -37,8 +45,7 @@ export const saveCurrentLevelToLocalStorage = (levelId: string | null, registry:
         throw new Error('Could not determine currently selected level');
     }
 
-    registry.update();
-    const currentLevelMap = serializeLevel(registry, assetStore);
+    const currentLevelMap = serializeNamedLevel(levelId, registry, assetStore);
     const jsonString = JSON.stringify(currentLevelMap, null, 2);
     localStorage.setItem(levelId, jsonString);
     console.log('Level snapshot saved to local storage');
@@ -46,7 +53,7 @@ export const saveCurrentLevelToLocalStorage = (levelId: string | null, registry:
 };
 
 export const saveLevelToLocalStorage = (levelId: string, levelMap: LevelMap) => {
-    const jsonString = JSON.stringify(levelMap, null, 2);
+    const jsonString = JSON.stringify({ ...levelMap, name: getLevelName(levelId, levelMap) }, null, 2);
     localStorage.setItem(levelId, jsonString);
     console.log('Level snapshot saved to local storage');
 };
