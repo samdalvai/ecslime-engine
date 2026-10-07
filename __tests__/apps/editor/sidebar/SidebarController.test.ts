@@ -3,7 +3,7 @@ import { Entity, Registry } from 'ecslime-engine';
 
 import Editor from '../../../../apps/editor/Editor';
 import EntityEditor from '../../../../apps/editor/entity-editor/EntityEditor';
-import RenderSidebarSystem from '../../../../apps/editor/systems/RenderSidebarSystem';
+import SidebarController from '../../../../apps/editor/sidebar/SidebarController';
 
 class NodeStub {
     children: NodeStub[] = [];
@@ -97,8 +97,8 @@ describe('Batched editor sidebar rendering', () => {
         nodes['inspector-list'] = new NodeStub('ul');
         nodes['selection-status'] = new NodeStub('span');
         const editor = { getEntityListElement: (entity: Entity) => new NodeStub(`entity-${entity.getId()}`) };
-        const system = new RenderSidebarSystem(editor as unknown as EntityEditor);
-        const renderSelection = (system as unknown as { renderSelection: () => void }).renderSelection;
+        const controller = new SidebarController(editor as unknown as EntityEditor);
+        const renderSelection = (controller as unknown as { renderSelection: () => void }).renderSelection;
         Editor.selectedEntities = Array.from({ length: 45 }, (_, index) => makeEntity(index));
 
         renderSelection();
@@ -134,10 +134,10 @@ describe('Batched editor sidebar rendering', () => {
             '#export-entities': exportButton,
         };
         const sidebar = { querySelector: (selector: string) => parts[selector] ?? null } as unknown as HTMLElement;
-        const system = new RenderSidebarSystem({} as EntityEditor);
+        const controller = new SidebarController({} as EntityEditor);
         const entities = Array.from({ length: 125 }, (_, index) => makeEntity(index));
-        Reflect.set(system, 'registry', { getAllEntities: () => entities } as unknown as Registry);
-        const renderEntityList = (system as unknown as { renderEntityList: (sidebar: HTMLElement) => void }).renderEntityList;
+        Reflect.set(controller, 'registry', { getAllEntities: () => entities } as unknown as Registry);
+        const renderEntityList = (controller as unknown as { renderEntityList: (sidebar: HTMLElement) => void }).renderEntityList;
 
         renderEntityList(sidebar);
         expect(list.children).toHaveLength(60);
