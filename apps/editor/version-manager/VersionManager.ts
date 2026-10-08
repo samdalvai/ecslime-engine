@@ -26,13 +26,14 @@ export default class VersionManager {
             throw new Error('No version index defined for level with id ' + levelId);
         }
 
-        const lastVersion = currentVersions[currentVersions.length - 1];
+        const currentVersion = JSON.parse(currentVersions[currentLevelVersionIndex]) as LevelMap;
+        const currentContent = JSON.stringify({ ...currentVersion, id: undefined, name: undefined });
+        const nextContent = JSON.stringify({ ...level, id: undefined, name: undefined });
+        if (currentContent === nextContent) return;
 
-        if (lastVersion !== JSON.stringify(level)) {
-            currentVersions.push(JSON.stringify(level));
-        }
-
-        this.levelVersionIndex.set(levelId, currentVersions.length - 1);
+        currentVersions.splice(currentLevelVersionIndex + 1);
+        currentVersions.push(JSON.stringify(level));
+        this.levelVersionIndex.set(levelId, currentLevelVersionIndex + 1);
     };
 
     getLevelVersions = (levelId: string) => {

@@ -117,6 +117,58 @@ describe('Testing version manager related functions', () => {
         expect(versionManager.getCurrentLevelVersion('test')).toEqual(level2);
     });
 
+    test('a new edit after undo replaces the redo path', () => {
+        const versions = new VersionManager();
+        const initial: LevelMap = {
+            id: 'test',
+            name: 'Test',
+            textures: [],
+            sounds: [],
+            mapWidth: 100,
+            mapHeight: 100,
+            entities: [],
+        };
+        const firstEdit = { ...initial, mapWidth: 200 };
+        const secondEdit = { ...initial, mapWidth: 300 };
+        versions.addLevelVersion('test', initial);
+        versions.addLevelVersion('test', firstEdit);
+        versions.setPreviousLevelVersion('test');
+
+        versions.addLevelVersion('test', secondEdit);
+        expect(versions.getLevelVersions('test')).toHaveLength(2);
+        expect(versions.getCurrentLevelVersion('test')).toEqual(secondEdit);
+        expect(versions.isLatestVersion('test')).toBe(true);
+
+        versions.setPreviousLevelVersion('test');
+        expect(versions.getCurrentLevelVersion('test')).toEqual(initial);
+        versions.setNextLevelVersion('test');
+        expect(versions.getCurrentLevelVersion('test')).toEqual(secondEdit);
+    });
+
+    test('a no-op save after undo keeps redo available, including a renamed level', () => {
+        const versions = new VersionManager();
+        const initial: LevelMap = {
+            id: 'test',
+            name: 'Old name',
+            textures: [],
+            sounds: [],
+            mapWidth: 100,
+            mapHeight: 100,
+            entities: [],
+        };
+        const firstEdit = { ...initial, mapWidth: 200 };
+        versions.addLevelVersion('test', initial);
+        versions.addLevelVersion('test', firstEdit);
+        versions.setPreviousLevelVersion('test');
+
+        versions.addLevelVersion('test', { ...initial, name: 'New name' });
+        expect(versions.getLevelVersionIndex('test')).toBe(0);
+        expect(versions.getLevelVersions('test')).toHaveLength(2);
+        expect(versions.isLatestVersion('test')).toBe(false);
+        versions.setNextLevelVersion('test');
+        expect(versions.getCurrentLevelVersion('test')).toEqual(firstEdit);
+    });
+
     test('Should throw error when setting non existent level version', () => {
         const versionManager = new VersionManager();
 
