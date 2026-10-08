@@ -42,8 +42,9 @@ export const deserializeEntity = (
         // OR even easier
         Object.assign(comp, component.properties);
         console.log(`after init ${ComponentClass.name} ${JSON.stringify(comp)}`);
+        entity.addComponentV2(comp);
 
-        entity.addComponent(ComponentClass, ...parameterValues);
+        // entity.addComponent(ComponentClass, ...parameterValues);
     }
 
     if (entityMap.tag) {
