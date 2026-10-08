@@ -1,6 +1,8 @@
 export type ComponentClass<T extends Component = Component, Args extends unknown[] = any[]> = {
     new (...args: Args): T;
     getComponentId(): number;
+    // TODO: add correct typing
+    metadata(): any;
 };
 
 export class IComponent {
@@ -58,4 +60,6 @@ export default class Component extends IComponent {
         }
         return this._id;
     }
+
+    protected static metadata(): any {}
 }

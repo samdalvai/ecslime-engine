@@ -30,6 +30,15 @@ export const deserializeEntity = (
             componentDefinition.deserialize?.(component.properties) ??
             getComponentConstructorParamNames(ComponentClass).map(param => component.properties[param]);
 
+        // TODO: initialize the component like this and add it to the entity
+        // TODO 2: add possible metadata to modify what comes from json
+        const comp = new ComponentClass();
+
+        for (const [property, value] of Object.entries(component.properties)) {
+            (comp as Record<string, unknown>)[property] = value;
+        }
+        console.log(`after init ${ComponentClass.name} ${JSON.stringify(comp)}`);
+
         entity.addComponent(ComponentClass, ...parameterValues);
     }
 
@@ -100,7 +109,6 @@ export const parseConstructorParameters = (constructorStr: string): string[] => 
         .split(' ')
         .filter(param => param !== '')
         .filter(param => !isNumeric(param));
-
     return paramNames;
 };
 
