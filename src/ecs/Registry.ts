@@ -394,6 +394,25 @@ export default class Registry {
         return newComponent;
     }
 
+    addComponentV2<T extends Component>(entity: Entity, component: T): T {
+        const ComponentClass = component.constructor as ComponentClass<T>;
+        const componentId = ComponentClass.getComponentId();
+
+        let pendingChanges = this._pendingComponentChange.get(entity);
+
+        if (!pendingChanges) {
+            pendingChanges = new Map();
+            this._pendingComponentChange.set(entity, pendingChanges);
+        }
+
+        pendingChanges.set(componentId, {
+            kind: 'add',
+            component,
+        });
+
+        return component;
+    }
+
     removeComponent<T extends ComponentClass>(entity: Entity, ComponentClass: T) {
         const componentId = ComponentClass.getComponentId();
 
