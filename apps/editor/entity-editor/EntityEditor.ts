@@ -20,6 +20,7 @@ import EntitySelectEvent from '../events/EntitySelectEvent';
 import EntityUpdateEvent from '../events/EntityUpdateEvent';
 import { createInput, createListItem, scrollToListElement, showAlert } from '../gui';
 import { saveCurrentLevelToLocalStorage } from '../persistence/levelPersistence';
+import { getFileLink } from '../persistence/fileLevels';
 import VersionManager from '../version-manager/VersionManager';
 
 export default class EntityEditor {
@@ -52,6 +53,12 @@ export default class EntityEditor {
     // Level management
     ////////////////////////////////////////////////////////////////////////////////
 
+    private markSavedLocally = (levelId: string) => {
+        if (typeof document === 'undefined') return;
+        const status = document.getElementById('save-status');
+        if (status) status.textContent = getFileLink(levelId) ? 'Saved locally · Save to file' : 'Saved locally';
+    };
+
     public saveLevel = () => {
         const status = document.getElementById('save-status');
         if (status) status.textContent = 'Saving…';
@@ -67,8 +74,7 @@ export default class EntityEditor {
         if (!levelId) return;
         const levelMap = saveCurrentLevelToLocalStorage(levelId, this.registry, this.assetStore);
         this.versionManager.addLevelVersion(levelId, levelMap);
-        const status = document.getElementById('save-status');
-        if (status) status.textContent = 'Saved locally';
+        this.markSavedLocally(levelId);
     };
 
     public undoLevelChange = async () => {
@@ -88,6 +94,7 @@ export default class EntityEditor {
             await this.levelManager.loadLevelFromLevelMap(levelVersion);
             this.eventBus.emitEvent(EntityUpdateEvent);
             saveCurrentLevelToLocalStorage(Editor.editorSettings.selectedLevel, this.registry, this.assetStore);
+            this.markSavedLocally(Editor.editorSettings.selectedLevel);
             this.levelChangeLock = false;
         }
     };
@@ -109,6 +116,7 @@ export default class EntityEditor {
             await this.levelManager.loadLevelFromLevelMap(levelVersion);
             this.eventBus.emitEvent(EntityUpdateEvent);
             saveCurrentLevelToLocalStorage(Editor.editorSettings.selectedLevel, this.registry, this.assetStore);
+            this.markSavedLocally(Editor.editorSettings.selectedLevel);
             this.levelChangeLock = false;
         }
     };
@@ -124,6 +132,7 @@ export default class EntityEditor {
             await this.levelManager.loadLevelFromLevelMap(levelVersion);
             this.eventBus.emitEvent(EntityUpdateEvent);
             saveCurrentLevelToLocalStorage(Editor.editorSettings.selectedLevel, this.registry, this.assetStore);
+            this.markSavedLocally(Editor.editorSettings.selectedLevel);
             this.levelChangeLock = false;
         }
     };

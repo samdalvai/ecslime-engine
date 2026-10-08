@@ -73,6 +73,8 @@ The editor provides tools to design and manage entities, components, and levels:
     - Load entity sprites
     - Persist levels to the browser's local storage
 
+For local JSON editing in a Chromium browser, click **Connect folder** in the editor and select `dist/assets/levels`. The editor lists valid JSON files from that folder and keeps edits as local drafts. Click **Save to file** to update the selected JSON file; new levels ask for a filename on their first save. If the file changes outside the editor, choose whether to overwrite it or reload it. The game loads `grass.json` at startup, so reload the game after saving that file. JSON export remains available without folder access.
+
 # Game example
 
 A demonstration RPG-style 2D game built with this engine, where the player can cast spells and defeat enemies. Sprites have been created using [Piskel](https://www.piskelapp.com/p/create/sprite/). You can find a working demo of this game at this [link](https://samdalvai.github.io/ecslime-engine/).

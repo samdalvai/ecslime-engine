@@ -16,6 +16,7 @@ import EntityKilledEvent from '../../game/events/EntityKilledEvent';
 import * as GameSystems from '../../game/systems';
 import Editor from '../Editor';
 import EntityEditor from '../entity-editor/EntityEditor';
+import FileLevels, { FileChangedError, getFileLink, unlinkLevelFile } from '../persistence/fileLevels';
 import EntityDeleteEvent from '../events/EntityDeleteEvent';
 import EntityDuplicateEvent from '../events/EntityDuplicateEvent';
 import EntityPasteEvent from '../events/EntityPasteEvent';
@@ -44,6 +45,8 @@ export default class SidebarController {
     private selectionRenderFrame: number | null = null;
     private selectionRenderToken = 0;
     private entityEditor: EntityEditor;
+    private fileLevels = new FileLevels();
+    private folderRestoreStarted = false;
     private registry: Registry | null = null;
     private leftSidebar: HTMLElement | null = null;
     private entityChangedListenerBound = false;
@@ -136,6 +139,12 @@ export default class SidebarController {
         this.renderActiveSystems(rightSidebar);
         this.renderLevelSettings(rightSidebar);
         this.renderLevelManagement(rightSidebar, leftSidebar, registry, assetStore, levelManager);
+        if (!this.folderRestoreStarted) {
+            this.folderRestoreStarted = true;
+            void this.fileLevels.restore().then(() => {
+                this.renderLevelManagement(rightSidebar, leftSidebar, registry, assetStore, levelManager);
+            }).catch(error => console.warn('Could not restore level folder', error));
+        }
         if (!this.entityChangedListenerBound) {
             document.addEventListener('editor:entity-changed', () => {
                 if (this.leftSidebar) this.renderEntityList(this.leftSidebar);
@@ -374,6 +383,29 @@ export default class SidebarController {
         };
     };
 
+    private updateFileControls = async () => {
+        const levelId = Editor.editorSettings.selectedLevel;
+        const connectButton = document.getElementById('connect-level-folder') as HTMLButtonElement | null;
+        const saveButton = document.getElementById('save-level-file') as HTMLButtonElement | null;
+        const deleteButton = document.getElementById('delete-level') as HTMLButtonElement | null;
+        const status = document.getElementById('save-status');
+        if (!connectButton || !saveButton || !deleteButton) return;
+        const link = levelId ? getFileLink(levelId) : undefined;
+        connectButton.disabled = !this.fileLevels.isSupported;
+        connectButton.textContent = this.fileLevels.folderName ?? 'Connect folder';
+        saveButton.disabled = !levelId || !this.fileLevels.folderName || (!!link && !this.fileLevels.isConnected(levelId));
+        saveButton.textContent = link ? 'Save to file' : 'Save as file';
+        deleteButton.disabled = !!link;
+        if (!status || !levelId) return;
+        if (link && !this.fileLevels.isConnected(levelId)) status.textContent = 'Local draft · Connect folder';
+        else if (link) {
+            const dirty = await this.fileLevels.isDirty(levelId);
+            if (Editor.editorSettings.selectedLevel === levelId) {
+                status.textContent = dirty ? 'Saved locally · Save to file' : 'Saved to file';
+            }
+        } else status.textContent = 'Saved locally';
+    };
+
     private renderLevelManagement(
         rightSidebar: HTMLElement,
         leftSidebar: HTMLElement,
@@ -383,6 +415,8 @@ export default class SidebarController {
     ) {
         const localStorageLevelsSelect = document.querySelector('#local-storage-levels') as HTMLSelectElement;
         const newLevelButton = document.querySelector('#new-level') as HTMLButtonElement;
+        const connectFolderButton = document.querySelector('#connect-level-folder') as HTMLButtonElement;
+        const saveFileButton = document.querySelector('#save-level-file') as HTMLButtonElement;
         const levelNameInput = rightSidebar.querySelector('#level-name') as HTMLInputElement;
         const deleteLevelButton = document.querySelector('#delete-level') as HTMLButtonElement;
         const exportToJsonButton = rightSidebar.querySelector('#export-to-json') as HTMLButtonElement;
@@ -391,6 +425,8 @@ export default class SidebarController {
         if (
             !localStorageLevelsSelect ||
             !newLevelButton ||
+            !connectFolderButton ||
+            !saveFileButton ||
             !levelNameInput ||
             !deleteLevelButton ||
             !exportToJsonButton ||
@@ -404,7 +440,7 @@ export default class SidebarController {
         for (const key of levelKeys) {
             const level = loadLevelFromLocalStorage(key);
             if (!level) throw new Error('Could not read level from local storage');
-            options.push({ value: key, text: getLevelName(key, level) });
+            options.push({ value: key, text: getLevelName(key, level) + (getFileLink(key) ? ' · file' : '') });
         }
 
         localStorageLevelsSelect.replaceChildren();
@@ -436,7 +472,8 @@ export default class SidebarController {
             saveLevelToLocalStorage(levelId, { ...level, name });
             levelNameInput.value = name;
             const option = document.getElementById(levelId) as HTMLOptionElement | null;
-            if (option) option.textContent = name;
+            if (option) option.textContent = name + (getFileLink(levelId) ? ' · file' : '');
+            void this.updateFileControls();
         };
 
         localStorageLevelsSelect.onchange = async (event: Event): Promise<void> => {
@@ -444,6 +481,51 @@ export default class SidebarController {
             const levelId = target.value;
 
             await this.handleLevelSelect(levelId, levelManager, leftSidebar, rightSidebar);
+            void this.updateFileControls();
+        };
+
+        connectFolderButton.onclick = async () => {
+            try {
+                await this.fileLevels.connect();
+                this.renderLevelManagement(rightSidebar, leftSidebar, registry, assetStore, levelManager);
+            } catch (error) {
+                if (error instanceof DOMException && error.name === 'AbortError') return;
+                showAlert(error instanceof Error ? error.message : 'Could not connect level folder.');
+            }
+        };
+
+        saveFileButton.onclick = async () => {
+            const levelId = Editor.editorSettings.selectedLevel;
+            if (!levelId) return;
+            this.entityEditor.flushSave();
+            let filename: string | undefined;
+            if (!getFileLink(levelId)) {
+                const chosen = window.prompt('JSON filename in the connected folder', `${levelId}.json`);
+                if (chosen === null) return;
+                filename = chosen.trim();
+            }
+            try {
+                await this.fileLevels.save(levelId, filename);
+                this.renderLevelManagement(rightSidebar, leftSidebar, registry, assetStore, levelManager);
+            } catch (error) {
+                if (error instanceof FileChangedError) {
+                    if (window.confirm('This file changed on disk. Overwrite it with your local draft?')) {
+                        try {
+                            await this.fileLevels.save(levelId, undefined, true);
+                            this.renderLevelManagement(rightSidebar, leftSidebar, registry, assetStore, levelManager);
+                        } catch (saveError) {
+                            showAlert(saveError instanceof Error ? saveError.message : 'Could not save file.');
+                        }
+                    } else if (window.confirm('Reload the file from disk and discard your local draft?')) {
+                        try {
+                            await this.fileLevels.reload(levelId);
+                            await this.handleLevelSelect(levelId, levelManager, leftSidebar, rightSidebar);
+                        } catch (reloadError) {
+                            showAlert(reloadError instanceof Error ? reloadError.message : 'Could not reload file.');
+                        }
+                    }
+                } else showAlert(error instanceof Error ? error.message : 'Could not save file.');
+            }
         };
 
         newLevelButton.onclick = async () => {
@@ -481,10 +563,12 @@ export default class SidebarController {
                 throw new Error('No level selected');
             }
 
+            if (getFileLink(Editor.editorSettings.selectedLevel)) return;
             const selectedLevel = loadLevelFromLocalStorage(Editor.editorSettings.selectedLevel);
             if (!selectedLevel) throw new Error('Could not read level from local storage');
             if (!window.confirm(`Delete level ${getLevelName(Editor.editorSettings.selectedLevel, selectedLevel)}? This cannot be undone.`)) return;
             this.entityEditor.flushSave();
+            unlinkLevelFile(Editor.editorSettings.selectedLevel);
             deleteLevelFromLocalStorage(Editor.editorSettings.selectedLevel);
             const optionToDelete = document.getElementById(Editor.editorSettings.selectedLevel) as HTMLOptionElement;
 
@@ -519,6 +603,7 @@ export default class SidebarController {
             this.entityEditor.flushSave();
             saveLevelToJson(levelId, registry, assetStore);
         };
+        void this.updateFileControls();
         loadFromJsonButton.onclick = () => {
             const input = document.createElement('input');
             input.type = 'file';
@@ -607,6 +692,7 @@ export default class SidebarController {
 
         saveEditorSettingsToLocalStorage();
         this.entityEditor.saveLevel();
+        void this.updateFileControls();
 
         Editor.loadingLevel = false;
     };
