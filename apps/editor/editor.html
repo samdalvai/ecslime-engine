@@ -15,24 +15,53 @@
                     <label for="local-storage-levels">Level</label>
                     <select id="local-storage-levels"></select>
                     <button id="new-level" type="button" title="Create level">New</button>
-                    <button id="delete-level" type="button" class="danger-quiet" title="Delete selected level">Delete</button>
+                    <button id="delete-level" type="button" class="danger-quiet" title="Delete selected level">
+                        Delete
+                    </button>
                 </div>
                 <div class="toolbar-group edit-tools">
                     <button id="undo-change" type="button" title="Undo">Undo</button>
                     <button id="redo-change" type="button" title="Redo">Redo</button>
                 </div>
                 <div class="toolbar-group toolbar-end">
-                    <button id="toggle-left-panel" class="panel-toggle" type="button" title="Toggle entity list" aria-controls="leftSidebar" aria-expanded="true">Entities</button>
-                    <button id="toggle-right-panel" class="panel-toggle" type="button" title="Toggle inspector" aria-controls="rightSidebar" aria-expanded="true">Inspector</button>
+                    <button
+                        id="toggle-left-panel"
+                        class="panel-toggle"
+                        type="button"
+                        title="Toggle entity list"
+                        aria-controls="leftSidebar"
+                        aria-expanded="true"
+                    >
+                        Entities
+                    </button>
+                    <button
+                        id="toggle-right-panel"
+                        class="panel-toggle"
+                        type="button"
+                        title="Toggle inspector"
+                        aria-controls="rightSidebar"
+                        aria-expanded="true"
+                    >
+                        Inspector
+                    </button>
                     <button id="toggle-test-mode" type="button" class="primary">Play</button>
                 </div>
             </header>
             <div id="workspace">
                 <aside id="leftSidebar" class="panel" aria-label="Entities">
-                    <div class="panel-heading"><div><span class="eyebrow">SCENE</span><h2>Entities</h2></div><button id="add-entity" class="primary" type="button">+ Add</button></div>
+                    <div class="panel-heading">
+                        <div>
+                            <span class="eyebrow">SCENE</span>
+                            <h2>Entities</h2>
+                        </div>
+                        <button id="add-entity" class="primary" type="button">+ Add</button>
+                    </div>
                     <label class="search-field" for="entity-search">Search entities</label>
                     <input id="entity-search" type="search" placeholder="Name, group, or ID" autocomplete="off" />
-                    <div class="panel-actions"><button id="import-entities" type="button">Import</button><button id="export-entities" type="button">Export selected</button></div>
+                    <div class="panel-actions">
+                        <button id="import-entities" type="button">Import</button
+                        ><button id="export-entities" type="button">Export selected</button>
+                    </div>
                     <ul id="entity-list" aria-label="Entity list"></ul>
                     <p id="entity-count" class="panel-footnote"></p>
                 </aside>
@@ -47,20 +76,41 @@
                 </main>
                 <aside id="rightSidebar" class="panel" aria-label="Inspector and settings">
                     <section class="inspector-section">
-                        <div class="panel-heading"><div><span class="eyebrow">SELECTION</span><h2>Inspector</h2></div></div>
+                        <div class="panel-heading">
+                            <div>
+                                <span class="eyebrow">SELECTION</span>
+                                <h2>Inspector</h2>
+                            </div>
+                        </div>
                         <ul id="inspector-list" aria-label="Selected entity properties"></ul>
                     </section>
                     <details class="settings-section" open>
                         <summary>Level settings</summary>
                         <div id="level-settings">
-                            <div class="form-row"><label for="level-name">Name</label><input type="text" id="level-name" autocomplete="off" /></div>
-                            <div class="form-row"><label for="map-width">Width</label><input type="number" id="map-width" min="1" /></div>
-                            <div class="form-row"><label for="map-height">Height</label><input type="number" id="map-height" min="1" /></div>
-                            <div class="form-row"><label for="show-grid">Show grid</label><input type="checkbox" id="show-grid" /></div>
-                            <div class="form-row"><label for="snap-grid">Snap to grid</label><input type="checkbox" id="snap-grid" /></div>
-                            <div class="form-row"><label for="grid-side">Grid size</label><input type="number" id="grid-side" min="1" /></div>
+                            <div class="form-row">
+                                <label for="level-name">Name</label
+                                ><input type="text" id="level-name" autocomplete="off" />
+                            </div>
+                            <div class="form-row">
+                                <label for="map-width">Width</label><input type="number" id="map-width" min="1" />
+                            </div>
+                            <div class="form-row">
+                                <label for="map-height">Height</label><input type="number" id="map-height" min="1" />
+                            </div>
+                            <div class="form-row">
+                                <label for="show-grid">Show grid</label><input type="checkbox" id="show-grid" />
+                            </div>
+                            <div class="form-row">
+                                <label for="snap-grid">Snap to grid</label><input type="checkbox" id="snap-grid" />
+                            </div>
+                            <div class="form-row">
+                                <label for="grid-side">Grid size</label><input type="number" id="grid-side" min="1" />
+                            </div>
                         </div>
-                        <div class="panel-actions"><button id="export-to-json" type="button">Export level</button><button id="load-from-json" type="button">Import level</button></div>
+                        <div class="panel-actions">
+                            <button id="export-to-json" type="button">Export level</button
+                            ><button id="load-from-json" type="button">Import level</button>
+                        </div>
                     </details>
                     <details class="settings-section">
                         <summary>Game systems</summary>
@@ -70,20 +120,29 @@
             </div>
         </div>
         <dialog id="shortcuts-dialog">
-            <div class="dialog-heading"><h2>Keyboard shortcuts</h2><button type="button" id="close-shortcuts">Close</button></div>
+            <div class="dialog-heading">
+                <h2>Keyboard shortcuts</h2>
+                <button type="button" id="close-shortcuts">Close</button>
+            </div>
             <div class="shortcut-grid">
-                <span>Select / move</span><kbd>Click / drag</kbd>
-                <span>Select multiple</span><kbd>Shift + drag</kbd>
-                <span>Pan</span><kbd>Middle drag or Mod + drag</kbd>
-                <span>Zoom</span><kbd>Mouse wheel</kbd>
-                <span>Copy / paste</span><kbd>Mod + C / V</kbd>
-                <span>Undo / redo</span><kbd>Mod + Z / Shift + Mod + Z</kbd>
-                <span>Test mode</span><kbd>F2</kbd>
+                <span>Select / move</span><kbd>Click / drag</kbd> <span>Select multiple</span><kbd>Shift + drag</kbd>
+                <span>Pan</span><kbd>Middle drag or Mod + drag</kbd> <span>Zoom</span><kbd>Mouse wheel</kbd>
+                <span>Copy / paste</span><kbd>Mod + C / V</kbd> <span>Undo / redo</span
+                ><kbd>Mod + Z / Shift + Mod + Z</kbd> <span>Test mode</span><kbd>F2</kbd>
             </div>
             <p>Mod means <span id="modifier-name">Ctrl</span> on this device.</p>
         </dialog>
-        <div id="custom-alert" class="custom-alert hidden" role="alertdialog" aria-modal="true" aria-labelledby="custom-alert-message">
-            <div class="custom-alert-box"><p id="custom-alert-message"></p><button id="close-alert" type="button">OK</button></div>
+        <div
+            id="custom-alert"
+            class="custom-alert hidden"
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="custom-alert-message"
+        >
+            <div class="custom-alert-box">
+                <p id="custom-alert-message"></p>
+                <button id="close-alert" type="button">OK</button>
+            </div>
         </div>
         <script type="module" src="./main.ts"></script>
     </body>

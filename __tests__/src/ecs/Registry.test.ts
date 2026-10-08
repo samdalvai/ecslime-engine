@@ -337,8 +337,12 @@ describe('Testing Registry related functions', () => {
 
         registry.update();
 
-        expect(() => entity.getComponent(MyComponent2)).toThrow('MyComponent2 is missing from entity ' + entity.getId());
-        expect(() => registry.getComponent(entity, MyComponent2)).toThrow('MyComponent2 is missing from entity ' + entity.getId());
+        expect(() => entity.getComponent(MyComponent2)).toThrow(
+            'MyComponent2 is missing from entity ' + entity.getId(),
+        );
+        expect(() => registry.getComponent(entity, MyComponent2)).toThrow(
+            'MyComponent2 is missing from entity ' + entity.getId(),
+        );
     });
 
     test('Should throw when another entity has the requested component', () => {
@@ -351,7 +355,9 @@ describe('Testing Registry related functions', () => {
         registry.update();
 
         expect(() => entity.getComponent(MyComponent)).toThrow('MyComponent is missing from entity ' + entity.getId());
-        expect(() => registry.getComponent(entity, MyComponent)).toThrow('MyComponent is missing from entity ' + entity.getId());
+        expect(() => registry.getComponent(entity, MyComponent)).toThrow(
+            'MyComponent is missing from entity ' + entity.getId(),
+        );
     });
 
     ////////////////////////////////////////////////////////////////////////////////

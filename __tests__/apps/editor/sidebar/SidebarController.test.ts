@@ -33,12 +33,13 @@ class NodeStub {
     }
 }
 
-const makeEntity = (id: number) => ({
-    getId: () => id,
-    getTag: () => undefined,
-    getGroup: () => undefined,
-    toBeKilled: false,
-}) as unknown as Entity;
+const makeEntity = (id: number) =>
+    ({
+        getId: () => id,
+        getTag: () => undefined,
+        getGroup: () => undefined,
+        toBeKilled: false,
+    }) as unknown as Entity;
 
 describe('Batched editor sidebar rendering', () => {
     const originalDocument = Object.getOwnPropertyDescriptor(globalThis, 'document');
@@ -137,7 +138,8 @@ describe('Batched editor sidebar rendering', () => {
         const controller = new SidebarController({} as EntityEditor);
         const entities = Array.from({ length: 125 }, (_, index) => makeEntity(index));
         Reflect.set(controller, 'registry', { getAllEntities: () => entities } as unknown as Registry);
-        const renderEntityList = (controller as unknown as { renderEntityList: (sidebar: HTMLElement) => void }).renderEntityList;
+        const renderEntityList = (controller as unknown as { renderEntityList: (sidebar: HTMLElement) => void })
+            .renderEntityList;
 
         renderEntityList(sidebar);
         expect(list.children).toHaveLength(60);

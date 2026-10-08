@@ -70,13 +70,22 @@ describe('Testing LevelManager', () => {
             sounds: [],
             mapWidth: 64,
             mapHeight: 64,
-            entities: [{
-                group: 'obstacles',
-                components: [{
-                    name: 'MockTransformComponent',
-                    properties: { position: { x: 12, y: 34 }, scale: { x: 1, y: 1 }, rotation: 0, isFixed: false },
-                }],
-            }],
+            entities: [
+                {
+                    group: 'obstacles',
+                    components: [
+                        {
+                            name: 'MockTransformComponent',
+                            properties: {
+                                position: { x: 12, y: 34 },
+                                scale: { x: 1, y: 1 },
+                                rotation: 0,
+                                isFixed: false,
+                            },
+                        },
+                    ],
+                },
+            ],
         };
 
         await levelManager.loadLevelFromLevelMap(level);
