@@ -46,14 +46,14 @@ export const saveCurrentLevelToLocalStorage = (levelId: string | null, registry:
     }
 
     const currentLevelMap = serializeNamedLevel(levelId, registry, assetStore);
-    const jsonString = JSON.stringify(currentLevelMap, null, 2);
+    const jsonString = JSON.stringify(currentLevelMap);
     localStorage.setItem(levelId, jsonString);
     console.log('Level snapshot saved to local storage');
     return currentLevelMap;
 };
 
 export const saveLevelToLocalStorage = (levelId: string, levelMap: LevelMap) => {
-    const jsonString = JSON.stringify({ ...levelMap, name: getLevelName(levelId, levelMap) }, null, 2);
+    const jsonString = JSON.stringify({ ...levelMap, name: getLevelName(levelId, levelMap) });
     localStorage.setItem(levelId, jsonString);
     console.log('Level snapshot saved to local storage');
 };
