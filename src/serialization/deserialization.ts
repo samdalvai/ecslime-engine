@@ -4,6 +4,8 @@ import Registry from '../ecs/Registry';
 import { EntityMap } from '../types/map';
 import { ComponentCatalog } from './componentCatalog';
 
+// TODO: this logic is brittle, it relies on having components with default parameters in the constructor, and also we cannot
+// handle enums in a good way
 export const deserializeEntity = (
     entityMap: EntityMap,
     registry: Registry,
