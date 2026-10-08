@@ -1,19 +1,33 @@
+import { describe, expect, test } from '@jest/globals';
 import { AssetStore, Engine, EventBus, LevelManager, LevelMap, Registry } from 'ecslime-engine';
 
 import Editor from '../../../../apps/editor/Editor';
 import EntityEditor from '../../../../apps/editor/entity-editor/EntityEditor';
-import { saveLevelToJson, saveLevelToLocalStorage, serializeNamedLevel } from '../../../../apps/editor/persistence/levelPersistence';
 import { resolveLevelName } from '../../../../apps/editor/persistence/levelNames';
+import {
+    saveLevelToJson,
+    saveLevelToLocalStorage,
+    serializeNamedLevel,
+} from '../../../../apps/editor/persistence/levelPersistence';
 import VersionManager from '../../../../apps/editor/version-manager/VersionManager';
 
-const emptyLevel = (name?: string): LevelMap => ({ name, textures: [], sounds: [], mapWidth: 640, mapHeight: 640, entities: [] });
+const emptyLevel = (name?: string): LevelMap => ({
+    name,
+    textures: [],
+    sounds: [],
+    mapWidth: 640,
+    mapHeight: 640,
+    entities: [],
+});
 
 const mockStorage = () => {
     const data = new Map<string, string>();
     Object.defineProperty(globalThis, 'localStorage', {
         configurable: true,
         value: {
-            get length() { return data.size; },
+            get length() {
+                return data.size;
+            },
             key: (index: number) => [...data.keys()][index] ?? null,
             getItem: (key: string) => data.get(key) ?? null,
             setItem: (key: string, value: string) => data.set(key, value),
@@ -75,7 +89,13 @@ describe('level names', () => {
         let blob: Blob | undefined;
         const link = { href: '', download: '', click: () => undefined };
         Object.defineProperty(globalThis, 'document', { configurable: true, value: { createElement: () => link } });
-        Object.defineProperty(URL, 'createObjectURL', { configurable: true, value: (value: Blob) => { blob = value; return 'blob:level'; } });
+        Object.defineProperty(URL, 'createObjectURL', {
+            configurable: true,
+            value: (value: Blob) => {
+                blob = value;
+                return 'blob:level';
+            },
+        });
         Object.defineProperty(URL, 'revokeObjectURL', { configurable: true, value: () => undefined });
         try {
             saveLevelToJson('level-0', new Registry(), assetStore);
@@ -99,7 +119,10 @@ describe('level names', () => {
         versions.addLevelVersion('level-0', { ...emptyLevel('Old name'), mapWidth: 500 });
         versions.addLevelVersion('level-0', { ...emptyLevel('Old name'), mapWidth: 700 });
         const manager = {
-            loadLevelFromLevelMap: async (level: LevelMap) => { Engine.mapWidth = level.mapWidth; Engine.mapHeight = level.mapHeight; },
+            loadLevelFromLevelMap: async (level: LevelMap) => {
+                Engine.mapWidth = level.mapWidth;
+                Engine.mapHeight = level.mapHeight;
+            },
         } as unknown as LevelManager;
         const eventBus = { emitEvent: () => undefined } as unknown as EventBus;
         const editor = new EntityEditor(new Registry(), assetStore, eventBus, manager, versions);

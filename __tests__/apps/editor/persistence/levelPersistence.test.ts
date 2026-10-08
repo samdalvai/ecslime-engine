@@ -1,3 +1,4 @@
+import { describe, expect, test } from '@jest/globals';
 import { AssetStore, Component, Registry } from 'ecslime-engine';
 
 import { saveCurrentLevelToLocalStorage } from '../../../../apps/editor/persistence/levelPersistence';
@@ -16,7 +17,10 @@ describe('Editor level persistence', () => {
                 setItem: (key: string, value: string) => stored.set(key, value),
             },
         });
-        stored.set('level-0', JSON.stringify({ name: 'Forest', textures: [], sounds: [], mapWidth: 640, mapHeight: 640, entities: [] }));
+        stored.set(
+            'level-0',
+            JSON.stringify({ name: 'Forest', textures: [], sounds: [], mapWidth: 640, mapHeight: 640, entities: [] }),
+        );
         const registry = new Registry();
         const assetStore = {
             getTexturesFilePaths: () => [],

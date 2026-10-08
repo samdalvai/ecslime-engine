@@ -21,8 +21,8 @@ import EntityDuplicateEvent from '../events/EntityDuplicateEvent';
 import EntityPasteEvent from '../events/EntityPasteEvent';
 import EntitySelectEvent from '../events/EntitySelectEvent';
 import EntityUpdateEvent from '../events/EntityUpdateEvent';
-import { getLevelName, resolveLevelName } from '../persistence/levelNames';
 import { createInput, createListItem, showAlert } from '../gui';
+import { getLevelName, resolveLevelName } from '../persistence/levelNames';
 import {
     loadLevelFromLocalStorage,
     saveEntitiesToJson,
@@ -483,7 +483,12 @@ export default class SidebarController {
 
             const selectedLevel = loadLevelFromLocalStorage(Editor.editorSettings.selectedLevel);
             if (!selectedLevel) throw new Error('Could not read level from local storage');
-            if (!window.confirm(`Delete level ${getLevelName(Editor.editorSettings.selectedLevel, selectedLevel)}? This cannot be undone.`)) return;
+            if (
+                !window.confirm(
+                    `Delete level ${getLevelName(Editor.editorSettings.selectedLevel, selectedLevel)}? This cannot be undone.`,
+                )
+            )
+                return;
             this.entityEditor.flushSave();
             deleteLevelFromLocalStorage(Editor.editorSettings.selectedLevel);
             const optionToDelete = document.getElementById(Editor.editorSettings.selectedLevel) as HTMLOptionElement;
@@ -543,7 +548,9 @@ export default class SidebarController {
                             }
                             const name = resolveLevelName(nextLevelId, levelMap.name);
                             if (!name) {
-                                showAlert('A level with this name already exists. Choose another name before importing.');
+                                showAlert(
+                                    'A level with this name already exists. Choose another name before importing.',
+                                );
                                 return;
                             }
 

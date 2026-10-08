@@ -25,9 +25,12 @@ const availableName = (base: string, isTaken: (name: string) => boolean): string
 };
 
 // A blank request uses the stable storage ID; an explicit duplicate is rejected.
-export const resolveLevelName = (levelId: string, requestedName: string | undefined, exceptLevelId?: string): string | null => {
+export const resolveLevelName = (
+    levelId: string,
+    requestedName: string | undefined,
+    exceptLevelId?: string,
+): string | null => {
     const name = requestedName?.trim();
     if (name) return isLevelNameTaken(name, exceptLevelId) ? null : name;
     return availableName(levelId, candidate => isLevelNameTaken(candidate, exceptLevelId));
 };
-
