@@ -34,9 +34,13 @@ export const deserializeEntity = (
         // TODO 2: add possible metadata to modify what comes from json
         const comp = new ComponentClass();
 
-        for (const [property, value] of Object.entries(component.properties)) {
-            (comp as Record<string, unknown>)[property] = value;
-        }
+        // for (const [property, value] of Object.entries(component.properties)) {
+        //     (comp as Record<string, unknown>)[property] = value;
+        // }
+        // console.log(`after init ${ComponentClass.name} ${JSON.stringify(comp)}`);
+
+        // OR even easier
+        Object.assign(comp, component.properties);
         console.log(`after init ${ComponentClass.name} ${JSON.stringify(comp)}`);
 
         entity.addComponent(ComponentClass, ...parameterValues);
