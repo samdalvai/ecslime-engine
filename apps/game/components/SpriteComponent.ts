@@ -37,4 +37,9 @@ export default class SpriteComponent extends Component {
 
         this.isVisible = isVisibile;
     }
+
+    // TODO: use real metadata
+    protected static override metadata(): any {
+        return 'Whater';
+    }
 }
