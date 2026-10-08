@@ -1,5 +1,6 @@
 import { Component, DEFAULT_SPRITE, Flip } from 'ecslime-engine';
 
+// TODO: evaluate if it makes sense to make this component an ECS engine default, along with rendering systems and potentially other components
 export default class SpriteComponent extends Component {
     assetId: string;
     width: number;

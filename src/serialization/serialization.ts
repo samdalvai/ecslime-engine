@@ -14,6 +14,7 @@ export const serializeEntity = (entity: Entity): EntityMap => {
             name: component.constructor.name,
             properties: {
                 ...component,
+                // TODO: entity serialization on the engine side should not know anything about these fields
                 ...('startTime' in component ? { startTime: 0 } : {}),
                 ...('followedEntity' in component ? { followedEntity: null } : {}),
             },
