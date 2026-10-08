@@ -1,4 +1,6 @@
 {
+  "id": "snapshot",
+  "name": "snapshot",
   "textures": [
     {
       "assetId": "tiles_dark",

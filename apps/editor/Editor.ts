@@ -22,7 +22,7 @@ import ScrollEvent from './events/ScrollEvent';
 import { closeAlert } from './gui';
 import { loadLevelFromLocalStorage, saveLevelToLocalStorage } from './persistence/levelPersistence';
 import {
-    getAllLevelKeysFromLocalStorage,
+    getAllLevelIdsFromLocalStorage,
     loadEditorSettingsFromLocalStorage,
     saveEditorSettingsToLocalStorage,
 } from './persistence/persistence';
@@ -240,9 +240,9 @@ export default class Editor extends Engine {
         this.registry.addSystem(EditorSystems.EntityDragSystem);
         this.registry.addSystem(EditorSystems.RenderInvisibleEntitiesSystem);
 
-        const levelKeys = getAllLevelKeysFromLocalStorage();
+        const levelIds = getAllLevelIdsFromLocalStorage();
 
-        if (levelKeys.length > 0) {
+        if (levelIds.length > 0) {
             if (Editor.editorSettings.selectedLevel) {
                 const level = loadLevelFromLocalStorage(Editor.editorSettings.selectedLevel);
                 if (!level) {
@@ -252,23 +252,22 @@ export default class Editor extends Engine {
                 await this.levelManager.loadLevelFromLevelMap(level);
                 this.versionManager.addLevelVersion(Editor.editorSettings.selectedLevel, level);
             } else {
-                const level = loadLevelFromLocalStorage(levelKeys[0]);
+                const level = loadLevelFromLocalStorage(levelIds[0]);
                 if (!level) {
                     throw new Error('Could not read level from local storage');
                 }
 
                 await this.levelManager.loadLevelFromLevelMap(level);
-                Editor.editorSettings.selectedLevel = levelKeys[0];
+                Editor.editorSettings.selectedLevel = levelIds[0];
                 saveEditorSettingsToLocalStorage();
-                this.versionManager.addLevelVersion(levelKeys[0], level);
+                this.versionManager.addLevelVersion(levelIds[0], level);
             }
         } else {
             console.log('No level available, loading default empty level');
-            const { levelId, levelMap } = this.levelManager.getDefaultLevel('level-0');
-            levelMap.name = levelId;
-            saveLevelToLocalStorage(levelId, levelMap);
+            const levelMap = this.levelManager.getDefaultLevel(crypto.randomUUID(), 'New Level');
+            saveLevelToLocalStorage(levelMap);
             await this.levelManager.loadLevelFromLevelMap(levelMap);
-            Editor.editorSettings.selectedLevel = levelId;
+            Editor.editorSettings.selectedLevel = levelMap.id;
             saveEditorSettingsToLocalStorage();
             this.versionManager.addLevelVersion(Editor.editorSettings.selectedLevel, levelMap);
         }

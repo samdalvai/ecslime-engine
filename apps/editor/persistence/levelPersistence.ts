@@ -1,22 +1,23 @@
 import { AssetStore, Entity, LevelMap, Registry, serializeEntities, serializeLevel } from 'ecslime-engine';
 
-import { getLevelName } from './levelNames';
+import { levelStorageKey } from './persistence';
 
-export const serializeNamedLevel = (levelId: string, registry: Registry, assetStore: AssetStore): LevelMap => {
+export const serializeStoredLevel = (levelId: string, registry: Registry, assetStore: AssetStore): LevelMap => {
     registry.update();
     const storedLevel = loadLevelFromLocalStorage(levelId);
     if (!storedLevel) throw new Error('Could not read level from local storage');
-    return { ...serializeLevel(registry, assetStore), name: getLevelName(levelId, storedLevel) };
+    return { ...serializeLevel(registry, assetStore), id: storedLevel.id, name: storedLevel.name };
 };
 
 export const saveLevelToJson = (levelId: string, registry: Registry, assetStore: AssetStore): void => {
-    const jsonString = JSON.stringify(serializeNamedLevel(levelId, registry, assetStore), null, 2);
+    const level = serializeStoredLevel(levelId, registry, assetStore);
+    const jsonString = JSON.stringify(level, null, 2);
     const blob = new Blob([jsonString], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
 
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'snapshot.json';
+    a.download = `${level.name.replace(/\s+/g, '-')}.json`;
     a.click();
 
     URL.revokeObjectURL(url);
@@ -45,20 +46,18 @@ export const saveCurrentLevelToLocalStorage = (levelId: string | null, registry:
         throw new Error('Could not determine currently selected level');
     }
 
-    const currentLevelMap = serializeNamedLevel(levelId, registry, assetStore);
-    const jsonString = JSON.stringify(currentLevelMap, null, 2);
-    localStorage.setItem(levelId, jsonString);
-    console.log('Level snapshot saved to local storage');
+    const currentLevelMap = serializeStoredLevel(levelId, registry, assetStore);
+    saveLevelToLocalStorage(currentLevelMap);
     return currentLevelMap;
 };
 
-export const saveLevelToLocalStorage = (levelId: string, levelMap: LevelMap) => {
-    const jsonString = JSON.stringify({ ...levelMap, name: getLevelName(levelId, levelMap) }, null, 2);
-    localStorage.setItem(levelId, jsonString);
+export const saveLevelToLocalStorage = (levelMap: LevelMap) => {
+    const jsonString = JSON.stringify(levelMap, null, 2);
+    localStorage.setItem(levelStorageKey(levelMap.id), jsonString);
     console.log('Level snapshot saved to local storage');
 };
 
 export const loadLevelFromLocalStorage = (levelId: string): LevelMap | undefined => {
-    const jsonString = localStorage.getItem(levelId) as any;
+    const jsonString = localStorage.getItem(levelStorageKey(levelId));
     return jsonString ? (JSON.parse(jsonString) as LevelMap) : undefined;
 };

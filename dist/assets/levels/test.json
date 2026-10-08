@@ -1,4 +1,6 @@
 {
+  "id": "test",
+  "name": "test",
   "textures": [
     {
       "assetId": "grass_dirt",

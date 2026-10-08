@@ -18,8 +18,16 @@ describe('Editor level persistence', () => {
             },
         });
         stored.set(
-            'level-0',
-            JSON.stringify({ name: 'Forest', textures: [], sounds: [], mapWidth: 640, mapHeight: 640, entities: [] }),
+            'level:level-0',
+            JSON.stringify({
+                id: 'level-0',
+                name: 'Forest',
+                textures: [],
+                sounds: [],
+                mapWidth: 640,
+                mapHeight: 640,
+                entities: [],
+            }),
         );
         const registry = new Registry();
         const assetStore = {
@@ -32,7 +40,8 @@ describe('Editor level persistence', () => {
 
         saveCurrentLevelToLocalStorage('level-0', registry, assetStore);
 
-        const written = JSON.parse(stored.get('level-0') as string);
+        const written = JSON.parse(stored.get('level:level-0') as string);
+        expect(written.id).toBe('level-0');
         expect(written.name).toBe('Forest');
         expect(written.entities[0].components).toEqual([{ name: 'MarkerComponent', properties: { value: 7 } }]);
     });
