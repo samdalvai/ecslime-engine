@@ -27,6 +27,7 @@ const mockStorage = () => {
     let reads = 0;
     Object.defineProperty(globalThis, 'localStorage', {
         configurable: true,
+        writable: true,
         value: {
             get length() {
                 return data.size;
