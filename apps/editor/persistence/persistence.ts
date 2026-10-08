@@ -2,7 +2,9 @@ import Editor from '../Editor';
 import { EditorSettings } from '../types';
 
 const EDITOR_SETTINGS_KEY = 'editor-settings';
-const LEVEL_KEY = 'level';
+const LEVEL_KEY_PREFIX = 'level:';
+
+export const levelStorageKey = (levelId: string) => `${LEVEL_KEY_PREFIX}${levelId}`;
 
 export const saveEditorSettingsToLocalStorage = () => {
     const settings: EditorSettings = Editor.editorSettings;
@@ -16,52 +18,14 @@ export const loadEditorSettingsFromLocalStorage = (): EditorSettings | undefined
 };
 
 export const deleteLevelFromLocalStorage = (levelId: string) => {
-    localStorage.removeItem(levelId);
+    localStorage.removeItem(levelStorageKey(levelId));
 };
 
-export const getAllLevelKeysFromLocalStorage = () => {
-    const levelKeys: string[] = [];
-
+export const getAllLevelIdsFromLocalStorage = (): string[] => {
+    const levelIds: string[] = [];
     for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
-
-        if (key && key.startsWith(LEVEL_KEY)) {
-            levelKeys.push(key);
-        }
+        if (key?.startsWith(LEVEL_KEY_PREFIX)) levelIds.push(key.slice(LEVEL_KEY_PREFIX.length));
     }
-
-    return sortLevelKeys(levelKeys);
-};
-
-export const getNextLevelId = (levelKeys: string[]) => {
-    let availableId = 0;
-
-    const sortedLevelKeys = sortLevelKeys(levelKeys);
-
-    for (const key of sortedLevelKeys) {
-        const numberPart = key.replace(LEVEL_KEY + '-', '');
-        const numberPartParsed = parseInt(numberPart);
-
-        if (numberPartParsed !== availableId) {
-            break;
-        }
-
-        availableId++;
-    }
-
-    return LEVEL_KEY + '-' + availableId;
-};
-
-export const sortLevelKeys = (levelKeys: string[]) => {
-    const sortedKeys = levelKeys.sort((keyA, keyB) => {
-        const numberPartA = keyA.replace(LEVEL_KEY + '-', '');
-        const numberPartParsedA = parseInt(numberPartA);
-
-        const numberPartB = keyB.replace(LEVEL_KEY + '-', '');
-        const numberPartParsedB = parseInt(numberPartB);
-
-        return numberPartParsedA - numberPartParsedB;
-    });
-
-    return sortedKeys;
+    return levelIds;
 };

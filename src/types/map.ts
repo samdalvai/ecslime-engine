@@ -1,11 +1,14 @@
 export type LevelMap = {
-    name?: string;
+    id: string;
+    name: string;
     textures: Asset[];
     sounds: Asset[];
     mapWidth: number;
     mapHeight: number;
     entities: EntityMap[];
 };
+
+export type LevelData = Omit<LevelMap, 'id' | 'name'>;
 
 export type Asset = {
     assetId: string;

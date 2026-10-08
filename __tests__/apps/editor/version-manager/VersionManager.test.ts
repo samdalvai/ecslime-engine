@@ -8,6 +8,8 @@ describe('Testing version manager related functions', () => {
         const versionManager = new VersionManager();
 
         const level: LevelMap = {
+            id: 'test',
+            name: 'Test',
             textures: [],
             sounds: [],
             mapWidth: 100,
@@ -26,6 +28,8 @@ describe('Testing version manager related functions', () => {
         const versionManager = new VersionManager();
 
         const level1: LevelMap = {
+            id: 'test',
+            name: 'Test',
             textures: [],
             sounds: [],
             mapWidth: 100,
@@ -34,6 +38,8 @@ describe('Testing version manager related functions', () => {
         };
 
         const level2: LevelMap = {
+            id: 'test',
+            name: 'Test',
             textures: [],
             sounds: [],
             mapWidth: 200,
@@ -54,6 +60,8 @@ describe('Testing version manager related functions', () => {
         const versionManager = new VersionManager();
 
         const level1: LevelMap = {
+            id: 'test',
+            name: 'Test',
             textures: [],
             sounds: [],
             mapWidth: 100,
@@ -62,6 +70,8 @@ describe('Testing version manager related functions', () => {
         };
 
         const level2: LevelMap = {
+            id: 'test',
+            name: 'Test',
             textures: [],
             sounds: [],
             mapWidth: 200,
@@ -80,6 +90,8 @@ describe('Testing version manager related functions', () => {
         const versionManager = new VersionManager();
 
         const level1: LevelMap = {
+            id: 'test',
+            name: 'Test',
             textures: [],
             sounds: [],
             mapWidth: 100,
@@ -88,6 +100,8 @@ describe('Testing version manager related functions', () => {
         };
 
         const level2: LevelMap = {
+            id: 'test',
+            name: 'Test',
             textures: [],
             sounds: [],
             mapWidth: 200,

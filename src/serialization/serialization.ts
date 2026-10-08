@@ -2,7 +2,7 @@ import Engine from '../Engine';
 import AssetStore from '../asset-store/AssetStore';
 import Entity from '../ecs/Entity';
 import Registry from '../ecs/Registry';
-import { ComponentMap, EntityMap, LevelMap } from '../types/map';
+import { ComponentMap, EntityMap, LevelData } from '../types/map';
 
 export const serializeEntity = (entity: Entity): EntityMap => {
     const components: ComponentMap[] = [];
@@ -40,7 +40,7 @@ export const serializeEntities = (entities: Entity[]): EntityMap[] => {
     return entitiesMap;
 };
 
-export const serializeLevel = (registry: Registry, assetStore: AssetStore): LevelMap => {
+export const serializeLevel = (registry: Registry, assetStore: AssetStore): LevelData => {
     const entities = registry.getAllEntities();
     return {
         textures: assetStore.getTexturesFilePaths(),

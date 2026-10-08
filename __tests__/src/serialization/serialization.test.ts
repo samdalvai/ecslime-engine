@@ -6,7 +6,7 @@ import Component from '../../../src/ecs/Component';
 import Entity from '../../../src/ecs/Entity';
 import Registry from '../../../src/ecs/Registry';
 import { serializeEntities, serializeEntity, serializeLevel } from '../../../src/serialization/serialization';
-import { EntityMap, LevelMap } from '../../../src/types/map';
+import { EntityMap, LevelData } from '../../../src/types/map';
 import { MockRigidBodyComponent, MockTransformComponent } from '../mocks/components';
 
 describe('Testing serialization related functions', () => {
@@ -355,7 +355,7 @@ describe('Testing serialization related functions', () => {
         const entity = registry.createEntity();
         entity.addComponent(MockTransformComponent, { x: 100, y: 100 }, { x: 1, y: 1 }, 0);
 
-        const expected: LevelMap = {
+        const expected: LevelData = {
             mapWidth: 500,
             mapHeight: 500,
             entities: [
@@ -395,7 +395,7 @@ describe('Testing serialization related functions', () => {
         const entity2 = registry.createEntity();
         entity2.addComponent(MockTransformComponent, { x: 200, y: 200 }, { x: 1, y: 1 }, 0);
 
-        const expected: LevelMap = {
+        const expected: LevelData = {
             mapWidth: 500,
             mapHeight: 500,
             entities: [
@@ -451,7 +451,7 @@ describe('Testing serialization related functions', () => {
         entity1.kill();
         registry.update();
 
-        const expected: LevelMap = {
+        const expected: LevelData = {
             mapWidth: 500,
             mapHeight: 500,
             entities: [

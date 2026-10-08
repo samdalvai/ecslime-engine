@@ -10,6 +10,15 @@ import { DEFAULT_SPRITE } from '../../../src/utils/constants';
 import { MockTransformComponent } from '../mocks/components';
 
 describe('Testing LevelManager', () => {
+    test('creates a complete default level with the supplied identity', () => {
+        const manager = new LevelManager(new Registry(), new AssetStore());
+        expect(manager.getDefaultLevel('new-id', 'New Level')).toMatchObject({
+            id: 'new-id',
+            name: 'New Level',
+            entities: [],
+        });
+    });
+
     test('Should load level textures and sounds in parallel after the default texture', async () => {
         const loadOrder: string[] = [];
         const pendingAssetLoads: Array<() => void> = [];
@@ -32,6 +41,8 @@ describe('Testing LevelManager', () => {
         } as unknown as AssetStore;
         const levelManager = new LevelManager(registry, assetStore, createComponentCatalog([]));
         const level: LevelMap = {
+            id: 'test-level',
+            name: 'Test Level',
             textures: [
                 { assetId: 'texture-1', filePath: '/texture-1.png' },
                 { assetId: 'texture-2', filePath: '/texture-2.png' },
@@ -66,6 +77,8 @@ describe('Testing LevelManager', () => {
             createComponentCatalog([{ name: 'MockTransformComponent', constructor: MockTransformComponent }]),
         );
         const level: LevelMap = {
+            id: 'test-level',
+            name: 'Test Level',
             textures: [],
             sounds: [],
             mapWidth: 64,
