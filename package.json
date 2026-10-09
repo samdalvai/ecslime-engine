@@ -16,6 +16,7 @@
         "test": "jest",
         "lint": "eslint . --ext .js,.ts",
         "lint:fix": "eslint . --ext .js,.ts --fix",
+        "prebuild:game:regression": "npm run build:package",
         "prebuild:game": "npm run build:package",
         "prebuild:editor": "npm run build:package",
         "build:game:regression": "parcel build apps/game/game.html --target game && mv dist/game.html dist/index.html",
