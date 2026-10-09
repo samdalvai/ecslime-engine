@@ -26,9 +26,9 @@ export const deserializeEntity = (
         }
 
         const ComponentClass = componentDefinition.constructor;
-        const parameterValues =
-            componentDefinition.deserialize?.(component.properties) ??
-            getComponentConstructorParamNames(ComponentClass).map(param => component.properties[param]);
+        // const parameterValues =
+        //     componentDefinition.deserialize?.(component.properties) ??
+        //     getComponentConstructorParamNames(ComponentClass).map(param => component.properties[param]);
 
         // TODO: initialize the component like this and add it to the entity
         // TODO 2: add possible metadata to modify what comes from json

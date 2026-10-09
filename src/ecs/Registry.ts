@@ -236,19 +236,31 @@ export default class Registry {
             }
 
             const ComponentClass = componentDefinition.constructor;
-            const parameterValues =
-                componentDefinition.clone?.(component) ??
-                getComponentConstructorParamNames(ComponentClass).map(param =>
-                    cloneComponentProperty(component[param as keyof Component]),
-                );
+            // console.log(ComponentClass);
+            const ComponentClassV2 = component.constructor as ComponentClass
+            // console.log(component.constructor);
+            const duplicatedComp = new ComponentClassV2()
+            // console.log(duplicatedComp.constructor);
+            // console.log({ ...duplicatedComp });
+            console.log("duplicating");
+            Object.assign(duplicatedComp, { ...component })
 
-            entityCopy.addComponent(ComponentClass, ...parameterValues);
+            // const parameterValues =
+            //     componentDefinition.clone?.(component) ??
+            //     getComponentConstructorParamNames(ComponentClass).map(param =>
+            //         cloneComponentProperty(component[param as keyof Component]),
+            //     );
+
+            entityCopy.addComponentByInstance(duplicatedComp)
+            // entityCopy.addComponent(ComponentClass, ...parameterValues);
         }
 
         const group = entity.getGroup();
         if (group !== undefined) {
             entityCopy.group(group);
         }
+
+        // Note: entity tags are not copied on purpose, is that a wanted behaviour?
 
         return entityCopy;
     }
