@@ -1,5 +1,3 @@
-import { ComponentCatalog } from '../serialization/componentCatalog';
-import { cloneComponentProperty, getComponentConstructorParamNames } from '../serialization/deserialization';
 import Component, { ComponentClass } from './Component';
 import Entity from './Entity';
 import Pool, { IPool } from './Pool';
@@ -224,18 +222,18 @@ export default class Registry {
         this._entitiesToBeKilled.push(entity);
     }
 
-    duplicateEntity(entity: Entity, componentCatalog: ComponentCatalog) {
+    duplicateEntity(entity: Entity) {
         const entityCopy = this.createEntity();
         const originalEntityComponents = entity.getComponents();
 
         for (const component of originalEntityComponents) {
-            const componentDefinition = componentCatalog.getByConstructor(component);
+            // const componentDefinition = componentCatalog.getByConstructor(component);
 
-            if (!componentDefinition) {
-                throw new Error(`Could not find component definition for ${component.constructor.name}`);
-            }
+            // if (!componentDefinition) {
+            //     throw new Error(`Could not find component definition for ${component.constructor.name}`);
+            // }
 
-            const ComponentClass = componentDefinition.constructor;
+            // const ComponentClass = componentDefinition.constructor;
             // console.log(ComponentClass);
             const ComponentClassV2 = component.constructor as ComponentClass
             // console.log(component.constructor);

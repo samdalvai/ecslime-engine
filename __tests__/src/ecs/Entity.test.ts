@@ -3,7 +3,6 @@ import { beforeEach, describe, expect, test } from '@jest/globals';
 import Component, { IComponent } from '../../../src/ecs/Component';
 import Registry from '../../../src/ecs/Registry';
 import { ISystem } from '../../../src/ecs/System';
-import { createComponentCatalog } from '../../../src/serialization/componentCatalog';
 
 class TestTransformComponent extends Component {
     position: { x: number; y: number };
@@ -15,10 +14,6 @@ class TestTransformComponent extends Component {
         this.scale = scale;
     }
 }
-
-const componentCatalog = createComponentCatalog([
-    { name: 'TestTransformComponent', constructor: TestTransformComponent },
-]);
 
 describe('Testing Entity related functions', () => {
     beforeEach(() => {
@@ -90,7 +85,7 @@ describe('Testing Entity related functions', () => {
         entity.addComponent(TestTransformComponent, { x: 100, y: 100 }, { x: 2, y: 2 });
         registry.update();
 
-        const entityCopy = entity.duplicate(componentCatalog);
+        const entityCopy = entity.duplicate();
         registry.update();
         const components = entityCopy.getComponents();
         expect(components[0]).toEqual(entity.getComponent(TestTransformComponent));
@@ -104,7 +99,7 @@ describe('Testing Entity related functions', () => {
         entity.addComponent(TestTransformComponent, { x: 100, y: 100 }, { x: 2, y: 2 });
         registry.update();
 
-        const entityCopy = entity.duplicate(componentCatalog);
+        const entityCopy = entity.duplicate();
         registry.update();
 
         const originalTransform = entity.getComponent(TestTransformComponent);
@@ -124,7 +119,7 @@ describe('Testing Entity related functions', () => {
         entity.tag('test-tag');
         entity.group('test-group');
 
-        const entityCopy = entity.duplicate(componentCatalog);
+        const entityCopy = entity.duplicate();
         expect(entityCopy.getTag()).toEqual(undefined);
         expect(entityCopy.getGroup()).toEqual('test-group');
     });
@@ -136,7 +131,7 @@ describe('Testing Entity related functions', () => {
         entity.addComponent(TestTransformComponent, { x: 100, y: 100 }, { x: 2, y: 2 });
         registry.update();
 
-        const entityCopy1 = entity.duplicate(componentCatalog);
+        const entityCopy1 = entity.duplicate();
         registry.update();
 
         const entityCopyTransform1 = entityCopy1.getComponent(TestTransformComponent);
@@ -144,7 +139,7 @@ describe('Testing Entity related functions', () => {
         entityCopyTransform1!.position.y = 200;
         registry.update();
 
-        const entityCopy2 = entityCopy1.duplicate(componentCatalog);
+        const entityCopy2 = entityCopy1.duplicate();
         registry.update();
         const components = entityCopy2.getComponents();
 
