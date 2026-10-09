@@ -7,7 +7,7 @@ import Entity from '../../../src/ecs/Entity';
 import Registry from '../../../src/ecs/Registry';
 import { serializeEntities, serializeEntity, serializeLevel } from '../../../src/serialization/serialization';
 import { EntityMap, LevelData } from '../../../src/types/map';
-import { MockRigidBodyComponent, MockTransformComponent } from '../mocks/components';
+import { MockNestedComponent, MockRigidBodyComponent, MockTransformComponent } from '../mocks/components';
 
 describe('Testing serialization related functions', () => {
     test('Should serialize entity with one component to a valid Entity Map', () => {
@@ -56,6 +56,27 @@ describe('Testing serialization related functions', () => {
                     properties: {
                         velocity: { x: 100, y: 100 },
                         direction: { x: 1, y: 0 },
+                    },
+                },
+            ],
+        };
+
+        registry.update();
+
+        expect(serializeEntity(entity)).toEqual(expected);
+    });
+
+    test('Should serialize entity with one component having nested properties to a valid Entity Map', () => {
+        const registry = new Registry();
+        const entity = registry.createEntity();
+        entity.addComponent(MockNestedComponent, { nested: { value1: 1, value2: 2 }, plain: 3 });
+
+        const expected: EntityMap = {
+            components: [
+                {
+                    name: 'MockNestedComponent',
+                    properties: {
+                        object: { nested: { value1: 1, value2: 2 }, plain: 3 },
                     },
                 },
             ],

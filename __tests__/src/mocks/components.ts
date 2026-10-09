@@ -26,3 +26,22 @@ export class MockRigidBodyComponent extends Component {
         this.direction = direction;
     }
 }
+
+type Plain = {
+    value1: number,
+    value2: number
+}
+
+type NestedObject = {
+    nested: Plain;
+    plain: number;
+}
+
+export class MockNestedComponent extends Component {
+    object: NestedObject;
+
+    constructor(object: NestedObject = { nested: { value1: 0, value2: 0 }, plain: 0 }) {
+        super();
+        this.object = object;
+    }
+}
