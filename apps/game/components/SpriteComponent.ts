@@ -39,7 +39,7 @@ export default class SpriteComponent extends Component {
     }
 
     // TODO: use real metadata
-    protected static override metadata(): any {
+    static override metadata(): any {
         return 'Whater';
     }
 }

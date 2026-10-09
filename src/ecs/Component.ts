@@ -20,6 +20,7 @@ export class IComponent {
 export default class Component extends IComponent {
     private static _id?: number;
 
+    // TODO: remove this in favour of metadata
     /**
      * This property should be **overridden** by child classes when enums
      * need to be serialized. Examples:
@@ -61,5 +62,6 @@ export default class Component extends IComponent {
         return this._id;
     }
 
-    protected static metadata(): any {}
+    // TODO: add real typing to metadata
+    static metadata(): any {}
 }
