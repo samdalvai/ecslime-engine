@@ -96,7 +96,7 @@ export default class SidebarController {
         let minX = Number.MAX_VALUE;
         let minY = Number.MAX_VALUE;
         for (const entityMap of event.entities) {
-            const copy = deserializeEntity(JSON.parse(JSON.stringify(entityMap)), registry, gameComponentCatalog);
+            const copy = deserializeEntity(structuredClone(entityMap), registry, gameComponentCatalog);
             registry.update();
             const position = copy.getComponent(TransformComponent).position;
             minX = Math.min(minX, position.x);

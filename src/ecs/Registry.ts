@@ -243,7 +243,8 @@ export default class Registry {
             // console.log(duplicatedComp.constructor);
             // console.log({ ...duplicatedComp });
             console.log("duplicating");
-            Object.assign(duplicatedComp, { ...component })
+
+            Object.assign(duplicatedComp, structuredClone({ ...component }))
 
             // const parameterValues =
             //     componentDefinition.clone?.(component) ??
