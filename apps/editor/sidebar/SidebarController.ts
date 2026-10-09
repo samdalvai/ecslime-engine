@@ -82,7 +82,7 @@ export default class SidebarController {
     };
 
     onEntityDuplicate = (event: EntityDuplicateEvent, leftSidebar: HTMLElement, eventBus: EventBus) => {
-        const copy = event.entity.duplicate(gameComponentCatalog);
+        const copy = event.entity.duplicate();
         Editor.selectedEntities = [copy];
         eventBus.emitEvent(EntitySelectEvent, [copy]);
         this.renderEntityList(leftSidebar);

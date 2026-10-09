@@ -1,4 +1,3 @@
-import { ComponentCatalog } from '../serialization/componentCatalog';
 import Component, { ComponentClass } from './Component';
 import Registry from './Registry';
 
@@ -33,8 +32,8 @@ export default class Entity {
         this._registry.killEntity(this);
     }
 
-    duplicate(componentCatalog: ComponentCatalog) {
-        return this._registry.duplicateEntity(this, componentCatalog);
+    duplicate() {
+        return this._registry.duplicateEntity(this);
     }
 
     tag(tag: string) {

@@ -1,4 +1,3 @@
-import Component, { ComponentClass } from '../ecs/Component';
 import Entity from '../ecs/Entity';
 import Registry from '../ecs/Registry';
 import { EntityMap } from '../types/map';
@@ -33,10 +32,11 @@ export const deserializeEntity = (
         // TODO: initialize the component like this and add it to the entity
         // TODO 2: add possible metadata to modify what comes from json
         const comp = new ComponentClass();
-        
+
         // TODO: maybe we have to use this more complex method, because metadata might define
         // wether we need to override some values, e.g. startTime might be overridden to 0
         for (const [property, value] of Object.entries(component.properties)) {
+            // TODO: do we need structuredClone here?
             (comp as Record<string, unknown>)[property] = value;
         }
         // console.log(`after init ${ComponentClass.name} ${JSON.stringify(comp)}`);
@@ -73,71 +73,4 @@ export const deserializeEntities = (
     }
 
     return entitiesList;
-};
-
-export const parseConstructorString = (componentString: string): string => {
-    const indexOfConstructor = componentString.indexOf('constructor');
-
-    if (indexOfConstructor === -1) {
-        throw new Error(`'Error, no constructor defined for component ${componentString}`);
-    }
-
-    const afterConstructor = componentString.substring(indexOfConstructor + 'constructor'.length);
-    let openParenthesis = 0;
-
-    for (let i = 0; i < afterConstructor.length; i++) {
-        const char = afterConstructor[i];
-
-        if (char === '(') {
-            openParenthesis++;
-        }
-
-        if (char === ')') {
-            openParenthesis--;
-
-            if (openParenthesis === 0) {
-                return afterConstructor.substring(1, i);
-            }
-        }
-    }
-
-    throw new Error(`'Error, could not parse constructor for component ${componentString}`);
-};
-
-export const parseConstructorParameters = (constructorStr: string): string[] => {
-    const paramNames = constructorStr
-        .replace(/= (true|false)/g, '') // Removes "= true" or "= false"
-        .replace('= []', '') // Removes literal "= []"
-        .replace(/\([^)]*\)/g, '') // Removes anything inside parentheses (e.g., function params or groupings)
-        .replace(/\{([\s\S]*?)\}/g, '') // Removes content inside curly braces (non-greedy)
-        .replace(/'(.*?)'/g, '') // Removes anything inside single quotes, including the quotes
-        .replace(/"(.*?)"/g, '') // Removes anything inside double quotes, including the quotes
-        .replace(/= [^,]+/g, '') // Removes default values (e.g., "= 5", "= 'abc'") until `,`
-        .replace(/[()=,]/g, '') // Removes parentheses, equal signs, and commas
-        .split(' ')
-        .filter(param => param !== '')
-        .filter(param => !isNumeric(param));
-    return paramNames;
-};
-
-export const getComponentConstructorParamNames = <T extends Component>(component: ComponentClass<T>): string[] => {
-    const componentString = component.toString();
-    const constructorString = parseConstructorString(componentString);
-    return parseConstructorParameters(constructorString);
-};
-
-export const cloneComponentProperty = (property: any) => {
-    if (Array.isArray(property)) {
-        return [...property];
-    }
-
-    if (property !== null && typeof property === 'object') {
-        return { ...property };
-    }
-
-    return property;
-};
-
-const isNumeric = (str: string) => {
-    return !isNaN(parseFloat(str));
 };

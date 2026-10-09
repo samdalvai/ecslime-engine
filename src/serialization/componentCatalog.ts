@@ -8,6 +8,8 @@ export type ComponentFieldDefinition = {
     options?: readonly string[];
 };
 
+// TODO: evaluate if all these methods should live here or be moved to component metadata, e.g. serialize and deserialize rules
+// maybe it's better to keep them near the component if for example we need to avoid serializing or deserializing a property
 export type ComponentDefinition<T extends Component = Component> = {
     name: string;
     constructor: ComponentClass<T>;

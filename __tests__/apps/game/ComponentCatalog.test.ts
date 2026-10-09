@@ -1,7 +1,6 @@
 import { describe, expect, test } from '@jest/globals';
 import { Registry } from 'ecslime-engine';
 
-import { gameComponentCatalog } from '../../../apps/game/catalog/gameComponentCatalog';
 import TransformComponent from '../../../apps/game/components/TransformComponent';
 
 describe('Testing game component catalog', () => {
@@ -12,7 +11,7 @@ describe('Testing game component catalog', () => {
         entity.addComponent(TransformComponent, { x: 100, y: 100 }, { x: 2, y: 2 });
         registry.update();
 
-        const entityCopy = entity.duplicate(gameComponentCatalog);
+        const entityCopy = entity.duplicate();
         registry.update();
 
         expect(entityCopy.getComponent(TransformComponent)).toEqual(entity.getComponent(TransformComponent));
