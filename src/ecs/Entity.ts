@@ -73,8 +73,8 @@ export default class Entity {
         return this._registry.addComponent(this, ComponentClass, ...args);
     }
 
-    addComponentV2<T extends Component>(comp: T): T {
-        return this._registry.addComponentV2(this, comp);
+    addComponentByInstance<T extends Component>(component: T): T {
+        return this._registry.addComponentByInstance(this, component);
     }
 
     removeComponent<T extends ComponentClass>(ComponentClass: T): void {

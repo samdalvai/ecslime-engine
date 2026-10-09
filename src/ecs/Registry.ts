@@ -394,7 +394,7 @@ export default class Registry {
         return newComponent;
     }
 
-    addComponentV2<T extends Component>(entity: Entity, component: T): T {
+    addComponentByInstance<T extends Component>(entity: Entity, component: T): T {
         const ComponentClass = component.constructor as ComponentClass<T>;
         const componentId = ComponentClass.getComponentId();
 

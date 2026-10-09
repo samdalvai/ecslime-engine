@@ -11,11 +11,12 @@ import {
 } from '../../../src/serialization/deserialization';
 import { EntityMap } from '../../../src/types/map';
 import { DEFAULT_SPRITE } from '../../../src/utils/constants';
-import { MockRigidBodyComponent, MockTransformComponent } from '../mocks/components';
+import { MockNestedComponent, MockRigidBodyComponent, MockTransformComponent } from '../mocks/components';
 
 const componentCatalog = createComponentCatalog([
     { name: 'MockRigidBodyComponent', constructor: MockRigidBodyComponent },
     { name: 'MockTransformComponent', constructor: MockTransformComponent },
+    { name: 'MockNestedComponent', constructor: MockNestedComponent },
 ]);
 
 describe('Testing deserialization related functions', () => {
@@ -211,7 +212,7 @@ describe('Testing deserialization related functions', () => {
     });
 
     test('Should throw error for component with no constructor', () => {
-        class MyComponent extends Component {}
+        class MyComponent extends Component { }
 
         expect(() => getComponentConstructorParamNames(MyComponent)).toThrowError();
     });
@@ -300,6 +301,29 @@ describe('Testing deserialization related functions', () => {
                 y: 0,
             },
         });
+    });
+
+    test('Should deserialize entity Map to Entity with one component having nested properties', () => {
+        const registry = new Registry();
+
+        const entityMap: EntityMap = {
+            components: [
+                {
+                    name: 'MockNestedComponent',
+                    properties: {
+                        object: { nested: { value1: 1, value2: 2 }, plain: 3 },
+                    },
+                },
+            ],
+        };
+
+        const entity = deserializeEntity(entityMap, registry, componentCatalog);
+        registry.update();
+        const nestedComp = entity.getComponent(MockNestedComponent);
+
+        expect(nestedComp).toEqual({
+            object: { nested: { value1: 1, value2: 2 }, plain: 3 },
+        })
     });
 
     test('Should deserialize entity Map to Entity having tag', () => {
