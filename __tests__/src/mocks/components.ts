@@ -28,14 +28,14 @@ export class MockRigidBodyComponent extends Component {
 }
 
 type Plain = {
-    value1: number,
-    value2: number
-}
+    value1: number;
+    value2: number;
+};
 
 type NestedObject = {
     nested: Plain;
     plain: number;
-}
+};
 
 export class MockNestedComponent extends Component {
     object: NestedObject;
@@ -43,5 +43,16 @@ export class MockNestedComponent extends Component {
     constructor(object: NestedObject = { nested: { value1: 0, value2: 0 }, plain: 0 }) {
         super();
         this.object = object;
+    }
+}
+
+export class MockMetadataComponent extends Component {
+    value1: number = 0;
+    value2: number = 0;
+
+    constructor(value1 = 0, value2 = 0) {
+        super();
+        this.value1 = value1;
+        this.value2 = value2;
     }
 }

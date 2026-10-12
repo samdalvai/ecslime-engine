@@ -25,6 +25,8 @@ export const deserializeEntity = (
         }
 
         const ComponentClass = componentDefinition.constructor;
+        const metadata = componentDefinition.metadata;
+        console.log("meta: ", metadata);
         // TODO: initialize the component like this and add it to the entity
         // TODO 2: add possible metadata to modify what comes from json
         const componentInstance = new ComponentClass();
