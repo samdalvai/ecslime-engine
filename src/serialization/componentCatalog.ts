@@ -14,8 +14,6 @@ export type ComponentDefinition<T extends Component = Component> = {
     name: string;
     constructor: ComponentClass<T>;
     fields?: ComponentFieldDefinition[];
-    serialize?: (component: T) => Record<string, unknown>;
-    deserialize?: (properties: Record<string, any>) => ConstructorParameters<ComponentClass<T>>;
     clone?: (component: T) => ConstructorParameters<ComponentClass<T>>;
 };
 
