@@ -19,7 +19,7 @@ export type ComponentMetadata<T> = readonly ComponentFieldMetadata<T>[];
 export type ComponentDefinition<T extends Component = Component> = {
     name: string;
     constructor: ComponentClass<T>;
-    metadata: ComponentFieldMetadata<T>;
+    metadata?: ComponentMetadata<T>;
 };
 
 export type ComponentCatalog = {
