@@ -218,22 +218,18 @@ const modifiedBindings: EngineBindings = {
         {
             name: 'PositionComponent',
             constructor: ModifiedPositionComponent,
-            clone: (component: ModifiedPositionComponent) => [{ ...component.position }],
         },
         {
             name: 'VelocityComponent',
             constructor: ModifiedVelocityComponent,
-            clone: (component: ModifiedVelocityComponent) => [{ ...component.velocity }],
         },
         {
             name: 'RenderableComponent',
             constructor: ModifiedRenderableComponent,
-            clone: (component: ModifiedRenderableComponent) => [component.assetId, component.zIndex],
         },
         {
             name: 'HealthComponent',
             constructor: ModifiedHealthComponent,
-            clone: (component: ModifiedHealthComponent) => [component.current, component.max],
         },
     ]),
 };

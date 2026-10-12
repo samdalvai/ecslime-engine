@@ -13,8 +13,6 @@ export type ComponentFieldDefinition = {
 export type ComponentDefinition<T extends Component = Component> = {
     name: string;
     constructor: ComponentClass<T>;
-    fields?: ComponentFieldDefinition[];
-    clone?: (component: T) => ConstructorParameters<ComponentClass<T>>;
 };
 
 export type ComponentCatalog = {
