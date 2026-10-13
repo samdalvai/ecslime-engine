@@ -19,8 +19,7 @@
         "prebuild:game:regression": "npm run build:package",
         "prebuild:game": "npm run build:package",
         "prebuild:editor": "npm run build:package",
-        "build:game:regression": "parcel build apps/game/game.html --target game && mv dist/game.html dist/index.html",
-        "build:game": "parcel build apps/game/game.html --target game --no-optimize && mv dist/game.html dist/index.html",
+        "build:game": "parcel build apps/game/game.html --target game && mv dist/game.html dist/index.html",
         "build:editor": "parcel build apps/editor/editor.html --target editor",
         "benchmark": "rm -rf .benchmark-dist && tsc --outDir .benchmark-dist --rootDir . --module commonjs --target es2020 benchmark/index.ts && node .benchmark-dist/benchmark/index.js"
     },
