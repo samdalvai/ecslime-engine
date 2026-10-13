@@ -399,6 +399,37 @@ describe('Testing deserialization related functions', () => {
         });
     });
 
+    test('Should not share nested objects between the entity map and deserialized components', () => {
+        const registry = new Registry();
+
+        const entityMap: EntityMap = {
+            components: [
+                {
+                    name: 'MockTransformComponent',
+                    properties: {
+                        position: { x: 100, y: 100 },
+                        scale: { x: 1, y: 1 },
+                        rotation: 0,
+                        isFixed: false,
+                    },
+                },
+            ],
+        };
+
+        const entity1 = deserializeEntity(entityMap, registry, componentCatalog);
+        const entity2 = deserializeEntity(entityMap, registry, componentCatalog);
+        registry.update();
+
+        const transform1 = entity1.getComponent(MockTransformComponent);
+        const transform2 = entity2.getComponent(MockTransformComponent);
+
+        transform1.position.x = 500;
+        (entityMap.components[0].properties as { position: { x: number } }).position.x = 700;
+
+        expect(transform2.position).toEqual({ x: 100, y: 100 });
+        expect(transform1.position).not.toBe(transform2.position);
+    });
+
     test('Should only accept metadata for known components, properties and options', () => {
         createComponentCatalog(
             { MockMetadataComponent },

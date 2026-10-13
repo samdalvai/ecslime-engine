@@ -1,6 +1,7 @@
 import {
     AssetStore,
     Component,
+    ComponentClass,
     Entity,
     EntityMap,
     EventBus,
@@ -11,6 +12,7 @@ import {
     isValidEntityMap,
 } from 'ecslime-engine';
 
+import { gameComponentCatalog } from '../../game/catalog/gameComponentCatalog';
 import * as GameComponents from '../../game/components';
 import Editor from '../Editor';
 import EntityDeleteEvent from '../events/EntityDeleteEvent';
@@ -208,7 +210,7 @@ export default class EntityEditor {
             componentContainer.open = true;
             componentList.appendChild(componentContainer);
 
-            scrollToListElement('#inspector-list', `#${component.constructor.name}-${entity.getId()}`);
+            scrollToListElement('#inspector-list', `#${this.getComponentName(component)}-${entity.getId()}`);
         }
 
         this.saveLevel();
@@ -219,10 +221,15 @@ export default class EntityEditor {
         if (!container) throw new Error(`Component container not found: ${containerId}`);
         container.remove();
 
-        const ComponentClass = GameComponents[component.constructor.name as keyof typeof GameComponents];
-        if (!ComponentClass) throw new Error(`Component class not found: ${component.constructor.name}`);
+        entity.removeComponent(component.constructor as ComponentClass);
+    };
 
-        entity.removeComponent(ComponentClass);
+    // Uses the catalog name instead of the class name, which is not preserved by minified builds
+    private getComponentName = (component: Component): string => {
+        const componentDefinition = gameComponentCatalog.getByConstructor(component);
+        if (!componentDefinition) throw new Error('Component is missing from the game component catalog');
+
+        return componentDefinition.name;
     };
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -366,10 +373,10 @@ export default class EntityEditor {
 
         // Sort components by keeping sprite component at the top
         sortedComponents.sort((componentA, componentB) => {
-            if (componentA.constructor.name === 'SpriteComponent') return -1;
-            if (componentB.constructor.name === 'SpriteComponent') return 1;
+            if (componentA instanceof GameComponents.SpriteComponent) return -1;
+            if (componentB instanceof GameComponents.SpriteComponent) return 1;
 
-            return componentA.constructor.name.localeCompare(componentB.constructor.name);
+            return this.getComponentName(componentA).localeCompare(this.getComponentName(componentB));
         });
 
         for (const component of sortedComponents) {
@@ -383,13 +390,15 @@ export default class EntityEditor {
     private getComponentContainer = (component: Component, entity: Entity) => {
         const componentContainer = document.createElement('details');
         componentContainer.className = 'component-card';
-        componentContainer.id = component.constructor.name + '-' + entity.getId();
+        const componentName = this.getComponentName(component);
+        componentContainer.id = componentName + '-' + entity.getId();
         componentContainer.open =
-            component.constructor.name === 'TransformComponent' || component.constructor.name === 'SpriteComponent';
+            component instanceof GameComponents.TransformComponent ||
+            component instanceof GameComponents.SpriteComponent;
         const summary = document.createElement('summary');
-        summary.textContent = component.constructor.name.replace(/Component$/, '').replace(/([a-z])([A-Z])/g, '$1 $2');
+        summary.textContent = componentName.replace(/Component$/, '').replace(/([a-z])([A-Z])/g, '$1 $2');
         componentContainer.append(summary);
-        if (component.constructor.name !== 'TransformComponent') {
+        if (!(component instanceof GameComponents.TransformComponent)) {
             const actions = document.createElement('div');
             actions.className = 'component-actions';
             const removeButton = document.createElement('button');
@@ -426,7 +435,7 @@ export default class EntityEditor {
             return null;
         }
 
-        if (component.constructor.name === 'SpriteComponent' && propertyName === 'assetId') {
+        if (component instanceof GameComponents.SpriteComponent && propertyName === 'assetId') {
             return this.createSpriteSelector(propertyName, component, entityId);
         }
 
@@ -440,7 +449,7 @@ export default class EntityEditor {
         }
 
         const propertyLabel =
-            component.constructor.name === 'TransformComponent' && propertyName === 'position'
+            component instanceof GameComponents.TransformComponent && propertyName === 'position'
                 ? 'position (centre, Y-up)'
                 : propertyName;
 
@@ -664,7 +673,7 @@ export default class EntityEditor {
             }
             default:
                 throw new Error(
-                    `Uknown type of property ${propertyName} with value ${propertyValue} for component ${component.constructor.name}`,
+                    `Uknown type of property ${propertyName} with value ${propertyValue} for component ${this.getComponentName(component)}`,
                 );
         }
     };

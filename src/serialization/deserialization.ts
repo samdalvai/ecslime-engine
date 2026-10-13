@@ -3,8 +3,11 @@ import Registry from '../ecs/Registry';
 import { EntityMap } from '../types/map';
 import { ComponentCatalog } from './componentCatalog';
 
-// TODO: this logic is brittle, it relies on having components with default parameters in the constructor, and also we cannot
-// handle enums in a good way
+/**
+ * Components are created with `new ComponentClass()` and then assigned the serialized properties,
+ * so every component must be constructible without arguments.
+ */
+// TODO: handle enums through component metadata
 export const deserializeEntity = (
     entityMap: EntityMap,
     registry: Registry,
@@ -12,11 +15,6 @@ export const deserializeEntity = (
 ): Entity => {
     const entity = registry.createEntity();
 
-    // TODO: this logic fails on prod environments where code is minified/obfuscated
-    // to test this locally run: npx parcel build apps/game/game.html && mv dist/game.html dist/index.html && npx serve dist
-    // current fix for prod is to add the flag --no-optimize to the build command
-    // npx parcel build apps/game/game.html --no-optimize && mv dist/game.html dist/index.html && npx serve dist
-    // TODO: Check if this comment is still relevant
     for (const component of entityMap.components) {
         const componentDefinition = componentCatalog.get(component.name);
 
@@ -34,8 +32,8 @@ export const deserializeEntity = (
                 continue;
             }
 
-            // TODO: do we need structuredClone here?
-            (componentInstance as Record<string, unknown>)[property] = value;
+            // Clone so the component does not share nested objects (e.g. vectors) with the entity map
+            (componentInstance as Record<string, unknown>)[property] = structuredClone(value);
         }
 
         entity.addComponentByInstance(componentInstance);
