@@ -8,13 +8,18 @@ import {
     deserializeEntity,
 } from '../../../src/serialization/deserialization';
 import { EntityMap } from '../../../src/types/map';
-import { MockNestedComponent, MockRigidBodyComponent, MockTransformComponent } from '../mocks/components';
+import {
+    MockMetadataComponent,
+    MockNestedComponent,
+    MockRigidBodyComponent,
+    MockTransformComponent,
+} from '../mocks/components';
 
-const componentCatalog = createComponentCatalog([
-    { name: 'MockRigidBodyComponent', constructor: MockRigidBodyComponent },
-    { name: 'MockTransformComponent', constructor: MockTransformComponent },
-    { name: 'MockNestedComponent', constructor: MockNestedComponent },
-]);
+const componentCatalog = createComponentCatalog({
+    MockRigidBodyComponent,
+    MockTransformComponent,
+    MockNestedComponent,
+});
 
 describe('Testing deserialization related functions', () => {
     test('Should deserialize entity Map to Entity with one component', () => {
@@ -344,7 +349,7 @@ describe('Testing deserialization related functions', () => {
         }
 
         const registry = new Registry();
-        const testOnlyCatalog = createComponentCatalog([{ name: 'TestOnlyComponent', constructor: TestOnlyComponent }]);
+        const testOnlyCatalog = createComponentCatalog({ TestOnlyComponent });
 
         const entityMap: EntityMap = {
             components: [
@@ -363,5 +368,68 @@ describe('Testing deserialization related functions', () => {
         expect(entity.getComponent(TestOnlyComponent)).toEqual({
             value: 42,
         });
+    });
+
+    test('Should keep the constructor default for properties excluded by catalog metadata', () => {
+        const metadataCatalog = createComponentCatalog(
+            { MockMetadataComponent },
+            { MockMetadataComponent: { properties: { value2: { deserialize: false } } } },
+        );
+
+        const registry = new Registry();
+
+        const entityMap: EntityMap = {
+            components: [
+                {
+                    name: 'MockMetadataComponent' as any,
+                    properties: {
+                        value1: 10,
+                        value2: 20,
+                    },
+                },
+            ],
+        };
+
+        const entity = deserializeEntity(entityMap, registry, metadataCatalog);
+        registry.update();
+
+        expect(entity.getComponent(MockMetadataComponent)).toEqual({
+            value1: 10,
+            value2: 0,
+        });
+    });
+
+    test('Should only accept metadata for known components, properties and options', () => {
+        createComponentCatalog(
+            { MockMetadataComponent },
+            {
+                // @ts-expect-error unknown component name
+                UnknownComponent: {},
+            },
+        );
+
+        createComponentCatalog(
+            { MockMetadataComponent },
+            {
+                MockMetadataComponent: {
+                    properties: {
+                        // @ts-expect-error unknown property name
+                        value3: { serialize: false },
+                    },
+                },
+            },
+        );
+
+        createComponentCatalog(
+            { MockMetadataComponent },
+            {
+                MockMetadataComponent: {
+                    properties: {
+                        // @ts-expect-error unknown property option
+                        value1: { serialze: false },
+                    },
+                },
+            },
+        );
     });
 });

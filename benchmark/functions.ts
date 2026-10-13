@@ -214,24 +214,12 @@ const modifiedBindings: EngineBindings = {
     MovementSystem: ModifiedMovementSystem,
     RenderSystem: ModifiedRenderSystem,
     HealthSystem: ModifiedHealthSystem,
-    componentCatalog: createModifiedComponentCatalog([
-        {
-            name: 'PositionComponent',
-            constructor: ModifiedPositionComponent,
-        },
-        {
-            name: 'VelocityComponent',
-            constructor: ModifiedVelocityComponent,
-        },
-        {
-            name: 'RenderableComponent',
-            constructor: ModifiedRenderableComponent,
-        },
-        {
-            name: 'HealthComponent',
-            constructor: ModifiedHealthComponent,
-        },
-    ]),
+    componentCatalog: createModifiedComponentCatalog({
+        PositionComponent: ModifiedPositionComponent,
+        VelocityComponent: ModifiedVelocityComponent,
+        RenderableComponent: ModifiedRenderableComponent,
+        HealthComponent: ModifiedHealthComponent,
+    }),
 };
 
 const countEntities = (entities: Iterable<unknown>) => {

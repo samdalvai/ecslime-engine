@@ -336,7 +336,7 @@ export default class Editor extends Engine {
                                 if (Editor.selectedEntities.length > 0) {
                                     const entityMaps: EntityMap[] = [];
                                     for (const entity of Editor.selectedEntities) {
-                                        const entityMap = serializeEntity(entity);
+                                        const entityMap = serializeEntity(entity, gameComponentCatalog);
                                         entityMaps.push(entityMap);
                                     }
 
@@ -352,7 +352,7 @@ export default class Editor extends Engine {
                                 if (Editor.selectedEntities.length > 0) {
                                     const entityMaps: EntityMap[] = [];
                                     for (const entity of Editor.selectedEntities) {
-                                        const entityMap = serializeEntity(entity);
+                                        const entityMap = serializeEntity(entity, gameComponentCatalog);
                                         entityMaps.push(entityMap);
                                     }
 

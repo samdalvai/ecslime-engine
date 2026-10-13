@@ -26,23 +26,18 @@ export const deserializeEntity = (
 
         const ComponentClass = componentDefinition.constructor;
         const metadata = componentDefinition.metadata;
-        console.log("meta: ", metadata);
-        // TODO: initialize the component like this and add it to the entity
-        // TODO 2: add possible metadata to modify what comes from json
         const componentInstance = new ComponentClass();
 
-        // TODO: maybe we have to use this more complex method, because metadata might define
-        // wether we need to override some values, e.g. startTime might be overridden to 0
         for (const [property, value] of Object.entries(component.properties)) {
+            // Properties excluded from deserialization keep the constructor default
+            if (metadata?.properties?.[property]?.deserialize === false) {
+                continue;
+            }
+
             // TODO: do we need structuredClone here?
             (componentInstance as Record<string, unknown>)[property] = value;
         }
-        // console.log(`after init ${ComponentClass.name} ${JSON.stringify(comp)}`);
-        // console.log(ComponentClass.metadata());
 
-        // OR even easier
-        // Object.assign(comp, component.properties);
-        // console.log(`after init ${ComponentClass.name} ${JSON.stringify(comp)}`);
         entity.addComponentByInstance(componentInstance);
     }
 
