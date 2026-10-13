@@ -6,10 +6,6 @@ export enum PickupEffect {
 }
 
 export default class PickableItemComponent extends Component {
-    static override _enums = {
-        effectOnPickup: PickupEffect,
-    };
-
     effectOnPickup: PickupEffect;
     effectValue: number;
 

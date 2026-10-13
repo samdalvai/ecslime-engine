@@ -1,11 +1,13 @@
 export { default as Engine } from './Engine';
 export { default as AssetStore } from './asset-store/AssetStore';
-export { createComponentCatalog } from './serialization/componentCatalog';
+export { createComponentCatalog, enumOptions, resolveEnumOptions } from './serialization/componentCatalog';
 export type {
     CatalogMetadata,
     ComponentCatalog,
     ComponentDefinition,
     ComponentMetadata,
+    EnumDefinition,
+    EnumOption,
     PropertyMetadata,
 } from './serialization/componentCatalog';
 export { default as Component, IComponent } from './ecs/Component';

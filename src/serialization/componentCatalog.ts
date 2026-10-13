@@ -9,16 +9,43 @@ export type ComponentDataKeys<T> = {
     [K in keyof T]-?: T[K] extends (...args: any[]) => any ? never : K;
 }[keyof T];
 
-export type PropertyMetadata = {
+export type EnumOption<V extends string | number = string | number> = {
+    readonly label: string;
+    readonly value: V;
+};
+
+/** Allowed values of an enum property: options created with `enumOptions(MyEnum)` or a list of values */
+export type EnumDefinition<V extends string | number> = readonly EnumOption<V>[] | readonly V[];
+
+export type PropertyMetadata<V = unknown> = {
     /** Defaults to true, when false the property is omitted from the serialized output */
     serialize?: boolean;
     /** Defaults to true, when false the serialized value is ignored and the constructor default is kept */
     deserialize?: boolean;
+    /** Allowed values of a string or number property, the editor shows them as a selection */
+    enum?: [V] extends [string | number] ? EnumDefinition<V> : never;
 };
 
 export type ComponentMetadata<T extends Component> = {
-    properties?: { [K in ComponentDataKeys<T>]?: PropertyMetadata };
+    properties?: { [K in ComponentDataKeys<T>]?: PropertyMetadata<T[K]> };
 };
+
+/**
+ * Creates typed enum options from a string or numeric TypeScript enum, labelled with the member names.
+ * Enum objects are not accepted directly because numeric enums also contain their reverse mapping
+ * (e.g. Flip[0] === 'NONE'), which would prevent checking the enum against the property type.
+ */
+export const enumOptions = <E extends Record<string, string | number>>(
+    enumObject: E,
+): EnumOption<E[Exclude<keyof E, number>]>[] => {
+    const entries = Object.entries(enumObject).filter(([key]) => Number.isNaN(Number(key)));
+
+    return entries.map(([label, value]) => ({ label, value }) as EnumOption<E[Exclude<keyof E, number>]>);
+};
+
+/** Normalizes an enum definition into a list of options */
+export const resolveEnumOptions = (definition: EnumDefinition<string | number>): EnumOption[] =>
+    definition.map(item => (typeof item === 'object' ? item : { label: String(item), value: item }));
 
 /** Optional metadata for each component of a catalog, keyed by component name */
 export type CatalogMetadata<C extends ComponentClassRecord> = {
