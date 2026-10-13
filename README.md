@@ -130,8 +130,16 @@ Each property supports:
 
 - `serialize: false`: the property is omitted from the serialized output.
 - `deserialize: false`: the serialized value is ignored and the constructor default is kept.
+- `enum`: the allowed values of a string or number property. The editor shows them as a selection, and deserialization replaces any other value with the constructor default and logs a warning.
 
-Metadata is fully typed: component names and property names autocomplete, and unknown names fail to compile.
+```ts
+PickableItemComponent: { properties: { effectOnPickup: { enum: enumOptions(PickupEffect) } } },
+SpriteComponent: { properties: { flip: { enum: enumOptions(Flip) } } },
+```
+
+`enum` accepts `enumOptions(MyEnum)` for any TypeScript enum, string or numeric, or a list of values (e.g. `['idle', 'run']`). Enum objects can't be passed directly: numeric enums also contain their reverse mapping (`Flip[0] === 'NONE'`), which would prevent checking the enum against the property type. `enumOptions` skips that mapping and labels the editor options with the enum member names.
+
+Metadata is fully typed: component names and property names autocomplete, unknown names fail to compile, and an `enum` must match the property's type.
 
 # How to develop a new game mechanic
 

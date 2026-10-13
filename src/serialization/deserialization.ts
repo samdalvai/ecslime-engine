@@ -1,13 +1,12 @@
 import Entity from '../ecs/Entity';
 import Registry from '../ecs/Registry';
 import { EntityMap } from '../types/map';
-import { ComponentCatalog } from './componentCatalog';
+import { ComponentCatalog, resolveEnumOptions } from './componentCatalog';
 
 /**
  * Components are created with `new ComponentClass()` and then assigned the serialized properties,
  * so every component must be constructible without arguments.
  */
-// TODO: handle enums through component metadata
 export const deserializeEntity = (
     entityMap: EntityMap,
     registry: Registry,
@@ -27,8 +26,21 @@ export const deserializeEntity = (
         const componentInstance = new ComponentClass();
 
         for (const [property, value] of Object.entries(component.properties)) {
+            const propertyMetadata = metadata?.properties?.[property];
+
             // Properties excluded from deserialization keep the constructor default
-            if (metadata?.properties?.[property]?.deserialize === false) {
+            if (propertyMetadata?.deserialize === false) {
+                continue;
+            }
+
+            // Values that are not allowed by the enum also keep the constructor default
+            if (
+                propertyMetadata?.enum &&
+                !resolveEnumOptions(propertyMetadata.enum).some(option => option.value === value)
+            ) {
+                console.warn(
+                    `Invalid value ${JSON.stringify(value)} for enum property ${component.name}.${property}, using the default value`,
+                );
                 continue;
             }
 

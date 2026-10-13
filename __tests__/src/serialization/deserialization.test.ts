@@ -1,19 +1,49 @@
-import { describe, expect, test } from '@jest/globals';
+import { describe, expect, jest, test } from '@jest/globals';
 
 import Component from '../../../src/ecs/Component';
 import Registry from '../../../src/ecs/Registry';
-import { createComponentCatalog } from '../../../src/serialization/componentCatalog';
-import {
-    deserializeEntities,
-    deserializeEntity,
-} from '../../../src/serialization/deserialization';
+import { createComponentCatalog, enumOptions } from '../../../src/serialization/componentCatalog';
+import { deserializeEntities, deserializeEntity } from '../../../src/serialization/deserialization';
 import { EntityMap } from '../../../src/types/map';
 import {
+    MockEnumComponent,
     MockMetadataComponent,
     MockNestedComponent,
+    MockNumericEnum,
     MockRigidBodyComponent,
+    MockStateComponent,
+    MockStringEnum,
     MockTransformComponent,
 } from '../mocks/components';
+
+enum OtherStringEnum {
+    FIRST = 'first',
+}
+
+enum OtherNumericEnum {
+    ZERO,
+}
+
+const enumCatalog = createComponentCatalog(
+    { MockEnumComponent },
+    {
+        MockEnumComponent: {
+            properties: {
+                stringValue: { enum: enumOptions(MockStringEnum) },
+                numericValue: { enum: enumOptions(MockNumericEnum) },
+            },
+        },
+    },
+);
+
+const stateCatalog = createComponentCatalog(
+    { MockStateComponent },
+    { MockStateComponent: { properties: { state: { enum: ['idle', 'run'] } } } },
+);
+
+const enumEntityMap = (properties: Record<string, unknown>): EntityMap => ({
+    components: [{ name: 'MockEnumComponent' as any, properties: properties as any }],
+});
 
 const componentCatalog = createComponentCatalog({
     MockRigidBodyComponent,
@@ -128,7 +158,7 @@ describe('Testing deserialization related functions', () => {
 
         expect(nestedComp).toEqual({
             object: { nested: { value1: 1, value2: 2 }, plain: 3 },
-        })
+        });
     });
 
     test('Should deserialize entity Map to Entity having tag', () => {
@@ -458,6 +488,174 @@ describe('Testing deserialization related functions', () => {
                     properties: {
                         // @ts-expect-error unknown property option
                         value1: { serialze: false },
+                    },
+                },
+            },
+        );
+    });
+
+    test('Should deserialize values allowed by enum metadata', () => {
+        const registry = new Registry();
+
+        const entity = deserializeEntity(
+            enumEntityMap({ stringValue: 'second', numericValue: 2 }),
+            registry,
+            enumCatalog,
+        );
+        registry.update();
+
+        expect(entity.getComponent(MockEnumComponent)).toEqual({
+            stringValue: MockStringEnum.SECOND,
+            numericValue: MockNumericEnum.TWO,
+            position: { x: 0, y: 0 },
+        });
+    });
+
+    test('Should keep the constructor default and warn for values not allowed by enum metadata', () => {
+        const warn = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+        const registry = new Registry();
+
+        const entity = deserializeEntity(
+            enumEntityMap({ stringValue: 'bogus', numericValue: '2' }),
+            registry,
+            enumCatalog,
+        );
+        registry.update();
+
+        expect(entity.getComponent(MockEnumComponent)).toEqual({
+            stringValue: MockStringEnum.FIRST,
+            numericValue: MockNumericEnum.ZERO,
+            position: { x: 0, y: 0 },
+        });
+        expect(warn).toHaveBeenCalledTimes(2);
+
+        warn.mockRestore();
+    });
+
+    test('Should deserialize values allowed by a list of enum values', () => {
+        const registry = new Registry();
+
+        const entity = deserializeEntity(
+            { components: [{ name: 'MockStateComponent' as any, properties: { state: 'run' } as any }] },
+            registry,
+            stateCatalog,
+        );
+        registry.update();
+
+        expect(entity.getComponent(MockStateComponent)).toEqual({ state: 'run' });
+    });
+
+    test('Should keep the constructor default and warn for values not in a list of enum values', () => {
+        const warn = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+        const registry = new Registry();
+
+        const entity = deserializeEntity(
+            { components: [{ name: 'MockStateComponent' as any, properties: { state: 'walk' } as any }] },
+            registry,
+            stateCatalog,
+        );
+        registry.update();
+
+        expect(entity.getComponent(MockStateComponent)).toEqual({ state: 'idle' });
+        expect(warn).toHaveBeenCalledTimes(1);
+
+        warn.mockRestore();
+    });
+
+    test('Should only accept enum metadata matching the property type', () => {
+        createComponentCatalog(
+            { MockEnumComponent },
+            {
+                MockEnumComponent: {
+                    properties: {
+                        stringValue: { enum: [MockStringEnum.FIRST, MockStringEnum.SECOND] },
+                        numericValue: { enum: [MockNumericEnum.ZERO, MockNumericEnum.ONE] },
+                    },
+                },
+            },
+        );
+
+        createComponentCatalog(
+            { MockEnumComponent },
+            {
+                MockEnumComponent: {
+                    properties: {
+                        // @ts-expect-error string enum on a numeric property
+                        numericValue: { enum: enumOptions(MockStringEnum) },
+                    },
+                },
+            },
+        );
+
+        createComponentCatalog(
+            { MockEnumComponent },
+            {
+                MockEnumComponent: {
+                    properties: {
+                        // @ts-expect-error enum objects must be passed through enumOptions
+                        stringValue: { enum: MockStringEnum },
+                        // @ts-expect-error enum objects must be passed through enumOptions
+                        numericValue: { enum: MockNumericEnum },
+                    },
+                },
+            },
+        );
+
+        createComponentCatalog(
+            { MockEnumComponent },
+            {
+                MockEnumComponent: {
+                    properties: {
+                        // @ts-expect-error list containing a value outside the property type
+                        stringValue: { enum: [MockStringEnum.FIRST, 'third'] },
+                    },
+                },
+            },
+        );
+
+        createComponentCatalog(
+            { MockStateComponent },
+            {
+                MockStateComponent: {
+                    properties: {
+                        // @ts-expect-error list containing a value outside the string union
+                        state: { enum: ['idle', 'walk'] },
+                    },
+                },
+            },
+        );
+
+        createComponentCatalog(
+            { MockEnumComponent },
+            {
+                MockEnumComponent: {
+                    properties: {
+                        // @ts-expect-error options of a different string enum
+                        stringValue: { enum: enumOptions(OtherStringEnum) },
+                    },
+                },
+            },
+        );
+
+        createComponentCatalog(
+            { MockEnumComponent },
+            {
+                MockEnumComponent: {
+                    properties: {
+                        // @ts-expect-error options of a different numeric enum
+                        numericValue: { enum: enumOptions(OtherNumericEnum) },
+                    },
+                },
+            },
+        );
+
+        createComponentCatalog(
+            { MockEnumComponent },
+            {
+                MockEnumComponent: {
+                    properties: {
+                        // @ts-expect-error enums are only allowed on string or number properties
+                        position: { enum: enumOptions(MockStringEnum) },
                     },
                 },
             },

@@ -4,12 +4,14 @@ import {
     ComponentClass,
     Entity,
     EntityMap,
+    EnumOption,
     EventBus,
     LevelManager,
     Rectangle,
     Registry,
     Vector,
     isValidEntityMap,
+    resolveEnumOptions,
 } from 'ecslime-engine';
 
 import { gameComponentCatalog } from '../../game/catalog/gameComponentCatalog';
@@ -232,6 +234,10 @@ export default class EntityEditor {
         return componentDefinition.name;
     };
 
+    private getPropertyMetadata = (component: Component, propertyName: string) => {
+        return gameComponentCatalog.getByConstructor(component)?.metadata?.properties?.[propertyName];
+    };
+
     ////////////////////////////////////////////////////////////////////////////////
     // HMTL elements management
     ////////////////////////////////////////////////////////////////////////////////
@@ -439,6 +445,11 @@ export default class EntityEditor {
             return this.createSpriteSelector(propertyName, component, entityId);
         }
 
+        const enumDefinition = this.getPropertyMetadata(component, propertyName)?.enum;
+        if (enumDefinition) {
+            return this.createEnumSelector(propertyName, resolveEnumOptions(enumDefinition), component, entityId);
+        }
+
         if (Array.isArray(propertyValue)) {
             const arrayContainer = document.createElement('div');
             for (const property of propertyValue as Array<any>) {
@@ -460,8 +471,36 @@ export default class EntityEditor {
             propertyValue,
             component,
             entityId,
-            [],
         );
+    };
+
+    private createEnumSelector = (
+        propertyName: string,
+        options: EnumOption[],
+        component: Component,
+        entityId: number,
+    ): HTMLElement => {
+        const select = document.createElement('select');
+        select.id = `${propertyName}-${entityId}`;
+        select.className = 'flex-1';
+
+        // Options are referenced by index so that numeric enum values are not converted to strings
+        options.forEach((option, index) => {
+            const optionElement = document.createElement('option');
+            optionElement.value = String(index);
+            optionElement.textContent = option.label;
+            select.appendChild(optionElement);
+        });
+
+        const currentValue = (component as any)[propertyName];
+        select.value = String(options.findIndex(option => option.value === currentValue));
+
+        select.addEventListener('change', () => {
+            (component as any)[propertyName] = options[select.selectedIndex].value;
+            this.saveLevel();
+        });
+
+        return createListItem(propertyName, select);
     };
 
     private createSpriteSelector = (propertyName: string, component: Component, entityId: number): HTMLElement => {
@@ -579,15 +618,6 @@ export default class EntityEditor {
         component: Component,
         entityId: number,
     ) => {
-        const enumMeta = (component.constructor as any)._enums?.[propertyName];
-        const enumValues = [];
-
-        if (enumMeta) {
-            for (const key of Object.keys(enumMeta)) {
-                enumValues.push(enumMeta[key]);
-            }
-        }
-
         return this.createListItemWithInputRec(
             propertyName,
             propertyName,
@@ -595,7 +625,6 @@ export default class EntityEditor {
             propertyValue,
             component,
             entityId,
-            enumValues,
         );
     };
 
@@ -606,31 +635,7 @@ export default class EntityEditor {
         propertyValue: string | number | boolean | object,
         component: Component,
         entityId: number,
-        enumValues: string[],
     ) => {
-        if (enumValues && enumValues.length > 0) {
-            const select = document.createElement('select');
-            select.id = `${propertyName}-${entityId}`;
-
-            for (const value of enumValues) {
-                const option = document.createElement('option');
-                option.value = value;
-                option.textContent = value || 'Unknown';
-                select.appendChild(option);
-            }
-
-            select.value = (component as any)[propertyName];
-            select.className = 'flex-1';
-
-            select.addEventListener('change', (e: Event) => {
-                const target = e.target as HTMLSelectElement;
-                (component as any)[propertyName] = target.value;
-                this.saveLevel();
-            });
-
-            return createListItem(label, select);
-        }
-
         const updateProperty = (newValue: any) => {
             (component as any)[propertyName] = newValue;
             this.saveLevel();
@@ -664,7 +669,6 @@ export default class EntityEditor {
                             propertyValue[property as keyof typeof propertyValue],
                             propertyValue,
                             entityId,
-                            enumValues,
                         ),
                     );
                 }

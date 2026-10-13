@@ -56,3 +56,42 @@ export class MockMetadataComponent extends Component {
         this.value2 = value2;
     }
 }
+
+export enum MockStringEnum {
+    FIRST = 'first',
+    SECOND = 'second',
+}
+
+export enum MockNumericEnum {
+    ZERO,
+    ONE,
+    TWO,
+}
+
+export class MockEnumComponent extends Component {
+    stringValue: MockStringEnum;
+    numericValue: MockNumericEnum;
+    position: Vector;
+
+    constructor(
+        stringValue = MockStringEnum.FIRST,
+        numericValue = MockNumericEnum.ZERO,
+        position: Vector = { x: 0, y: 0 },
+    ) {
+        super();
+        this.stringValue = stringValue;
+        this.numericValue = numericValue;
+        this.position = position;
+    }
+}
+
+export type MockState = 'idle' | 'run';
+
+export class MockStateComponent extends Component {
+    state: MockState;
+
+    constructor(state: MockState = 'idle') {
+        super();
+        this.state = state;
+    }
+}
