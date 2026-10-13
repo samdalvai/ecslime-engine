@@ -48,6 +48,10 @@ export const screenToWorld = (screen: Vector, camera: Camera, zoom = 1): Vector 
 /**
  * Clamps a camera centre to a finite map. If a map dimension is smaller than
  * its viewport dimension, the camera is centred on that map dimension.
+ *
+ * The result is snapped so that the camera edges fall on whole pixels. With an odd viewport
+ * size a whole-pixel centre would put the edges on half pixels, which shifts the whole world
+ * by half a pixel and shows visible seams between tiles.
  */
 export const clampCameraCenter = (camera: Camera, mapSize: Size): Vector => {
     if (mapSize.width < 0 || mapSize.height < 0) {
@@ -55,12 +59,11 @@ export const clampCameraCenter = (camera: Camera, mapSize: Size): Vector => {
     }
 
     const clampAxis = (center: number, mapLength: number, viewportLength: number): number => {
-        if (mapLength <= viewportLength) {
-            return mapLength / 2;
-        }
-
         const halfViewport = viewportLength / 2;
-        return clamp(center, halfViewport, mapLength - halfViewport);
+        const clampedCenter =
+            mapLength <= viewportLength ? mapLength / 2 : clamp(center, halfViewport, mapLength - halfViewport);
+
+        return Math.round(clampedCenter - halfViewport) + halfViewport;
     };
 
     return {

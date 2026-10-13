@@ -52,6 +52,38 @@ describe('standard coordinate helpers', () => {
         expect(clampCameraCenter(camera, { width: 100, height: 100 })).toEqual({ x: 50, y: 50 });
     });
 
+    test('snaps camera edges to whole pixels for odd viewport sizes', () => {
+        const oddCamera: Camera = { center: { x: 500, y: 400 }, viewportWidth: 301, viewportHeight: 151 };
+
+        const center = clampCameraCenter(oddCamera, { width: 1000, height: 1000 });
+        const bounds = getCameraBounds({ ...oddCamera, center });
+
+        expect(Number.isInteger(bounds.left)).toBe(true);
+        expect(Number.isInteger(bounds.top)).toBe(true);
+        expect(Math.abs(center.x - oddCamera.center.x)).toBeLessThanOrEqual(0.5);
+        expect(Math.abs(center.y - oddCamera.center.y)).toBeLessThanOrEqual(0.5);
+    });
+
+    test('snaps camera edges to whole pixels when clamped to the map edges', () => {
+        const oddCamera: Camera = { center: { x: -10, y: 2000 }, viewportWidth: 301, viewportHeight: 151 };
+
+        const center = clampCameraCenter(oddCamera, { width: 1000, height: 1000 });
+
+        expect(getCameraBounds({ ...oddCamera, center })).toMatchObject({ left: 0, top: 1000 });
+    });
+
+    test('snaps camera edges to whole pixels when centring a map smaller than the viewport', () => {
+        const largeCamera: Camera = { center: { x: 0, y: 0 }, viewportWidth: 300, viewportHeight: 200 };
+
+        const center = clampCameraCenter(largeCamera, { width: 101, height: 51 });
+        const bounds = getCameraBounds({ ...largeCamera, center });
+
+        expect(Number.isInteger(bounds.left)).toBe(true);
+        expect(Number.isInteger(bounds.top)).toBe(true);
+        expect(Math.abs(center.x - 50.5)).toBeLessThanOrEqual(0.5);
+        expect(Math.abs(center.y - 25.5)).toBeLessThanOrEqual(0.5);
+    });
+
     test('calculates centre-anchored sprite and collider bounds', () => {
         expect(getSpriteBounds({ x: 10, y: 20 }, { width: 8, height: 4 }, { x: 2, y: 3 })).toEqual({
             left: 2,
