@@ -2,24 +2,33 @@ import Component, { ComponentClass } from '../ecs/Component';
 
 type AnyComponentClass = ComponentClass<Component>;
 
-export type ComponentFieldDefinition = {
-    name: string;
-    type: 'number' | 'string' | 'boolean' | 'vector' | 'rectangle' | 'enum' | 'json';
-    options?: readonly string[];
+type ComponentClassRecord = Record<string, ComponentClass<any>>;
+
+/** Instance keys of a component that hold data, methods are excluded */
+export type ComponentDataKeys<T> = {
+    [K in keyof T]-?: T[K] extends (...args: any[]) => any ? never : K;
+}[keyof T];
+
+export type PropertyMetadata = {
+    /** Defaults to true, when false the property is omitted from the serialized output */
+    serialize?: boolean;
+    /** Defaults to true, when false the serialized value is ignored and the constructor default is kept */
+    deserialize?: boolean;
 };
 
-export type ComponentFieldMetadata<T> = {
-    name: keyof T;
+export type ComponentMetadata<T extends Component> = {
+    properties?: { [K in ComponentDataKeys<T>]?: PropertyMetadata };
 };
 
-export type ComponentMetadata<T> = readonly ComponentFieldMetadata<T>[];
+/** Optional metadata for each component of a catalog, keyed by component name */
+export type CatalogMetadata<C extends ComponentClassRecord> = {
+    [K in keyof C]?: ComponentMetadata<InstanceType<C[K]>>;
+};
 
-// TODO: evaluate if all these methods should live here or be moved to component metadata, e.g. serialize and deserialize rules
-// maybe it's better to keep them near the component if for example we need to avoid serializing or deserializing a property
-export type ComponentDefinition<T extends Component = Component> = {
+export type ComponentDefinition = {
     name: string;
-    constructor: ComponentClass<T>;
-    metadata?: ComponentMetadata<T>;
+    constructor: AnyComponentClass;
+    metadata?: ComponentMetadata<any>;
 };
 
 export type ComponentCatalog = {
@@ -28,21 +37,24 @@ export type ComponentCatalog = {
     list(): ComponentDefinition[];
 };
 
-export const createComponentCatalog = (definitions: ComponentDefinition<any>[]): ComponentCatalog => {
+export const createComponentCatalog = <C extends ComponentClassRecord>(
+    components: C,
+    metadata: CatalogMetadata<C> = {},
+): ComponentCatalog => {
+    const definitions: ComponentDefinition[] = [];
     const definitionsByName = new Map<string, ComponentDefinition>();
     const definitionsByConstructor = new Map<AnyComponentClass, ComponentDefinition>();
 
-    for (const definition of definitions) {
-        if (definitionsByName.has(definition.name)) {
-            throw new Error(`Duplicate component definition name: ${definition.name}`);
+    for (const [name, constructor] of Object.entries(components)) {
+        if (definitionsByConstructor.has(constructor)) {
+            throw new Error(`Duplicate component definition constructor: ${name}`);
         }
 
-        if (definitionsByConstructor.has(definition.constructor)) {
-            throw new Error(`Duplicate component definition constructor: ${definition.name}`);
-        }
+        const definition: ComponentDefinition = { name, constructor, metadata: metadata[name] };
 
-        definitionsByName.set(definition.name, definition);
-        definitionsByConstructor.set(definition.constructor, definition);
+        definitions.push(definition);
+        definitionsByName.set(name, definition);
+        definitionsByConstructor.set(constructor, definition);
     }
 
     return {

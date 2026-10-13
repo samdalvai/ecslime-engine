@@ -5,9 +5,15 @@ import AssetStore from '../../../src/asset-store/AssetStore';
 import Component from '../../../src/ecs/Component';
 import Entity from '../../../src/ecs/Entity';
 import Registry from '../../../src/ecs/Registry';
+import { createComponentCatalog } from '../../../src/serialization/componentCatalog';
 import { serializeEntities, serializeEntity, serializeLevel } from '../../../src/serialization/serialization';
 import { EntityMap, LevelData } from '../../../src/types/map';
-import { MockNestedComponent, MockRigidBodyComponent, MockTransformComponent } from '../mocks/components';
+import {
+    MockMetadataComponent,
+    MockNestedComponent,
+    MockRigidBodyComponent,
+    MockTransformComponent,
+} from '../mocks/components';
 
 describe('Testing serialization related functions', () => {
     test('Should serialize entity with one component to a valid Entity Map', () => {
@@ -303,29 +309,22 @@ describe('Testing serialization related functions', () => {
         expect(serializeEntities([entity1, entity2])).toEqual(expected);
     });
 
-    test('Should serialize entity component with startTime and override it to 0', () => {
-        class MyComponent extends Component {
-            myProperty: number;
-            startTime: number;
-
-            constructor(myProperty = 0, startTime = 0) {
-                super();
-                this.myProperty = myProperty;
-                this.startTime = startTime;
-            }
-        }
+    test('Should not serialize properties excluded by catalog metadata', () => {
+        const componentCatalog = createComponentCatalog(
+            { MockMetadataComponent },
+            { MockMetadataComponent: { properties: { value2: { serialize: false } } } },
+        );
 
         const registry = new Registry();
         const entity = registry.createEntity();
-        entity.addComponent(MyComponent, 10, 1000);
+        entity.addComponent(MockMetadataComponent, 10, 20);
 
         const expected: EntityMap = {
             components: [
                 {
-                    name: 'MyComponent' as any,
+                    name: 'MockMetadataComponent' as any,
                     properties: {
-                        myProperty: 10,
-                        startTime: 0,
+                        value1: 10,
                     },
                 },
             ],
@@ -333,20 +332,25 @@ describe('Testing serialization related functions', () => {
 
         registry.update();
 
-        expect(serializeEntity(entity)).toEqual(expected);
+        expect(serializeEntity(entity, componentCatalog)).toEqual(expected);
     });
 
-    test('Should serialize entity component with followedEntity and override it to null', () => {
+    test('Should not serialize entity references excluded by catalog metadata', () => {
         class MyComponent extends Component {
             myProperty: number;
-            followedEntity: Entity;
+            followedEntity: Entity | null;
 
-            constructor(myProperty = 0, followedEntity: Entity) {
+            constructor(myProperty = 0, followedEntity: Entity | null = null) {
                 super();
                 this.myProperty = myProperty;
                 this.followedEntity = followedEntity;
             }
         }
+
+        const componentCatalog = createComponentCatalog(
+            { MyComponent },
+            { MyComponent: { properties: { followedEntity: { serialize: false } } } },
+        );
 
         const registry = new Registry();
         const entity = registry.createEntity();
@@ -358,7 +362,6 @@ describe('Testing serialization related functions', () => {
                     name: 'MyComponent' as any,
                     properties: {
                         myProperty: 10,
-                        followedEntity: null,
                     },
                 },
             ],
@@ -366,7 +369,43 @@ describe('Testing serialization related functions', () => {
 
         registry.update();
 
-        expect(serializeEntity(entity)).toEqual(expected);
+        expect(serializeEntity(entity, componentCatalog)).toEqual(expected);
+    });
+
+    test('Should serialize all properties when the catalog has no metadata for the component', () => {
+        const componentCatalog = createComponentCatalog({ MockMetadataComponent });
+
+        const registry = new Registry();
+        const entity = registry.createEntity();
+        entity.addComponent(MockMetadataComponent, 10, 20);
+
+        const expected: EntityMap = {
+            components: [
+                {
+                    name: 'MockMetadataComponent' as any,
+                    properties: {
+                        value1: 10,
+                        value2: 20,
+                    },
+                },
+            ],
+        };
+
+        registry.update();
+
+        expect(serializeEntity(entity, componentCatalog)).toEqual(expected);
+    });
+
+    test('Should use the catalog name of the component when serializing', () => {
+        const componentCatalog = createComponentCatalog({ RenamedComponent: MockMetadataComponent });
+
+        const registry = new Registry();
+        const entity = registry.createEntity();
+        entity.addComponent(MockMetadataComponent, 10, 20);
+
+        registry.update();
+
+        expect(serializeEntity(entity, componentCatalog).components[0].name).toBe('RenamedComponent');
     });
 
     test('Should serialize level with one entity', () => {

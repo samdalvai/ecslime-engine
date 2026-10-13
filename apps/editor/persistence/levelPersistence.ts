@@ -1,12 +1,13 @@
 import { AssetStore, Entity, LevelMap, Registry, serializeEntities, serializeLevel } from 'ecslime-engine';
 
+import { gameComponentCatalog } from '../../game/catalog/gameComponentCatalog';
 import { levelStorageKey } from './persistence';
 
 export const serializeStoredLevel = (levelId: string, registry: Registry, assetStore: AssetStore): LevelMap => {
     registry.update();
     const storedLevel = loadLevelFromLocalStorage(levelId);
     if (!storedLevel) throw new Error('Could not read level from local storage');
-    return { ...serializeLevel(registry, assetStore), id: storedLevel.id, name: storedLevel.name };
+    return { ...serializeLevel(registry, assetStore, gameComponentCatalog), id: storedLevel.id, name: storedLevel.name };
 };
 
 export const saveLevelToJson = (levelId: string, registry: Registry, assetStore: AssetStore): void => {
@@ -27,7 +28,7 @@ export const saveLevelToJson = (levelId: string, registry: Registry, assetStore:
 
 export const saveEntitiesToJson = (entities: Entity[]): void => {
     entities[0]?.registry.update();
-    const jsonString = JSON.stringify(serializeEntities(entities), null, 2);
+    const jsonString = JSON.stringify(serializeEntities(entities, gameComponentCatalog), null, 2);
     const blob = new Blob([jsonString], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
 

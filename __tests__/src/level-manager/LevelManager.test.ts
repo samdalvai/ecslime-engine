@@ -39,7 +39,7 @@ describe('Testing LevelManager', () => {
                 return new Promise<void>(resolve => pendingAssetLoads.push(resolve));
             }),
         } as unknown as AssetStore;
-        const levelManager = new LevelManager(registry, assetStore, createComponentCatalog([]));
+        const levelManager = new LevelManager(registry, assetStore, createComponentCatalog({}));
         const level: LevelMap = {
             id: 'test-level',
             name: 'Test Level',
@@ -74,7 +74,7 @@ describe('Testing LevelManager', () => {
         const levelManager = new LevelManager(
             registry,
             assetStore,
-            createComponentCatalog([{ name: 'MockTransformComponent', constructor: MockTransformComponent }]),
+            createComponentCatalog({ MockTransformComponent }),
         );
         const level: LevelMap = {
             id: 'test-level',

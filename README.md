@@ -112,9 +112,26 @@ For editor navigation, `tsconfig.json` resolves `ecslime-engine` to `src/index.t
 
 # Game Component Catalog
 
-Serializable game components are exposed through `apps/game/catalog/gameComponentCatalog.ts`. The catalog is built from the exports in `apps/game/components/index.ts` and is passed to engine APIs that need to resolve component names, such as deserialization and entity duplication.
+Serializable game components are exposed through `apps/game/catalog/gameComponentCatalog.ts`. The catalog is built from the exports in `apps/game/components/index.ts` and is passed to engine APIs that need to resolve component names, such as serialization, deserialization and entity duplication.
 
 When adding a component, export it from `apps/game/components/index.ts`; that makes it available to the editor and the `gameComponentCatalog`.
+
+## Component metadata
+
+Components can optionally define metadata in the catalog, keyed by component name. Components without metadata are serialized and deserialized with all their properties.
+
+```ts
+export const gameComponentCatalog = createComponentCatalog(Components, {
+    AnimationComponent: { properties: { startTime: { serialize: false, deserialize: false } } },
+});
+```
+
+Each property supports:
+
+- `serialize: false`: the property is omitted from the serialized output.
+- `deserialize: false`: the serialized value is ignored and the constructor default is kept.
+
+Metadata is fully typed: component names and property names autocomplete, and unknown names fail to compile.
 
 # How to develop a new game mechanic
 
@@ -143,6 +160,8 @@ export { default as TextLabelComponent } from './TextLabelComponent';
 export { default as TransformComponent } from './TransformComponent';
 export { default as MyNewComponent } from './MyNewComponent';
 ```
+
+If some properties should not be serialized or deserialized (for example runtime state or entity references), add [component metadata](#component-metadata) for the component in `gameComponentCatalog`.
 
 3. Create a new system under `apps/game/systems`
 
