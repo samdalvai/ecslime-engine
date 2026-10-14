@@ -1,3 +1,8 @@
+import EventBus from '../event-bus/EventBus';
+import ComponentAddedEvent from '../events/ComponentAddedEvent';
+import ComponentRemovedEvent from '../events/ComponentRemovedEvent';
+import EntityCreatedEvent from '../events/EntityCreatedEvent';
+import EntityKilledEvent from '../events/EntityKilledEvent';
 import Component, { ComponentClass } from './Component';
 import Entity from './Entity';
 import Pool, { IPool } from './Pool';
@@ -7,6 +12,8 @@ import System, { SystemClass } from './System';
 type ComponentChange = { kind: 'add'; component: Component } | { kind: 'remove' };
 
 export default class Registry {
+    private _eventBus: EventBus;
+
     private _numEntities: number;
     private _entities: Map<number, Entity>;
 
@@ -34,7 +41,10 @@ export default class Registry {
 
     private _freeIds: number[];
 
-    constructor() {
+    // TODO: default eventbus added just to avoid fixing the tests, evaluate removing it
+    constructor(eventBus = new EventBus()) {
+        this._eventBus = eventBus;
+
         this._numEntities = 0;
         this._entities = new Map();
         this._componentPools = [];
@@ -209,6 +219,7 @@ export default class Registry {
         const entity = new Entity(entityId, this);
         this._entities.set(entity.getId(), entity);
 
+        this._eventBus.emitEvent(EntityCreatedEvent, entity);
         return entity;
     }
 
@@ -220,6 +231,8 @@ export default class Registry {
 
         entity.markAsKilled();
         this._entitiesToBeKilled.push(entity);
+
+        this._eventBus.emitEvent(EntityKilledEvent, entity);
     }
 
     duplicateEntity(entity: Entity) {
@@ -227,31 +240,11 @@ export default class Registry {
         const originalEntityComponents = entity.getComponents();
 
         for (const component of originalEntityComponents) {
-            // const componentDefinition = componentCatalog.getByConstructor(component);
+            const ComponentClassV2 = component.constructor as ComponentClass;
+            const duplicatedComp = new ComponentClassV2();
+            Object.assign(duplicatedComp, structuredClone({ ...component }));
 
-            // if (!componentDefinition) {
-            //     throw new Error(`Could not find component definition for ${component.constructor.name}`);
-            // }
-
-            // const ComponentClass = componentDefinition.constructor;
-            // console.log(ComponentClass);
-            const ComponentClassV2 = component.constructor as ComponentClass
-            // console.log(component.constructor);
-            const duplicatedComp = new ComponentClassV2()
-            // console.log(duplicatedComp.constructor);
-            // console.log({ ...duplicatedComp });
-            console.log("duplicating");
-
-            Object.assign(duplicatedComp, structuredClone({ ...component }))
-
-            // const parameterValues =
-            //     componentDefinition.clone?.(component) ??
-            //     getComponentConstructorParamNames(ComponentClass).map(param =>
-            //         cloneComponentProperty(component[param as keyof Component]),
-            //     );
-
-            entityCopy.addComponentByInstance(duplicatedComp)
-            // entityCopy.addComponent(ComponentClass, ...parameterValues);
+            entityCopy.addComponentByInstance(duplicatedComp);
         }
 
         const group = entity.getGroup();
@@ -402,6 +395,8 @@ export default class Registry {
             component: newComponent,
         });
 
+        // TODO: should this event be emitted only when the systems are synced?
+        this._eventBus.emitEvent(ComponentAddedEvent, entity, ComponentClass);
         return newComponent;
     }
 
@@ -421,6 +416,8 @@ export default class Registry {
             component,
         });
 
+        // TODO: should this event be emitted only when the systems are synced?
+        this._eventBus.emitEvent(ComponentAddedEvent, entity, ComponentClass);
         return component;
     }
 
@@ -437,6 +434,9 @@ export default class Registry {
         pendingChanges.set(componentId, {
             kind: 'remove',
         });
+
+        // TODO: should this event be emitted only when the systems are synced?
+        this._eventBus.emitEvent(ComponentRemovedEvent, entity, ComponentClass);
     }
 
     processComponentChanges(entity: Entity, changes: Map<number, ComponentChange>): void {
