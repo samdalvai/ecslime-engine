@@ -48,9 +48,9 @@ export default abstract class Engine {
         this.ctx = null;
         this.camera = this.createCamera();
 
-        this.registry = new Registry();
         this.assetStore = new AssetStore();
         this.eventBus = new EventBus();
+        this.registry = new Registry(this.eventBus);
         this.inputManager = new InputManager();
         this.levelManager = new LevelManager(this.registry, this.assetStore);
 
