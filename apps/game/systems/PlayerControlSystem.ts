@@ -2,7 +2,11 @@ import {
     Engine,
     EventBus,
     Flip,
+    KeyPressedEvent,
+    KeyReleasedEvent,
     MouseButton,
+    MouseMoveEvent,
+    MousePressedEvent,
     Registry,
     System,
     Vector,
@@ -27,10 +31,6 @@ import SlowTimeComponent from '../components/SlowTimeComponent';
 import SpriteComponent from '../components/SpriteComponent';
 import TeleportComponent from '../components/TeleportComponent';
 import TransformComponent from '../components/TransformComponent';
-import KeyPressedEvent from '../events/KeyPressedEvent';
-import KeyReleasedEvent from '../events/KeyReleasedEvent';
-import MouseMoveEvent from '../events/MouseMoveEvent';
-import MousePressedEvent from '../events/MousePressedEvent';
 import RangedAttackEmitEvent from '../events/RangedAttackEmitEvent';
 import SoundEmitEvent from '../events/SoundEmitEvent';
 

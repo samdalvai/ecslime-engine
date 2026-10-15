@@ -1,7 +1,6 @@
-import { Camera, Engine, GameStatus, beginWorldRender, endWorldRender, screenToWorld } from 'ecslime-engine';
+import { Camera, Engine, GameStatus, beginWorldRender, endWorldRender } from 'ecslime-engine';
 
 import { gameComponentCatalog } from './catalog/gameComponentCatalog';
-import * as GameEvents from './events';
 import * as Systems from './systems';
 import GameEndSystem from './systems/GameEndSystem';
 import RenderMenuSystem from './systems/RenderMenuSystem';
@@ -67,85 +66,18 @@ export default class Game extends Engine {
 
         await this.levelManager.addLevelToAssets('grass', 'assets/levels/grass.json');
         await this.levelManager.loadLevelFromAssets('grass');
-        // await this.assetStore.addTexture('player', 'assets/sprites/player_full.png');
-        // await this.assetStore.addTexture('cursor', 'assets/sprites/cursor.png');
-        // await this.assetStore.addTexture('destination_circle', 'assets/sprites/destination_circle.png');
 
-        // Engine.mapWidth = 1000;
-        // Engine.mapHeight = 2000;
-
-        // const player = this.registry.createEntity();
-        // player.addComponent(SpriteComponent, 'player', 32, 32, 0, 0, 0);
-        // player.addComponent(TransformComponent, { x: 100, y: 100 }, { x: 1, y: 1 });
-        // player.addComponent(RigidBodyComponent, { x: 0, y: 0 });
-        // player.addComponent(PlayerControlComponent, 100);
-        // player.addComponent(AnimationComponent, 4, 10);
-        // player.addComponent(SpriteStateComponent);
-        // player.addComponent(CameraFollowComponent);
-        // player.tag('player');
 
         Game.gameStatus = GameStatus.PLAYING;
     };
 
-    processInput = () => {
-        // Hanlde keyboard events
-        while (this.inputManager.keyboardInputBuffer.length > 0) {
-            const inputEvent = this.inputManager.keyboardInputBuffer.shift();
-
-            if (!inputEvent) {
-                return;
-            }
-
-            switch (inputEvent.type) {
-                case 'keydown':
-                    if (inputEvent.code === 'F2') {
-                        this.isDebug = !this.isDebug;
-                    }
-
-                    this.eventBus.emitEvent(GameEvents.KeyPressedEvent, inputEvent.code);
-                    break;
-                case 'keyup':
-                    this.eventBus.emitEvent(GameEvents.KeyReleasedEvent, inputEvent.code);
-                    break;
-            }
+    protected onKeyDown(event: KeyboardEvent) {
+        if (event.code === 'F2') {
+            this.isDebug = !this.isDebug;
         }
 
-        // Handle mouse events
-        while (this.inputManager.mouseInputBuffer.length > 0) {
-            const inputEvent = this.inputManager.mouseInputBuffer.shift();
-
-            if (!inputEvent) {
-                return;
-            }
-
-            Engine.mousePositionScreen = {
-                x: inputEvent.x,
-                y: inputEvent.y,
-            };
-
-            switch (inputEvent.type) {
-                case 'mousemove':
-                    Engine.mousePositionWorld = screenToWorld(Engine.mousePositionScreen, this.camera);
-
-                    this.eventBus.emitEvent(GameEvents.MouseMoveEvent, Engine.mousePositionWorld);
-                    break;
-                case 'mousedown':
-                    this.eventBus.emitEvent(
-                        GameEvents.MousePressedEvent,
-                        screenToWorld({ x: inputEvent.x, y: inputEvent.y }, this.camera),
-                        inputEvent.button,
-                    );
-                    break;
-                case 'mouseup':
-                    this.eventBus.emitEvent(
-                        GameEvents.MouseReleasedEvent,
-                        screenToWorld({ x: inputEvent.x, y: inputEvent.y }, this.camera),
-                        inputEvent.button,
-                    );
-                    break;
-            }
-        }
-    };
+        return true;
+    }
 
     update = (deltaTime: number) => {
         // Reset all event handlers for the current frame
@@ -183,7 +115,7 @@ export default class Game extends Engine {
         this.registry.getSystem(Systems.CameraMovementSystem).update(this.camera);
         this.registry.getSystem(Systems.CollisionSystem).update(this.eventBus);
         this.registry.getSystem(Systems.RangedAttackEmitSystem).update();
-        this.registry.getSystem(Systems.LifetimeSystem).update(this.eventBus);
+        this.registry.getSystem(Systems.LifetimeSystem).update();
         this.registry.getSystem(Systems.ParticleEmitSystem).update();
         this.registry.getSystem(Systems.EntityDestinationSystem).update();
         this.registry.getSystem(Systems.EntityEffectSystem).update(this.registry);

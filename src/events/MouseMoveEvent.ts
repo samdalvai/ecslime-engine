@@ -1,4 +1,5 @@
-import { GameEvent, Vector } from 'ecslime-engine';
+import GameEvent from '../event-bus/GameEvent';
+import { Vector } from '../types/utils';
 
 export default class MouseMoveEvent extends GameEvent {
     coordinates: Vector;

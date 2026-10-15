@@ -1,7 +1,6 @@
-import { EventBus, System } from 'ecslime-engine';
+import { System } from 'ecslime-engine';
 
 import LifetimeComponent from '../components/LifetimeComponent';
-import EntityKilledEvent from '../events/EntityKilledEvent';
 
 export default class LifetimeSystem extends System {
     constructor() {
@@ -9,14 +8,13 @@ export default class LifetimeSystem extends System {
         this.requireComponent(LifetimeComponent);
     }
 
-    update(eventBus: EventBus) {
+    update() {
         for (const entity of this.getSystemEntities()) {
             const lifeTime = entity.getComponent(LifetimeComponent);
 
             // Kill projectiles after they reach their duration limit
             if (performance.now() - lifeTime.startTime > lifeTime.lifetime) {
                 entity.kill();
-                eventBus.emitEvent(EntityKilledEvent, entity);
             }
         }
     }

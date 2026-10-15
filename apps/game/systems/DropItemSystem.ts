@@ -1,4 +1,4 @@
-import { EventBus, System } from 'ecslime-engine';
+import { EntityKilledEvent, EventBus, System } from 'ecslime-engine';
 
 import {
     AnimationComponent,
@@ -11,7 +11,6 @@ import {
     TransformComponent,
 } from '../components';
 import { PickupEffect } from '../components/PickableItemComponent';
-import EntityKilledEvent from '../events/EntityKilledEvent';
 
 export default class DropItemSystem extends System {
     constructor() {

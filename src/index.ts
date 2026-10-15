@@ -21,6 +21,7 @@ export { default as System, ISystem } from './ecs/System';
 export type { SystemClass } from './ecs/System';
 export { default as EventBus } from './event-bus/EventBus';
 export { default as GameEvent } from './event-bus/GameEvent';
+export * from './events';
 export { default as InputManager } from './input-manager/InputManager';
 export { default as LevelManager } from './level-manager/LevelManager';
 export { default as FixedFPSLoopStrategy } from './loop-strategy/FixedFPSLoopStrategy';

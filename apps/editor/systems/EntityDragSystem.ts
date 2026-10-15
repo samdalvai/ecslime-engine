@@ -3,7 +3,11 @@ import {
     Engine,
     Entity,
     EventBus,
+    KeyPressedEvent,
     MouseButton,
+    MouseMoveEvent,
+    MousePressedEvent,
+    MouseReleasedEvent,
     System,
     Vector,
     WorldBounds,
@@ -13,7 +17,6 @@ import {
 
 import SpriteComponent from '../../game/components/SpriteComponent';
 import TransformComponent from '../../game/components/TransformComponent';
-import { KeyPressedEvent, MouseMoveEvent, MousePressedEvent, MouseReleasedEvent } from '../../game/events';
 import Editor from '../Editor';
 import EntityEditor from '../entity-editor/EntityEditor';
 import EntitySelectEvent from '../events/EntitySelectEvent';

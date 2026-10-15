@@ -12,13 +12,11 @@ import {
 } from 'ecslime-engine';
 
 import { gameComponentCatalog } from '../game/catalog/gameComponentCatalog';
-import * as GameEvents from '../game/events';
 import * as GameSystems from '../game/systems';
 import { drawGameBorder, drawGrid, drawMultipleSelection } from './canvas/drawEditorOverlays';
 import EntityEditor from './entity-editor/EntityEditor';
 import EntityDeleteEvent from './events/EntityDeleteEvent';
 import EntityPasteEvent from './events/EntityPasteEvent';
-import ScrollEvent from './events/ScrollEvent';
 import { closeAlert } from './gui';
 import { loadLevelFromLocalStorage, saveLevelToLocalStorage } from './persistence/levelPersistence';
 import {
@@ -30,6 +28,9 @@ import SidebarController from './sidebar/SidebarController';
 import * as EditorSystems from './systems';
 import { EditorSettings } from './types';
 import VersionManager from './version-manager/VersionManager';
+
+const isCommandKey = (code: string) =>
+    code === 'MetaLeft' || code === 'ControlLeft' || code === 'ControlRight' || code === 'MetaRight';
 
 export default class Editor extends Engine {
     // Object for Editor
@@ -275,264 +276,153 @@ export default class Editor extends Engine {
         await this.assetStore.initialize();
     };
 
-    processInput = () => {
-        if (Editor.loadingLevel) {
-            return;
+    protected isInputBlocked() {
+        return Editor.loadingLevel || Editor.alertShown;
+    }
+
+    protected getZoom() {
+        return this.zoom;
+    }
+
+    protected onKeyDown(event: KeyboardEvent) {
+        if (isCommandKey(event.code)) {
+            this.commandPressed = true;
         }
 
-        if (Editor.alertShown) {
-            this.inputManager.mouseInputBuffer = [];
-            this.inputManager.keyboardInputBuffer = [];
-            this.inputManager.wheelInputBuffer = [];
-            return;
+        if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') {
+            this.shiftPressed = true;
         }
 
-        // Hanlde keyboard events
-        while (this.inputManager.keyboardInputBuffer.length > 0) {
-            const inputEvent = this.inputManager.keyboardInputBuffer.shift();
+        if (event.code === 'F2') this.toggleTestMode();
+        if (document.activeElement?.matches('input, select, textarea')) return false;
 
-            if (!inputEvent) {
-                return;
-            }
-
-            switch (inputEvent.type) {
-                case 'keydown':
-                    if (
-                        inputEvent.code === 'MetaLeft' ||
-                        inputEvent.code === 'ControlLeft' ||
-                        inputEvent.code === 'ControlRight' ||
-                        inputEvent.code === 'MetaRight'
-                    ) {
-                        this.commandPressed = true;
-                    }
-
-                    if (inputEvent.code === 'ShiftLeft' || inputEvent.code === 'ShiftRight') {
-                        this.shiftPressed = true;
-                    }
-
-                    if (inputEvent.code === 'F2') this.toggleTestMode();
-                    if (document.activeElement?.matches('input, select, textarea')) break;
-
-                    if (inputEvent.code === 'Delete' && Editor.selectedEntities.length > 0) {
-                        if (this.leftSidebar) {
-                            for (const entity of Editor.selectedEntities) {
-                                this.eventBus.emitEvent(EntityDeleteEvent, entity);
-                            }
-
-                            Editor.selectedEntities.length = 0;
-                        }
-                    }
-
-                    if (this.commandPressed) {
-                        switch (inputEvent.code) {
-                            case 'KeyZ':
-                                if (this.shiftPressed) {
-                                    this.entityEditor.redoLevelChange();
-                                } else {
-                                    this.entityEditor.undoLevelChange();
-                                }
-                                break;
-                            case 'KeyC':
-                                if (Editor.selectedEntities.length > 0) {
-                                    const entityMaps: EntityMap[] = [];
-                                    for (const entity of Editor.selectedEntities) {
-                                        const entityMap = serializeEntity(entity, gameComponentCatalog);
-                                        entityMaps.push(entityMap);
-                                    }
-
-                                    Editor.copiedEntities = entityMaps;
-                                }
-                                break;
-                            case 'KeyV':
-                                if (Editor.copiedEntities.length > 0) {
-                                    this.eventBus.emitEvent(EntityPasteEvent, Editor.copiedEntities);
-                                }
-                                break;
-                            case 'KeyX':
-                                if (Editor.selectedEntities.length > 0) {
-                                    const entityMaps: EntityMap[] = [];
-                                    for (const entity of Editor.selectedEntities) {
-                                        const entityMap = serializeEntity(entity, gameComponentCatalog);
-                                        entityMaps.push(entityMap);
-                                    }
-
-                                    Editor.copiedEntities = entityMaps;
-                                    for (const entity of Editor.selectedEntities) {
-                                        this.eventBus.emitEvent(EntityDeleteEvent, entity);
-                                    }
-                                    Editor.selectedEntities.length = 0;
-                                }
-                                break;
-                        }
-                    }
-
-                    this.eventBus.emitEvent(GameEvents.KeyPressedEvent, inputEvent.code);
-                    break;
-                case 'keyup':
-                    if (
-                        inputEvent.code === 'MetaLeft' ||
-                        inputEvent.code === 'ControlLeft' ||
-                        inputEvent.code === 'ControlRight' ||
-                        inputEvent.code === 'MetaRight'
-                    ) {
-                        this.commandPressed = false;
-                    }
-
-                    if (inputEvent.code === 'ShiftLeft' || inputEvent.code === 'ShiftRight') {
-                        this.shiftPressed = false;
-                    }
-
-                    this.eventBus.emitEvent(GameEvents.KeyReleasedEvent, inputEvent.code);
-                    break;
-            }
-        }
-
-        // Handle mouse events
-        while (this.inputManager.mouseInputBuffer.length > 0) {
-            const inputEvent = this.inputManager.mouseInputBuffer.shift();
-
-            if (!inputEvent) {
-                return;
-            }
-
-            if (!this.leftSidebar) {
-                throw new Error('Failed to get leftSidebar element.');
-            }
-
-            const canvasBounds = this.canvas?.getBoundingClientRect();
-            if (!canvasBounds) throw new Error('Canvas bounds not available');
-            const screenPosition = {
-                x: inputEvent.x - canvasBounds.left,
-                y: inputEvent.y - canvasBounds.top,
-            };
-
-            switch (inputEvent.type) {
-                case 'mousemove': {
-                    // Dragging the canvas follows the pointer in screen space.
-                    if (this.mousePressed && this.commandPressed) {
-                        const previousX = Engine.mousePositionScreen.x;
-                        const previousY = Engine.mousePositionScreen.y;
-                        const diffX = (screenPosition.x - previousX) / this.zoom;
-                        const diffY = (screenPosition.y - previousY) / this.zoom;
-
-                        this.camera.center.x -= diffX;
-                        this.camera.center.y += diffY;
-                    }
-
-                    Engine.mousePositionScreen = screenPosition;
-                    Engine.mousePositionWorld = screenToWorld(screenPosition, this.camera, this.zoom);
-                    this.eventBus.emitEvent(GameEvents.MouseMoveEvent, Engine.mousePositionWorld);
-                    break;
+        if (event.code === 'Delete' && Editor.selectedEntities.length > 0) {
+            if (this.leftSidebar) {
+                for (const entity of Editor.selectedEntities) {
+                    this.eventBus.emitEvent(EntityDeleteEvent, entity);
                 }
-                case 'mousedown':
-                    if (!this.canvas) {
-                        throw new Error('Failed to get canvas element.');
+
+                Editor.selectedEntities.length = 0;
+            }
+        }
+
+        if (this.commandPressed) {
+            switch (event.code) {
+                case 'KeyZ':
+                    if (this.shiftPressed) {
+                        this.entityEditor.redoLevelChange();
+                    } else {
+                        this.entityEditor.undoLevelChange();
                     }
-
-                    Engine.mousePositionScreen = screenPosition;
-                    Engine.mousePositionWorld = screenToWorld(screenPosition, this.camera, this.zoom);
-
-                    this.mousePressed = true;
-
-                    if (this.testMode) {
-                        if (
-                            screenPosition.x < 0 ||
-                            screenPosition.x > this.canvas.width ||
-                            screenPosition.y < 0 ||
-                            screenPosition.y > this.canvas.height
-                        ) {
-                            return;
-                        }
-                    }
-
-                    this.eventBus.emitEvent(GameEvents.MousePressedEvent, Engine.mousePositionWorld, inputEvent.button);
-
-                    if (inputEvent.button === MouseButton.MIDDLE) {
-                        this.commandPressed = true;
-                    }
-
                     break;
-                case 'mouseup':
-                    if (!this.canvas) {
-                        throw new Error('Failed to get canvas element.');
+                case 'KeyC':
+                    if (Editor.selectedEntities.length > 0) {
+                        Editor.copiedEntities = this.serializeSelectedEntities();
                     }
-
-                    Engine.mousePositionScreen = screenPosition;
-                    Engine.mousePositionWorld = screenToWorld(screenPosition, this.camera, this.zoom);
-
-                    this.mousePressed = false;
-
-                    if (this.testMode) {
-                        if (
-                            screenPosition.x < 0 ||
-                            screenPosition.x > this.canvas.width ||
-                            screenPosition.y < 0 ||
-                            screenPosition.y > this.canvas.height
-                        ) {
-                            return;
+                    break;
+                case 'KeyV':
+                    if (Editor.copiedEntities.length > 0) {
+                        this.eventBus.emitEvent(EntityPasteEvent, Editor.copiedEntities);
+                    }
+                    break;
+                case 'KeyX':
+                    if (Editor.selectedEntities.length > 0) {
+                        Editor.copiedEntities = this.serializeSelectedEntities();
+                        for (const entity of Editor.selectedEntities) {
+                            this.eventBus.emitEvent(EntityDeleteEvent, entity);
                         }
-                    }
-
-                    this.eventBus.emitEvent(
-                        GameEvents.MouseReleasedEvent,
-                        Engine.mousePositionWorld,
-                        inputEvent.button,
-                    );
-
-                    if (inputEvent.button === MouseButton.MIDDLE) {
-                        this.commandPressed = false;
+                        Editor.selectedEntities.length = 0;
                     }
                     break;
             }
         }
 
-        while (this.inputManager.wheelInputBuffer.length > 0) {
-            const wheelEvent = this.inputManager.wheelInputBuffer.shift();
+        return true;
+    }
 
-            if (this.testMode) {
-                return;
-            }
-
-            if (!wheelEvent) {
-                return;
-            }
-
-            if (!this.leftSidebar || !this.canvas) {
-                throw new Error('leftSidebar or canvas is not defined');
-            }
-
-            if (
-                Engine.mousePositionScreen.x < 0 ||
-                Engine.mousePositionScreen.x > this.canvas.width ||
-                Engine.mousePositionScreen.y < 0 ||
-                Engine.mousePositionScreen.y > this.canvas.height
-            ) {
-                return;
-            }
-
-            const mouseWorldBefore = screenToWorld(Engine.mousePositionScreen, this.camera, this.zoom);
-
-            if (wheelEvent.deltaY < 0) {
-                this.zoom *= 1 + 0.1;
-                this.eventBus.emitEvent(ScrollEvent, 'up');
-            }
-            if (wheelEvent.deltaY > 0) {
-                this.zoom *= 1 - 0.1;
-                this.eventBus.emitEvent(ScrollEvent, 'down');
-            }
-
-            this.zoom = Math.max(0.05, Math.min(8, this.zoom));
-            this.updateZoomStatus();
-
-            this.camera.viewportWidth = this.canvas.width / this.zoom;
-            this.camera.viewportHeight = this.canvas.height / this.zoom;
-
-            const mouseWorldAfter = screenToWorld(Engine.mousePositionScreen, this.camera, this.zoom);
-            this.camera.center.x += mouseWorldBefore.x - mouseWorldAfter.x;
-            this.camera.center.y += mouseWorldBefore.y - mouseWorldAfter.y;
-            Engine.mousePositionWorld = mouseWorldBefore;
+    protected onKeyUp(event: KeyboardEvent) {
+        if (isCommandKey(event.code)) {
+            this.commandPressed = false;
         }
+
+        if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') {
+            this.shiftPressed = false;
+        }
+
+        return true;
+    }
+
+    protected onMouseMove(_event: MouseEvent, screenPosition: Vector) {
+        // Dragging the canvas follows the pointer in screen space.
+        if (this.mousePressed && this.commandPressed) {
+            const diffX = (screenPosition.x - Engine.mousePositionScreen.x) / this.zoom;
+            const diffY = (screenPosition.y - Engine.mousePositionScreen.y) / this.zoom;
+
+            this.camera.center.x -= diffX;
+            this.camera.center.y += diffY;
+        }
+
+        return true;
+    }
+
+    protected onMouseDown(event: MouseEvent, screenPosition: Vector) {
+        this.mousePressed = true;
+
+        if (event.button === MouseButton.MIDDLE) {
+            this.commandPressed = true;
+        }
+
+        return !(this.testMode && this.isOutsideCanvas(screenPosition));
+    }
+
+    protected onMouseUp(event: MouseEvent, screenPosition: Vector) {
+        this.mousePressed = false;
+
+        if (event.button === MouseButton.MIDDLE) {
+            this.commandPressed = false;
+        }
+
+        return !(this.testMode && this.isOutsideCanvas(screenPosition));
+    }
+
+    protected onWheel(event: WheelEvent) {
+        if (this.testMode || !this.canvas || this.isOutsideCanvas(Engine.mousePositionScreen)) {
+            return false;
+        }
+
+        const mouseWorldBefore = screenToWorld(Engine.mousePositionScreen, this.camera, this.zoom);
+
+        this.zoom *= event.deltaY < 0 ? 1 + 0.1 : 1 - 0.1;
+        this.zoom = Math.max(0.05, Math.min(8, this.zoom));
+        this.updateZoomStatus();
+
+        this.camera.viewportWidth = this.canvas.width / this.zoom;
+        this.camera.viewportHeight = this.canvas.height / this.zoom;
+
+        // Keep the world point under the cursor fixed while zooming
+        const mouseWorldAfter = screenToWorld(Engine.mousePositionScreen, this.camera, this.zoom);
+        this.camera.center.x += mouseWorldBefore.x - mouseWorldAfter.x;
+        this.camera.center.y += mouseWorldBefore.y - mouseWorldAfter.y;
+        Engine.mousePositionWorld = mouseWorldBefore;
+
+        return true;
+    }
+
+    private isOutsideCanvas = (screenPosition: Vector) => {
+        if (!this.canvas) {
+            return true;
+        }
+
+        return (
+            screenPosition.x < 0 ||
+            screenPosition.x > this.canvas.width ||
+            screenPosition.y < 0 ||
+            screenPosition.y > this.canvas.height
+        );
     };
+
+    private serializeSelectedEntities = () =>
+        Editor.selectedEntities.map(entity => serializeEntity(entity, gameComponentCatalog));
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     update = (deltaTime: number) => {
@@ -592,8 +482,7 @@ export default class Editor extends Engine {
 
         // Invoke all the systems that need to update
         this.isSystemActive('MovementSystem') && this.registry.getSystem(GameSystems.MovementSystem).update(deltaTime);
-        this.isSystemActive('LifetimeSystem') &&
-            this.registry.getSystem(GameSystems.LifetimeSystem).update(this.eventBus);
+        this.isSystemActive('LifetimeSystem') && this.registry.getSystem(GameSystems.LifetimeSystem).update();
         this.isSystemActive('PlayerDetectionSystem') &&
             this.registry.getSystem(GameSystems.PlayerDetectionSystem).update(this.registry);
         this.isSystemActive('ScriptingSystem') && this.registry.getSystem(GameSystems.ScriptingSystem).update();

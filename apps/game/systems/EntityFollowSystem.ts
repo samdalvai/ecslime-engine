@@ -1,4 +1,5 @@
 import {
+    EntityKilledEvent,
     EventBus,
     System,
     computeDirectionVector,
@@ -11,7 +12,6 @@ import RigidBodyComponent from '../components/RigidBodyComponent';
 import ScriptComponent from '../components/ScriptComponent';
 import SpriteComponent from '../components/SpriteComponent';
 import TransformComponent from '../components/TransformComponent';
-import EntityKilledEvent from '../events/EntityKilledEvent';
 
 export default class EntityFollowSystem extends System {
     constructor() {

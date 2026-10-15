@@ -3,10 +3,7 @@ import { EventBus } from 'ecslime-engine';
 
 import Component, { IComponent } from '../../../src/ecs/Component';
 import Registry from '../../../src/ecs/Registry';
-import ComponentAddedEvent from '../../../src/events/ComponentAddedEvent';
-import ComponentRemovedEvent from '../../../src/events/ComponentRemovedEvent';
-import EntityCreatedEvent from '../../../src/events/EntityCreatedEvent';
-import EntityKilledEvent from '../../../src/events/EntityKilledEvent';
+import { ComponentAddedEvent, ComponentRemovedEvent, EntityCreatedEvent, EntityKilledEvent } from '../../../src/events';
 
 describe('Testing Default events', () => {
     beforeEach(() => {

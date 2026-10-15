@@ -1,7 +1,16 @@
-import { AssetStore, Engine, EventBus, GameStatus, LevelManager, Rectangle, Registry, System } from 'ecslime-engine';
+import {
+    AssetStore,
+    Engine,
+    EventBus,
+    GameStatus,
+    LevelManager,
+    MousePressedEvent,
+    Rectangle,
+    Registry,
+    System,
+} from 'ecslime-engine';
 
 import Game from '../Game';
-import { MousePressedEvent } from '../events';
 
 export default class RenderMenuSystem extends System {
     registry: Registry;
