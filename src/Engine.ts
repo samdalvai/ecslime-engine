@@ -1,10 +1,19 @@
 import AssetStore from './asset-store/AssetStore';
 import Registry from './ecs/Registry';
 import EventBus from './event-bus/EventBus';
+import {
+    KeyPressedEvent,
+    KeyReleasedEvent,
+    MouseMoveEvent,
+    MousePressedEvent,
+    MouseReleasedEvent,
+    ScrollEvent,
+} from './events';
 import InputManager from './input-manager/InputManager';
 import LevelManager from './level-manager/LevelManager';
 import LoopStrategy from './loop-strategy/LoopStrategy';
 import { Camera, GameStatus, Vector } from './types/utils';
+import { screenToWorld } from './utils/coordinates';
 
 export default abstract class Engine {
     // Objects for rendering
@@ -132,7 +141,125 @@ export default abstract class Engine {
     /** Creates the camera representation used by this engine surface. */
     protected abstract createCamera(): Camera;
 
-    protected abstract processInput(): void;
+    /**
+     * Drains the input buffers, keeps `Engine.mousePositionScreen`/`Engine.mousePositionWorld`
+     * up to date and emits the default input events. Override the `on*` hooks to react to
+     * raw input or to suppress the emission of an event (by returning `false`).
+     */
+    protected processInput() {
+        if (this.isInputBlocked()) {
+            this.inputManager.keyboardInputBuffer.length = 0;
+            this.inputManager.mouseInputBuffer.length = 0;
+            this.inputManager.wheelInputBuffer.length = 0;
+            return;
+        }
+
+        for (const inputEvent of this.inputManager.keyboardInputBuffer.splice(0)) {
+            switch (inputEvent.type) {
+                case 'keydown':
+                    if (this.onKeyDown(inputEvent)) {
+                        this.eventBus.emitEvent(KeyPressedEvent, inputEvent.code);
+                    }
+                    break;
+                case 'keyup':
+                    if (this.onKeyUp(inputEvent)) {
+                        this.eventBus.emitEvent(KeyReleasedEvent, inputEvent.code);
+                    }
+                    break;
+            }
+        }
+
+        for (const inputEvent of this.inputManager.mouseInputBuffer.splice(0)) {
+            const canvasBounds = this.canvas?.getBoundingClientRect();
+            const screenPosition = {
+                x: inputEvent.x - (canvasBounds?.left ?? 0),
+                y: inputEvent.y - (canvasBounds?.top ?? 0),
+            };
+
+            // Hooks run before the global mouse positions are updated, so they can still read the previous ones
+            let shouldEmit = false;
+            switch (inputEvent.type) {
+                case 'mousemove':
+                    shouldEmit = this.onMouseMove(inputEvent, screenPosition);
+                    break;
+                case 'mousedown':
+                    shouldEmit = this.onMouseDown(inputEvent, screenPosition);
+                    break;
+                case 'mouseup':
+                    shouldEmit = this.onMouseUp(inputEvent, screenPosition);
+                    break;
+            }
+
+            Engine.mousePositionScreen = screenPosition;
+            Engine.mousePositionWorld = screenToWorld(screenPosition, this.camera, this.getZoom());
+
+            if (!shouldEmit) {
+                continue;
+            }
+
+            switch (inputEvent.type) {
+                case 'mousemove':
+                    this.eventBus.emitEvent(MouseMoveEvent, Engine.mousePositionWorld);
+                    break;
+                case 'mousedown':
+                    this.eventBus.emitEvent(MousePressedEvent, Engine.mousePositionWorld, inputEvent.button);
+                    break;
+                case 'mouseup':
+                    this.eventBus.emitEvent(MouseReleasedEvent, Engine.mousePositionWorld, inputEvent.button);
+                    break;
+            }
+        }
+
+        for (const wheelEvent of this.inputManager.wheelInputBuffer.splice(0)) {
+            if (wheelEvent.deltaY === 0 || !this.onWheel(wheelEvent)) {
+                continue;
+            }
+
+            this.eventBus.emitEvent(ScrollEvent, wheelEvent.deltaY < 0 ? 'up' : 'down');
+        }
+    }
+
+    // Input hooks, overridden by the engine surfaces when needed
+
+    /** When `true`, all buffered input is discarded without emitting events. */
+    protected isInputBlocked(): boolean {
+        return false;
+    }
+
+    /** Zoom applied when converting the mouse screen position to world coordinates. */
+    protected getZoom(): number {
+        return 1;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected onKeyDown(event: KeyboardEvent): boolean {
+        return true;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected onKeyUp(event: KeyboardEvent): boolean {
+        return true;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected onMouseMove(event: MouseEvent, screenPosition: Vector): boolean {
+        return true;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected onMouseDown(event: MouseEvent, screenPosition: Vector): boolean {
+        return true;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected onMouseUp(event: MouseEvent, screenPosition: Vector): boolean {
+        return true;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected onWheel(event: WheelEvent): boolean {
+        return true;
+    }
 
     protected abstract update(deltaTime: number): void;
 

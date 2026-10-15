@@ -10,7 +10,6 @@ import TransformComponent from '../components/TransformComponent';
 import CameraShakeEvent from '../events/CameraShakeEvent';
 import CollisionEvent from '../events/CollisionEvent';
 import EntityHitEvent from '../events/EntityHitEvent';
-import EntityKilledEvent from '../events/EntityKilledEvent';
 import SoundEmitEvent from '../events/SoundEmitEvent';
 
 export default class DamageSystem extends System {
@@ -109,7 +108,6 @@ export default class DamageSystem extends System {
             const health = entity.getComponent(HealthComponent);
 
             if (health.healthPercentage <= 0) {
-                this.eventBus.emitEvent(EntityKilledEvent, entity);
                 entity.kill();
             }
 

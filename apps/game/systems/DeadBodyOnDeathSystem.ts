@@ -1,4 +1,4 @@
-import { EventBus, System } from 'ecslime-engine';
+import { EntityKilledEvent, EventBus, System } from 'ecslime-engine';
 
 import DeadBodyOnDeathComponent from '../components/DeadBodyOnDeathComponent';
 import LifetimeComponent from '../components/LifetimeComponent';
@@ -6,7 +6,6 @@ import RigidBodyComponent from '../components/RigidBodyComponent';
 import ShadowComponent from '../components/ShadowComponent';
 import SpriteComponent from '../components/SpriteComponent';
 import TransformComponent from '../components/TransformComponent';
-import EntityKilledEvent from '../events/EntityKilledEvent';
 
 export default class DeadBodyOnDeathSystem extends System {
     constructor() {

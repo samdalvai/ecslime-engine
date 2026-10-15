@@ -2,6 +2,7 @@ import {
     AssetStore,
     Engine,
     Entity,
+    EntityKilledEvent,
     EventBus,
     LevelManager,
     Registry,
@@ -11,7 +12,6 @@ import {
 
 import { gameComponentCatalog } from '../../game/catalog/gameComponentCatalog';
 import { TransformComponent } from '../../game/components';
-import EntityKilledEvent from '../../game/events/EntityKilledEvent';
 import * as GameSystems from '../../game/systems';
 import Editor from '../Editor';
 import EntityEditor from '../entity-editor/EntityEditor';

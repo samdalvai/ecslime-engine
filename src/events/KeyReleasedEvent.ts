@@ -1,4 +1,4 @@
-import { GameEvent } from 'ecslime-engine';
+import GameEvent from '../event-bus/GameEvent';
 
 export default class KeyReleasedEvent extends GameEvent {
     keyCode: string;
