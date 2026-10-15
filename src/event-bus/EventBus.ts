@@ -42,11 +42,7 @@ export default class EventBus {
         this.subscribers.get(eventTypeName)?.push(subscriber);
     }
 
-    // TODO: this is not Typesafe, add correct typing as with component constructors
-    emitEvent<TEvent extends GameEvent>(
-        eventType: new (...args: any[]) => TEvent,
-        ...args: ConstructorParameters<typeof eventType>
-    ): void {
+    emitEvent<T extends new (...args: any[]) => GameEvent>(eventType: T, ...args: ConstructorParameters<T>): void {
         const eventTypeName = eventType.name;
         const handlers = this.subscribers.get(eventTypeName);
         if (handlers) {
