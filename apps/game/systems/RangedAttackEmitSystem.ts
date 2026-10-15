@@ -3,7 +3,9 @@ import {
     Entity,
     EventBus,
     Registry,
+    SpriteComponent,
     System,
+    TransformComponent,
     Vector,
     computeDirectionVector,
     computeUnitVector,
@@ -19,8 +21,6 @@ import ProjectileComponent from '../components/ProjectileComponent';
 import RangedAttackEmitterComponent from '../components/RangedAttackEmitterComponent';
 import RigidBodyComponent from '../components/RigidBodyComponent';
 import ShadowComponent from '../components/ShadowComponent';
-import SpriteComponent from '../components/SpriteComponent';
-import TransformComponent from '../components/TransformComponent';
 import RangedAttackEmitEvent from '../events/RangedAttackEmitEvent';
 
 export default class RangedAttackEmitSystem extends System {

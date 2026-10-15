@@ -10,6 +10,7 @@ export type {
     EnumOption,
     PropertyMetadata,
 } from './serialization/componentCatalog';
+export * from './components';
 export { default as Component, IComponent } from './ecs/Component';
 export type { ComponentClass } from './ecs/Component';
 export { default as Entity } from './ecs/Entity';
@@ -18,6 +19,7 @@ export type { IPool } from './ecs/Pool';
 export { default as Registry } from './ecs/Registry';
 export { default as Signature } from './ecs/Signature';
 export { default as System, ISystem } from './ecs/System';
+export * from './systems';
 export type { SystemClass } from './ecs/System';
 export { default as EventBus } from './event-bus/EventBus';
 export { default as GameEvent } from './event-bus/GameEvent';

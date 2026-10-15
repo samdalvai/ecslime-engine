@@ -1,7 +1,9 @@
 import {
     Camera,
     Engine,
+    SpriteComponent,
     System,
+    TransformComponent,
     getCameraBounds,
     getSpriteBounds,
     worldBoundsOverlap,
@@ -9,8 +11,6 @@ import {
 } from 'ecslime-engine';
 
 import LightEmitComponent from '../components/LightEmitComponent';
-import SpriteComponent from '../components/SpriteComponent';
-import TransformComponent from '../components/TransformComponent';
 
 export default class RenderLightingSystem extends System {
     constructor() {

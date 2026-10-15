@@ -1,8 +1,14 @@
-import { Camera, System, getCameraBounds, getSpriteBounds, worldBoundsOverlap } from 'ecslime-engine';
+import {
+    Camera,
+    SpriteComponent,
+    System,
+    TransformComponent,
+    getCameraBounds,
+    getSpriteBounds,
+    worldBoundsOverlap,
+} from 'ecslime-engine';
 
 import HealthComponent from '../components/HealthComponent';
-import SpriteComponent from '../components/SpriteComponent';
-import TransformComponent from '../components/TransformComponent';
 
 export default class RenderHealthBarSystem extends System {
     constructor() {

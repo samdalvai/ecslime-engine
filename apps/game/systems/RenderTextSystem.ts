@@ -1,6 +1,5 @@
-import { System } from 'ecslime-engine';
+import { System, TransformComponent } from 'ecslime-engine';
 
-import { TransformComponent } from '../components';
 import TextLabelComponent from '../components/TextLabelComponent';
 
 export default class RenderTextSystem extends System {

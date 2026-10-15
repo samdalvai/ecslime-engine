@@ -1,9 +1,15 @@
-import { System, WorldBounds, getCameraBounds, getSpriteBounds, worldBoundsOverlap } from 'ecslime-engine';
+import {
+    System,
+    TransformComponent,
+    WorldBounds,
+    getCameraBounds,
+    getSpriteBounds,
+    worldBoundsOverlap,
+} from 'ecslime-engine';
 import { Camera } from 'ecslime-engine';
 
 import Game from '../Game';
 import ParticleComponent from '../components/ParticleComponent';
-import TransformComponent from '../components/TransformComponent';
 
 export default class RenderParticleSystem extends System {
     constructor() {

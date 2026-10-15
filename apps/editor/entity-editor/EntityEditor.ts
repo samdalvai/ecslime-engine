@@ -9,6 +9,8 @@ import {
     LevelManager,
     Rectangle,
     Registry,
+    SpriteComponent,
+    TransformComponent,
     Vector,
     isValidEntityMap,
     resolveEnumOptions,
@@ -138,7 +140,7 @@ export default class EntityEditor {
 
     addEntity = () => {
         const entity = this.registry.createEntity();
-        entity.addComponent(GameComponents.TransformComponent);
+        entity.addComponent(TransformComponent);
 
         Editor.selectedEntities = [entity];
         this.eventBus.emitEvent(EntitySelectEvent, [entity]);
@@ -379,8 +381,8 @@ export default class EntityEditor {
 
         // Sort components by keeping sprite component at the top
         sortedComponents.sort((componentA, componentB) => {
-            if (componentA instanceof GameComponents.SpriteComponent) return -1;
-            if (componentB instanceof GameComponents.SpriteComponent) return 1;
+            if (componentA instanceof SpriteComponent) return -1;
+            if (componentB instanceof SpriteComponent) return 1;
 
             return this.getComponentName(componentA).localeCompare(this.getComponentName(componentB));
         });
@@ -398,13 +400,11 @@ export default class EntityEditor {
         componentContainer.className = 'component-card';
         const componentName = this.getComponentName(component);
         componentContainer.id = componentName + '-' + entity.getId();
-        componentContainer.open =
-            component instanceof GameComponents.TransformComponent ||
-            component instanceof GameComponents.SpriteComponent;
+        componentContainer.open = component instanceof TransformComponent || component instanceof SpriteComponent;
         const summary = document.createElement('summary');
         summary.textContent = componentName.replace(/Component$/, '').replace(/([a-z])([A-Z])/g, '$1 $2');
         componentContainer.append(summary);
-        if (!(component instanceof GameComponents.TransformComponent)) {
+        if (!(component instanceof TransformComponent)) {
             const actions = document.createElement('div');
             actions.className = 'component-actions';
             const removeButton = document.createElement('button');
@@ -441,7 +441,7 @@ export default class EntityEditor {
             return null;
         }
 
-        if (component instanceof GameComponents.SpriteComponent && propertyName === 'assetId') {
+        if (component instanceof SpriteComponent && propertyName === 'assetId') {
             return this.createSpriteSelector(propertyName, component, entityId);
         }
 
@@ -460,7 +460,7 @@ export default class EntityEditor {
         }
 
         const propertyLabel =
-            component instanceof GameComponents.TransformComponent && propertyName === 'position'
+            component instanceof TransformComponent && propertyName === 'position'
                 ? 'position (centre, Y-up)'
                 : propertyName;
 
@@ -528,7 +528,7 @@ export default class EntityEditor {
             const img = document.getElementById(`spritesheet-${entityId}`) as HTMLImageElement;
             if (!img) throw new Error(`Sprite image not found: ${entityId}`);
 
-            const newAssetImg = this.assetStore.getTexture((component as GameComponents.SpriteComponent).assetId);
+            const newAssetImg = this.assetStore.getTexture((component as SpriteComponent).assetId);
             img.src = newAssetImg.src;
             img.style.maxHeight = `${Math.max(newAssetImg.height, 100)}px`;
 
@@ -538,7 +538,7 @@ export default class EntityEditor {
         const propertyLi = createListItem(propertyName, select);
 
         const spriteImage = document.createElement('img');
-        const assetImg = this.assetStore.getTexture((component as GameComponents.SpriteComponent).assetId);
+        const assetImg = this.assetStore.getTexture((component as SpriteComponent).assetId);
         spriteImage.src = assetImg.src;
         spriteImage.style.objectFit = 'contain';
         spriteImage.style.maxHeight = `${assetImg.height}px`;
@@ -579,7 +579,7 @@ export default class EntityEditor {
                 const allEntities = this.registry.getAllEntities();
 
                 for (const entity of allEntities) {
-                    if (entity.hasComponent(GameComponents.SpriteComponent)) {
+                    if (entity.hasComponent(SpriteComponent)) {
                         const entitySpriteSelect = document.getElementById('assetId-' + entity.getId());
                         if (!entitySpriteSelect) {
                             continue;
@@ -598,7 +598,7 @@ export default class EntityEditor {
                 spriteImage.style.objectFit = 'contain';
                 spriteImage.style.maxHeight = `${newAssetImg.height}px`;
                 spriteImage.style.maxWidth = '100%';
-                (component as GameComponents.SpriteComponent).assetId = assetId;
+                (component as SpriteComponent).assetId = assetId;
 
                 this.saveLevel();
             }

@@ -1,9 +1,7 @@
-import { EventBus, System } from 'ecslime-engine';
+import { EventBus, SpriteComponent, System, TransformComponent } from 'ecslime-engine';
 
 import AnimationComponent from '../components/AnimationComponent';
 import LifetimeComponent from '../components/LifetimeComponent';
-import SpriteComponent from '../components/SpriteComponent';
-import TransformComponent from '../components/TransformComponent';
 import EntityHitEvent from '../events/EntityHitEvent';
 
 export default class AnimationOnHitSystem extends System {

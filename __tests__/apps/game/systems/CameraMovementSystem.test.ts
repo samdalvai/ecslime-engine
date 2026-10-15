@@ -1,10 +1,9 @@
 import { describe, expect, test } from '@jest/globals';
-import { Engine } from 'ecslime-engine';
+import { Engine, TransformComponent } from 'ecslime-engine';
 import { Registry } from 'ecslime-engine';
 import { Camera } from 'ecslime-engine';
 
 import CameraFollowComponent from '../../../../apps/game/components/CameraFollowComponent';
-import TransformComponent from '../../../../apps/game/components/TransformComponent';
 import CameraMovementSystem from '../../../../apps/game/systems/CameraMovementSystem';
 
 describe('CameraMovementSystem', () => {

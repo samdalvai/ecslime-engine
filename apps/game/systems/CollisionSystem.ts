@@ -1,8 +1,7 @@
-import { System, Vector, WorldBounds, getColliderBounds, worldBoundsOverlap } from 'ecslime-engine';
+import { System, TransformComponent, Vector, WorldBounds, getColliderBounds, worldBoundsOverlap } from 'ecslime-engine';
 import { EventBus } from 'ecslime-engine';
 
 import BoxColliderComponent from '../components/BoxColliderComponent';
-import TransformComponent from '../components/TransformComponent';
 import CollisionEvent from '../events/CollisionEvent';
 
 export default class CollisionSystem extends System {

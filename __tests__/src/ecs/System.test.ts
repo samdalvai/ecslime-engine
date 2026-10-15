@@ -25,6 +25,15 @@ describe('Testing System related functions', () => {
         expect(MySystem2.getSystemId()).toBe(1);
     });
 
+    test('A subclass of a System should not inherit the id of its parent', () => {
+        class ParentSystem extends System {}
+        class ChildSystem extends ParentSystem {}
+
+        expect(ParentSystem.getSystemId()).toBe(0);
+        expect(ChildSystem.getSystemId()).toBe(1);
+        expect(ParentSystem.getSystemId()).toBe(0);
+    });
+
     test('A system requiring a component should add entity to his system entitites', () => {
         class MyComponent extends Component {}
         class MySystem extends System {

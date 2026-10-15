@@ -1,11 +1,9 @@
-import { Registry, System, isPointInsideCircle } from 'ecslime-engine';
+import { Registry, SpriteComponent, System, TransformComponent, isPointInsideCircle } from 'ecslime-engine';
 
 import DamageRadiusComponent from '../components/DamageRadiusComponent';
 import EntityEffectComponent from '../components/EntityEffectComponent';
 import EntityFollowComponent from '../components/EntityFollowComponent';
 import SlowTimeComponent from '../components/SlowTimeComponent';
-import SpriteComponent from '../components/SpriteComponent';
-import TransformComponent from '../components/TransformComponent';
 
 export default class EntityEffectSystem extends System {
     constructor() {

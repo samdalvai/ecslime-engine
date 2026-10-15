@@ -21,4 +21,13 @@ describe('Testing Component related functions', () => {
         expect(MyComponent1.getComponentId()).toBe(0);
         expect(MyComponent2.getComponentId()).toBe(1);
     });
+
+    test('A subclass of a component should not inherit the id of its parent', () => {
+        class ParentComponent extends Component {}
+        class ChildComponent extends ParentComponent {}
+
+        expect(ParentComponent.getComponentId()).toBe(0);
+        expect(ChildComponent.getComponentId()).toBe(1);
+        expect(ParentComponent.getComponentId()).toBe(0);
+    });
 });

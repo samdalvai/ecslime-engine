@@ -8,7 +8,9 @@ import {
     MouseMoveEvent,
     MousePressedEvent,
     Registry,
+    SpriteComponent,
     System,
+    TransformComponent,
     Vector,
     computeDirectionVector,
     computeUnitVector,
@@ -28,9 +30,7 @@ import PlayerControlComponent from '../components/PlayerControlComponent';
 import RangedAttackEmitterComponent from '../components/RangedAttackEmitterComponent';
 import RigidBodyComponent from '../components/RigidBodyComponent';
 import SlowTimeComponent from '../components/SlowTimeComponent';
-import SpriteComponent from '../components/SpriteComponent';
 import TeleportComponent from '../components/TeleportComponent';
-import TransformComponent from '../components/TransformComponent';
 import RangedAttackEmitEvent from '../events/RangedAttackEmitEvent';
 import SoundEmitEvent from '../events/SoundEmitEvent';
 

@@ -19,7 +19,8 @@ export default class Component extends IComponent {
     private static _id?: number;
 
     static getComponentId() {
-        if (this._id === undefined) {
+        // Own property check, so that subclasses don't inherit the id of their parent class
+        if (!Object.prototype.hasOwnProperty.call(this, '_id') || this._id === undefined) {
             this._id = this.getNextId();
         }
         return this._id;

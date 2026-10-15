@@ -1,7 +1,13 @@
-import { Camera, System, getCameraBounds, getColliderBounds, worldBoundsOverlap } from 'ecslime-engine';
+import {
+    Camera,
+    System,
+    TransformComponent,
+    getCameraBounds,
+    getColliderBounds,
+    worldBoundsOverlap,
+} from 'ecslime-engine';
 
 import BoxColliderComponent from '../components/BoxColliderComponent';
-import TransformComponent from '../components/TransformComponent';
 
 export default class DebugColliderSystem extends System {
     constructor() {

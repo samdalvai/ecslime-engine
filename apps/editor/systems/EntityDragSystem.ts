@@ -8,15 +8,15 @@ import {
     MouseMoveEvent,
     MousePressedEvent,
     MouseReleasedEvent,
+    SpriteComponent,
     System,
+    TransformComponent,
     Vector,
     WorldBounds,
     getSpriteBounds,
     worldBoundsOverlap,
 } from 'ecslime-engine';
 
-import SpriteComponent from '../../game/components/SpriteComponent';
-import TransformComponent from '../../game/components/TransformComponent';
 import Editor from '../Editor';
 import EntityEditor from '../entity-editor/EntityEditor';
 import EntitySelectEvent from '../events/EntitySelectEvent';

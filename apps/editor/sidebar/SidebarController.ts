@@ -6,12 +6,12 @@ import {
     EventBus,
     LevelManager,
     Registry,
+    TransformComponent,
     deserializeEntity,
     isValidLevelMap,
 } from 'ecslime-engine';
 
 import { gameComponentCatalog } from '../../game/catalog/gameComponentCatalog';
-import { TransformComponent } from '../../game/components';
 import * as GameSystems from '../../game/systems';
 import Editor from '../Editor';
 import EntityEditor from '../entity-editor/EntityEditor';

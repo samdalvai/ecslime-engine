@@ -2,15 +2,15 @@ import {
     Camera,
     DEFAULT_SPRITE,
     Engine,
+    SpriteComponent,
     System,
+    TransformComponent,
     WorldBounds,
     getCameraBounds,
     getSpriteBounds,
     worldBoundsOverlap,
 } from 'ecslime-engine';
 
-import SpriteComponent from '../../game/components/SpriteComponent';
-import TransformComponent from '../../game/components/TransformComponent';
 import Editor from '../Editor';
 
 type RenderableEntity = {

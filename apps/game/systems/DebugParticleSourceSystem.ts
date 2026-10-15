@@ -1,7 +1,6 @@
-import { Camera, System, getCameraBounds, worldBoundsOverlap } from 'ecslime-engine';
+import { Camera, System, TransformComponent, getCameraBounds, worldBoundsOverlap } from 'ecslime-engine';
 
 import ParticleEmitComponent from '../components/ParticleEmitComponent';
-import TransformComponent from '../components/TransformComponent';
 
 export default class DebugParticleSourceSystem extends System {
     constructor() {

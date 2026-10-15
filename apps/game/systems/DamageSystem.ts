@@ -1,12 +1,10 @@
-import { Entity, EventBus, System } from 'ecslime-engine';
+import { Entity, EventBus, SpriteComponent, System, TransformComponent } from 'ecslime-engine';
 
 import CameraShakeComponent from '../components/CameraShakeComponent';
 import EntityEffectComponent from '../components/EntityEffectComponent';
 import HealthComponent from '../components/HealthComponent';
 import MeleeAttackComponent from '../components/MeleeAttackComponent';
 import ProjectileComponent from '../components/ProjectileComponent';
-import SpriteComponent from '../components/SpriteComponent';
-import TransformComponent from '../components/TransformComponent';
 import CameraShakeEvent from '../events/CameraShakeEvent';
 import CollisionEvent from '../events/CollisionEvent';
 import EntityHitEvent from '../events/EntityHitEvent';

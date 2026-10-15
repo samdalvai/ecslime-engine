@@ -1,10 +1,9 @@
 import { describe, expect, test } from '@jest/globals';
-import { Registry } from 'ecslime-engine';
+import { Registry, TransformComponent } from 'ecslime-engine';
 import { EventBus } from 'ecslime-engine';
 import { Vector } from 'ecslime-engine';
 
 import BoxColliderComponent from '../../../../apps/game/components/BoxColliderComponent';
-import TransformComponent from '../../../../apps/game/components/TransformComponent';
 import CollisionEvent from '../../../../apps/game/events/CollisionEvent';
 import CollisionSystem from '../../../../apps/game/systems/CollisionSystem';
 

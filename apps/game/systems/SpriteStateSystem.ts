@@ -1,8 +1,7 @@
-import { System } from 'ecslime-engine';
+import { SpriteComponent, System } from 'ecslime-engine';
 
 import HealthComponent from '../components/HealthComponent';
 import RigidBodyComponent from '../components/RigidBodyComponent';
-import SpriteComponent from '../components/SpriteComponent';
 import SpriteStateComponent from '../components/SpriteStateComponent';
 
 export default class SpriteStateSystem extends System {

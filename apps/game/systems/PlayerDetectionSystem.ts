@@ -1,9 +1,7 @@
-import { EventBus, Registry, System, isPointInsideCircle } from 'ecslime-engine';
+import { EventBus, Registry, SpriteComponent, System, TransformComponent, isPointInsideCircle } from 'ecslime-engine';
 
 import EntityFollowComponent from '../components/EntityFollowComponent';
 import RigidBodyComponent from '../components/RigidBodyComponent';
-import SpriteComponent from '../components/SpriteComponent';
-import TransformComponent from '../components/TransformComponent';
 import EntityHitEvent from '../events/EntityHitEvent';
 
 export default class PlayerDetectionSystem extends System {

@@ -2,7 +2,9 @@ import {
     Engine,
     Entity,
     EventBus,
+    SpriteComponent,
     System,
+    TransformComponent,
     Vector,
     WorldBounds,
     getColliderBounds,
@@ -12,8 +14,6 @@ import {
 import BoxColliderComponent from '../components/BoxColliderComponent';
 import EntityEffectComponent from '../components/EntityEffectComponent';
 import RigidBodyComponent from '../components/RigidBodyComponent';
-import SpriteComponent from '../components/SpriteComponent';
-import TransformComponent from '../components/TransformComponent';
 import CollisionEvent from '../events/CollisionEvent';
 
 export default class MovementSystem extends System {
